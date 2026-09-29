@@ -1,0 +1,15 @@
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.venv/
+
+# Downloaded and derived data (rebuilt by the pipeline)
+data/raw/
+data/interim/
+
+# Keep the evaluation summary and map; the rest is regenerated
+outputs/*
+!outputs/evaluation.md
+!outputs/evaluation.json
+!outputs/risk_map.html

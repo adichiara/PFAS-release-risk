@@ -1,0 +1,140 @@
+# Catalog of every dataset the pipeline uses. All sources are publicly available.
+#
+# status:
+#   available  - downloaded automatically by `pfas-risk download`
+#   manual     - public, but must be exported by hand from a web portal (see notes)
+#   planned    - public source identified; loader not written yet
+#
+# MassGIS files are fetched from the public MassGIS download bucket.
+
+massgis_base: https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov
+
+sources:
+
+  # ---- Spatial units -------------------------------------------------------
+  block_groups:
+    title: 2020 Census block groups (with 2020 population and housing counts)
+    publisher: MassGIS / U.S. Census Bureau
+    path: shapefiles/census2020/CENSUS2020_BLK_BG_TRCT.zip
+    layer: CENSUS2020BLOCKGROUPS_POLY.shp
+    role: unit
+    status: available
+
+  towns:
+    title: Municipal boundaries (used for spatially grouped cross-validation)
+    publisher: MassGIS
+    path: shapefiles/state/towns.zip
+    layer: TOWNS_POLY.shp
+    role: grouping
+    status: available
+
+  # ---- Response ------------------------------------------------------------
+  massdep_releases:
+    title: MassDEP reportable releases (RTNs) with PFAS as a released chemical
+    publisher: MassDEP Waste Site & Reportable Release database
+    url: https://eeaonline.eea.state.ma.us/portal#!/search/wastesite
+    file: massdep_releases.csv
+    role: response
+    status: manual
+    notes: >
+      Export the reportable release search results (all RTNs, with chemical and
+      address fields) to CSV and save as data/raw/massdep_releases.csv. Until then
+      the pipeline falls back to data/seed/massdep_pfas_releases_2021-11-07.csv,
+      the 52 PFAS RTNs compiled from the same database for the 2021 WPI/MassDEP
+      project.
+
+  address_points:
+    title: MassGIS statewide address points (offline geocoding of release addresses)
+    publisher: MassGIS
+    path: gdbs/MassGIS_AddressPoints.zip
+    layer: MAD_ADDRESS_POINTS_GC
+    gdb: MassGIS_Statewide_Address_Points.gdb
+    role: geocoding
+    status: available
+
+  # ---- Candidate PFAS sources and activity -----------------------------------
+  fire_stations:
+    title: Fire stations (MEMA)
+    publisher: MassGIS
+    path: shapefiles/state/firestations_pt.zip
+    layer: FIRESTATIONS_PT_MEMA.shp
+    role: feature
+    status: available
+
+  bwp_major:
+    title: MassDEP major permitted facilities (air, hazardous waste generators, TSDFs)
+    publisher: MassGIS / MassDEP
+    path: shapefiles/state/bwpmajor_pt.zip
+    layer: BWPMAJOR_PT.shp
+    role: feature
+    status: available
+
+  ust:
+    title: MassDEP underground storage tank facilities
+    publisher: MassGIS / MassDEP
+    path: shapefiles/state/ust.zip
+    layer: BWP_PT_UST.shp
+    role: feature
+    status: available
+
+  landfills:
+    title: MassDEP solid waste land disposal sites (landfill footprints)
+    publisher: MassGIS / MassDEP
+    path: shapefiles/state/solidwaste.zip
+    layer: SW_LD_POLY.shp
+    role: feature
+    status: available
+
+  major_roads:
+    title: 2020 TIGER primary and secondary roads
+    publisher: MassGIS / U.S. Census Bureau
+    path: shapefiles/census2020/CENSUS2020TIGERROADS_SHP.zip
+    layer: CENSUS2020TIGERMAJROADS_ARC.shp
+    role: feature
+    status: available
+
+  aquifers:
+    title: High- and medium-yield aquifers
+    publisher: MassGIS / USGS
+    path: shapefiles/state/aquifers.zip
+    layer: AQUIFERS_POLY.shp
+    role: feature
+    status: available
+
+  # ---- Identified, not yet wired in -----------------------------------------
+  epa_echo_facilities:
+    title: EPA ECHO / FRS facilities by NAICS code (PFAS-handling industries)
+    publisher: U.S. EPA
+    url: https://echo.epa.gov/tools/data-downloads
+    role: feature
+    status: planned
+    notes: Public replacement for the non-public BAW industry list used in 2021.
+
+  airports:
+    title: Public-use airports (AFFF use)
+    publisher: FAA / MassDOT Aeronautics
+    url: https://adds-faa.opendata.arcgis.com/
+    role: feature
+    status: planned
+
+  military_installations:
+    title: Military installations, ranges and training areas (MIRTA)
+    publisher: U.S. Department of Defense
+    url: https://catalog.data.gov/dataset/military-installations-ranges-and-training-areas
+    role: feature
+    status: planned
+
+  land_cover_2016:
+    title: 2016 land cover / land use (industrial, commercial, impervious fractions)
+    publisher: MassGIS
+    path: shapefiles/lclu2016/
+    role: feature
+    status: planned
+    notes: 294 tiles, ~5.4 GB. Optional heavy step.
+
+  ucmr5:
+    title: EPA UCMR 5 PFAS occurrence data for public water systems
+    publisher: U.S. EPA
+    url: https://www.epa.gov/dwucmr/occurrence-data-unregulated-contaminant-monitoring-rule
+    role: context
+    status: planned
