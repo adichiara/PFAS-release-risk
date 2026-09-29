@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PFAS Release Risk</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  :root {
+    color-scheme: light;
+    --surface: #fcfcfb; --panel: #ffffff; --border: #dddcd7;
+    --text-primary: #0b0b0b; --text-secondary: #52514e; --text-muted: #7a7974;
+    --seq-1: #cde2fb; --seq-2: #86b6ef; --seq-3: #3987e5; --seq-4: #1c5cab; --seq-5: #0d366b;
+    --release: #eb6834; --warn-bg: #fdf1e7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --surface: #1a1a19; --panel: #242423; --border: #3a3a37;
+      --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #94938b;
+      --release: #d95926; --warn-bg: #3a2a1f;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface: #1a1a19; --panel: #242423; --border: #3a3a37;
+    --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #94938b;
+    --release: #d95926; --warn-bg: #3a2a1f;
+  }
+  html, body { margin: 0; height: 100%; background: var(--surface); color: var(--text-primary);
+    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  #map { position: absolute; inset: 0; background: var(--surface); }
+  .panel { position: absolute; z-index: 1000; background: var(--panel); border: 1px solid var(--border);
+    border-radius: 8px; box-shadow: 0 2px 10px rgb(0 0 0 / .12); }
+  #info { top: 12px; left: 12px; width: 320px; max-width: calc(100vw - 48px); padding: 14px 16px; }
+  #info h1 { font-size: 17px; margin: 0 0 4px; }
+  #info p { margin: 6px 0; color: var(--text-secondary); }
+  #info .warn { background: var(--warn-bg); padding: 8px 10px; border-radius: 6px; color: var(--text-primary); }
+  #info table { width: 100%; border-collapse: collapse; margin-top: 8px; font-variant-numeric: tabular-nums; }
+  #info td { padding: 2px 0; color: var(--text-secondary); }
+  #info td + td { text-align: right; color: var(--text-primary); padding-left: 10px; }
+  #info details summary { cursor: pointer; color: var(--text-secondary); margin-top: 6px; }
+  #legend { bottom: 24px; left: 12px; padding: 10px 12px; }
+  #legend .row { display: flex; align-items: center; gap: 8px; margin: 3px 0; color: var(--text-secondary); }
+  #legend .sw { width: 18px; height: 12px; border-radius: 2px; border: 1px solid var(--border); }
+  #legend .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--release);
+    box-shadow: 0 0 0 2px #fff; margin: 0 4px; }
+  #legend .title { font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+  .leaflet-tooltip, .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+    background: var(--panel); color: var(--text-primary); border-color: var(--border); }
+  .tt b { color: var(--text-primary); } .tt span { color: var(--text-secondary); }
+  @media (max-width: 600px) {
+    #info { top: auto; bottom: 12px; left: 12px; right: 12px; width: auto; max-height: 40vh; overflow: auto; }
+    #legend { bottom: auto; top: 12px; left: auto; right: 12px; }
+    #info details:not([open]) ~ * { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="map"></div>
+
+<div id="info" class="panel">
+  <h1>PFAS release risk, Massachusetts</h1>
+  <p>Relative risk of a reported PFAS release per km², by 2020 census block group. Built only
+     from public data.</p>
+  <p class="warn">Preliminary. Trained on __N_RELEASES__ located PFAS releases (__SOURCE__). Scores
+     rank areas relative to each other; they are not probabilities of contamination.</p>
+  <details>
+    <summary>How well it validates</summary>
+    <p>Model: <b>__MODEL__</b>. Scores shown are out-of-fold: each block group was scored by a model
+       trained without its town.</p>
+    <table id="metrics"></table>
+    <p>The baseline uses block-group land area only. Larger areas see more reported releases,
+       so the useful signal is how far the model gets beyond it.</p>
+  </details>
+</div>
+
+<div id="legend" class="panel">
+  <div class="title">Risk per km², percentile</div>
+  <div class="row"><span class="sw" style="background:var(--seq-5)"></span>97.5–100</div>
+  <div class="row"><span class="sw" style="background:var(--seq-4)"></span>90–97.5</div>
+  <div class="row"><span class="sw" style="background:var(--seq-3)"></span>75–90</div>
+  <div class="row"><span class="sw" style="background:var(--seq-2)"></span>50–75</div>
+  <div class="row"><span class="sw" style="background:var(--seq-1)"></span>0–50</div>
+  <div class="row"><span class="dot"></span>Reported PFAS release</div>
+</div>
+
+<script>
+const POLYGONS = __POLYGONS__;
+const POINTS = __POINTS__;
+const METRICS = __METRICS__;
+
+const css = getComputedStyle(document.documentElement);
+const seq = [1, 2, 3, 4, 5].map(i => css.getPropertyValue(`--seq-${i}`).trim());
+const releaseColor = css.getPropertyValue('--release').trim();
+const colorFor = p => p >= 97.5 ? seq[4] : p >= 90 ? seq[3] : p >= 75 ? seq[2] : p >= 50 ? seq[1] : seq[0];
+
+const labels = {
+  roc_auc: 'ROC AUC', avg_precision: 'Average precision',
+  capture_top10pct_units: 'Releases in top 10% of block groups',
+  capture_top10pct_area: 'Releases in top-risk 10% of land area',
+};
+const fmt = (k, v) => k.startsWith('capture') ? Math.round(v * 100) + '%' : v.toFixed(2);
+document.getElementById('metrics').innerHTML =
+  '<tr><td></td><td><b>Model</b></td><td><b>Area only</b></td></tr>' +
+  Object.entries(METRICS).map(([k, [m, b]]) =>
+    `<tr><td>${labels[k] || k}</td><td>${fmt(k, m)}</td><td>${fmt(k, b)}</td></tr>`).join('');
+
+const map = L.map('map', { preferCanvas: true, zoomSnap: 0.25, zoomControl: false });
+L.control.zoom({ position: 'bottomright' }).addTo(map);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; OpenStreetMap contributors &copy; CARTO', subdomains: 'abcd', maxZoom: 18,
+}).addTo(map);
+
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+const bg = L.geoJSON(POLYGONS, {
+  style: f => ({ fillColor: colorFor(f.properties.pct), fillOpacity: 0.72, color: '#ffffff', weight: 0.4 }),
+  onEachFeature: (f, layer) => {
+    const p = f.properties;
+    layer.bindTooltip(
+      `<div class="tt"><b>${esc(p.town)}</b> <span>block group ${esc(p.geoid)}</span><br>` +
+      `Risk percentile: <b>${p.pct}</b><br>` +
+      `<span>Population ${Number(p.POP20).toLocaleString()} · ${p.land_km2} km² land</span>` +
+      (p.releases ? `<br>Reported PFAS releases: <b>${p.releases}</b>` : '') + '</div>',
+      { sticky: true });
+    layer.on({
+      mouseover: e => e.target.setStyle({ weight: 2, color: '#0b0b0b' }),
+      mouseout: e => bg.resetStyle(e.target),
+    });
+  },
+}).addTo(map);
+
+L.geoJSON(POINTS, {
+  pointToLayer: (f, latlng) => L.circleMarker(latlng, {
+    radius: 5, fillColor: releaseColor, fillOpacity: 1, color: '#ffffff', weight: 2,
+  }),
+  onEachFeature: (f, layer) => {
+    const p = f.properties;
+    layer.bindPopup(
+      `<b>${esc(p.site_name || 'PFAS release')}</b><br>RTN ${esc(p.rtn)} · ${esc(p.town)}<br>` +
+      `${esc(p.address)}<br>Notified ${esc(p.notification_date)}<br>` +
+      `<span style="color:var(--text-secondary)">${esc(p.chemical)}</span>`);
+  },
+}).addTo(map);
+
+// Keep the state clear of the info panel on wide screens.
+const wide = window.innerWidth > 600;
+map.fitBounds(bg.getBounds(), wide ? { paddingTopLeft: [350, 10], paddingBottomRight: [10, 10] } : { padding: [10, 10] });
+</script>
+</body>
+</html>
