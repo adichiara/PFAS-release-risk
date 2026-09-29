@@ -20,6 +20,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.5"]
+refresh = ["playwright>=1.45"]
 
 [project.scripts]
 pfas-risk = "pfas_risk.cli:main"

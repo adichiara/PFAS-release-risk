@@ -49,15 +49,25 @@ Add `-v` for progress logging. A full run takes about 15 minutes.
 
 ### Updating the release list
 
-1. Download **Downloadable Data: Waste Site Cleanup Notifications & Status** from
-   [Downloadable Contaminated Site Lists](https://www.mass.gov/info-details/downloadable-contaminated-site-lists)
-   in a browser (mass.gov refuses scripted downloads) and save it as
-   `data/raw/massdep_release_data.zip`.
-2. Run `pfas-risk releases`. It keeps RTNs whose chemical list matches PFAS names (any
-   spelling), adds 2021-list sites no longer tagged, drops RTNs MassDEP closed into another
-   RTN on the list, and looks up MassDEP's published site coordinates (reusing ones already
-   fetched). The result is `data/releases/massdep_pfas_releases.csv`; commit it.
-3. Run `pfas-risk run`, then check the `geocode_precision` log line. Unplaced sites can be
+This is automated: the **Refresh data and model** workflow runs every Monday (or on demand
+from the Actions tab, with an option to force a rebuild). It downloads MassDEP's data and
+stops if the file is unchanged. Otherwise it rebuilds the release list, reruns the model,
+commits `data/releases/`, `outputs/` and `docs/` to `main`, and redeploys the site.
+
+To do the same by hand:
+
+1. `pfas-risk fetch-releases` downloads MassDEP's **Waste Site Cleanup Notifications &
+   Status** zip (from [Downloadable Contaminated Site Lists](https://www.mass.gov/info-details/downloadable-contaminated-site-lists))
+   to `data/raw/massdep_release_data.zip` and reports whether it changed. mass.gov refuses
+   plain scripted requests, so this falls back to a headless browser: install it with
+   `pip install -e ".[refresh]" && python -m playwright install chromium` (or point
+   `PFAS_RISK_CHROMIUM` at an existing Chromium). Saving the file from a browser also works.
+2. `pfas-risk releases` keeps RTNs whose chemical list matches PFAS names (any spelling),
+   adds 2021-list sites no longer tagged, drops RTNs MassDEP closed into another RTN on the
+   list, and looks up MassDEP's published coordinates for RTNs new to the list. It writes
+   `data/releases/massdep_pfas_releases.csv` and `massdep_source.json` (the download's
+   sha256 and date); commit both.
+3. `pfas-risk run`, then check the `geocode_precision` log line. Unplaced sites can be
    placed by hand in `data/seed/geocode_overrides.csv` (x/y in EPSG:26986, with a note).
 
 ## Method
@@ -129,5 +139,6 @@ docs/                     published site: index.html, map.html
 
 `pfas-risk site` (also run by `pfas-risk run`) writes the site to `docs/`. The
 `Deploy site to GitHub Pages` workflow publishes `docs/` whenever it changes on `main` (Pages
-source: GitHub Actions); it can also be run by hand from the Actions tab. Commit `docs/` after
-each run to update the site.
+source: GitHub Actions); it can also be run by hand from the Actions tab. The weekly refresh
+workflow commits `docs/` and starts this deploy itself. The **CI** workflow runs lint and
+tests on every pull request.

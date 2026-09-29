@@ -11,6 +11,7 @@ import shutil
 from pathlib import Path
 
 from .config import OUTPUT_DIR, ROOT, catalog
+from .fetch import SOURCE_RECORD
 
 SITE_DIR = ROOT / "docs"
 TEMPLATE = Path(__file__).with_name("site_template.html")
@@ -77,6 +78,12 @@ def _source_rows() -> str:
     return "\n".join(rows)
 
 
+def _data_date() -> str:
+    if SOURCE_RECORD.exists():
+        return f" on MassDEP release data dated {json.loads(SOURCE_RECORD.read_text())['tables_dated']}"
+    return ""
+
+
 def build_site() -> Path:
     report = json.loads((OUTPUT_DIR / "evaluation.json").read_text())
     source = ("MassDEP's release database plus the 2021 project list"
@@ -92,7 +99,8 @@ def build_site() -> Path:
             .replace("__N_NULL__", str(report.get("null_permutations", 20)))
             .replace("__NULL_ROWS__", _null_rows(report))
             .replace("__SOURCE_ROWS__", _source_rows())
-            .replace("__RUN_DATE__", report["run_date"]))
+            .replace("__RUN_DATE__", report["run_date"])
+            .replace("__DATA_DATE__", _data_date()))
     SITE_DIR.mkdir(exist_ok=True)
     (SITE_DIR / "index.html").write_text(page)
     shutil.copyfile(OUTPUT_DIR / "risk_map.html", SITE_DIR / "map.html")

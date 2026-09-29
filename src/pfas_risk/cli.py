@@ -13,6 +13,7 @@ from .config import OUTPUT_DIR
 from .features import attach_releases, build_features
 from .mapping import risk_map
 from .model import evaluate, permutation_null
+from .fetch import fetch_release_zip, recorded_sha256, sha256
 from .releases import build_release_list, locate_releases
 from .site import build_site
 from .sources import download_all
@@ -33,8 +34,17 @@ def cmd_download(args) -> None:
         print(p)
 
 
+def cmd_fetch_releases(args) -> None:
+    """Download the MassDEP zip; print `changed=true|false` (for GitHub Actions outputs)."""
+    path = fetch_release_zip()
+    changed = sha256(path) != recorded_sha256()
+    print(f"downloaded {path} ({path.stat().st_size:,} bytes)")
+    print(f"changed={'true' if changed else 'false'}")
+
+
 def cmd_releases(args) -> None:
-    print(build_release_list(args.zip, coordinates=not args.no_coordinates))
+    print(build_release_list(args.zip, coordinates=not args.no_coordinates,
+                             refresh_coordinates=args.refresh_coordinates))
 
 
 def cmd_features(args) -> None:
@@ -160,9 +170,14 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--force", action="store_true")
     p.set_defaults(func=cmd_download)
 
+    p = sub.add_parser("fetch-releases", help="download the MassDEP bulk data and report whether it changed")
+    p.set_defaults(func=cmd_fetch_releases)
+
     p = sub.add_parser("releases", help="build the PFAS release list from the MassDEP bulk download")
     p.add_argument("--zip", help="path to the MassDEP download (default: data/raw/massdep_release_data.zip)")
     p.add_argument("--no-coordinates", action="store_true", help="skip MassDEP site coordinate lookups")
+    p.add_argument("--refresh-coordinates", action="store_true",
+                   help="look up coordinates for every RTN, not just ones new to the list")
     p.set_defaults(func=cmd_releases)
 
     p = sub.add_parser("features", help="build the block-group feature table")
