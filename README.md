@@ -27,11 +27,12 @@ necessarily missing from the labels.
 with a link to the interactive map). Latest evaluation:
 [`outputs/evaluation.md`](outputs/evaluation.md).
 
-In short, land area alone explains most of what the data shows, because larger block groups
-contain more reported releases. The best model (gradient boosting) finds about 26% of
-releases in the highest-risk 10% of land, against 18% for area alone. Against a permutation
-null that keeps size and density effects the result is borderline (empirical p ≈ 0.05–0.10
-with 20 permutations). Treat the map as a starting point, not a finding.
+In short, with 194 located releases in 140 block groups the model now clearly adds
+information beyond size. Gradient boosting finds about 32% of releases in the highest-risk
+10% of land, against 13% for land area alone and 16% for area plus density (ROC AUC 0.84
+vs 0.83). It beat all 20 permutations of a null that keeps size and density effects, on
+every metric (p < 0.05, the smallest p 20 permutations can show). Scores are still relative
+risk of a *reported* release, which also reflects where investigations happen.
 
 ## Run it
 
