@@ -5,15 +5,15 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-from datetime import date
+from datetime import datetime, timezone
 
 import pandas as pd
 
 from .config import OUTPUT_DIR
 from .features import attach_releases, build_features
+from .fetch import fetch_release_zip, recorded_sha256, sha256
 from .mapping import risk_map
 from .model import evaluate, permutation_null
-from .fetch import fetch_release_zip, recorded_sha256, sha256
 from .releases import build_release_list, locate_releases
 from .site import build_site
 from .sources import download_all
@@ -48,7 +48,7 @@ def cmd_releases(args) -> None:
 
 
 def cmd_features(args) -> None:
-    df, releases = _dataset(force=args.force)
+    df, _ = _dataset(force=args.force)
     print(f"{len(df)} block groups, {int(df['releases'].sum())} located releases in "
           f"{int((df['releases'] > 0).sum())} block groups; "
           f"{df.attrs['unlocated_releases']} releases could not be located")
@@ -67,7 +67,7 @@ def cmd_evaluate(args) -> None:
     null.to_csv(OUTPUT_DIR / "null_metrics.csv", index=False)
     oof.to_parquet(OUTPUT_DIR / "oof_scores.parquet")
     report = {
-        "run_date": date.today().isoformat(),
+        "run_date": datetime.now(timezone.utc).date().isoformat(),
         "release_source": releases.attrs.get("source"),
         "block_groups": len(df),
         "located_releases": int(df["releases"].sum()),
@@ -104,16 +104,16 @@ def _markdown(report: dict, summary: pd.DataFrame, null: pd.DataFrame) -> str:
     lines = [
         "# Evaluation",
         "",
-        f"Run {report['run_date']} on `{report['release_source']}`: {report['located_releases']} located "
-        f"releases in {report['release_block_groups']} of {report['block_groups']} block groups "
-        f"({report['unlocated_releases']} could not be located).",
+        (f"Run {report['run_date']} on `{report['release_source']}`: {report['located_releases']} located "
+         f"releases in {report['release_block_groups']} of {report['block_groups']} block groups "
+         f"({report['unlocated_releases']} could not be located)."),
         "",
-        f"Town-grouped 5-fold cross-validation, {report['repeats']} repeats (mean ± sd). "
-        "Compare models with the two baselines, not with 10%: releases are not spread evenly "
-        "over land or over block groups, so chance capture depends on the budget.",
+        (f"Town-grouped 5-fold cross-validation, {report['repeats']} repeats (mean ± sd). "
+         "Compare models with the two baselines, not with 10%: releases are not spread evenly "
+         "over land or over block groups, so chance capture depends on the budget."),
         "",
-        "| model | ROC AUC | avg precision | releases in top 10% of block groups "
-        "| releases in top-risk 10% of land |",
+        ("| model | ROC AUC | avg precision | releases in top 10% of block groups "
+         "| releases in top-risk 10% of land |"),
         "|---|---|---|---|---|",
     ]
     for model, row in summary.iterrows():
@@ -125,9 +125,9 @@ def _markdown(report: dict, summary: pd.DataFrame, null: pd.DataFrame) -> str:
         "",
         "## Does it beat size and density alone?",
         "",
-        f"Permutation null for {report['best_model']}: release labels shuffled {len(null)} times among "
-        "block groups in the same land-area x population-density quintile, then the same "
-        "cross-validation. This keeps the size and density effects and removes everything else.",
+        (f"Permutation null for {report['best_model']}: release labels shuffled {len(null)} times among "
+         "block groups in the same land-area x population-density quintile, then the same "
+         "cross-validation. This keeps the size and density effects and removes everything else."),
         "",
         "| metric | observed | null mean | null 95th pct | p |",
         "|---|---|---|---|---|",

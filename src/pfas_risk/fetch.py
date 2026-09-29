@@ -91,14 +91,14 @@ def recorded_sha256() -> str | None:
 def record_source(zip_path: Path, n_releases: int) -> None:
     """Called by the release-list build: remember which download it came from."""
     import zipfile
-    from datetime import date
+    from datetime import datetime, timezone
 
     with zipfile.ZipFile(zip_path) as z:
         stamp = max(i.date_time for i in z.infolist())
     SOURCE_RECORD.parent.mkdir(parents=True, exist_ok=True)
     SOURCE_RECORD.write_text(json.dumps({
         "zip_sha256": sha256(zip_path),
-        "tables_dated": "%04d-%02d-%02d" % stamp[:3],
-        "built": date.today().isoformat(),
+        "tables_dated": f"{stamp[0]:04d}-{stamp[1]:02d}-{stamp[2]:02d}",
+        "built": datetime.now(timezone.utc).date().isoformat(),
         "pfas_releases": n_releases,
     }, indent=2) + "\n")

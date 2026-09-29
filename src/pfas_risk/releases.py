@@ -105,7 +105,7 @@ def fetch_coordinates(rtns: list[str], pause: float = 0.2) -> pd.DataFrame:
             with urllib.request.urlopen(SITE_API + rtn, timeout=30) as r:
                 d = json.load(r)
             lat, lon = d.get("Latitude") or None, d.get("Longitude") or None
-        except Exception as e:  # noqa: BLE001 - a missing site just stays unplaced
+        except Exception as e:  # a missing site just stays unplaced
             log.warning("no coordinates for %s: %s", rtn, e)
         rows.append({"rtn": rtn, "lat": lat, "lon": lon})
         time.sleep(pause)
@@ -165,7 +165,7 @@ def outside_town(rel: pd.DataFrame, pts: gpd.GeoSeries, towns: gpd.GeoDataFrame)
     """
     shapes = towns.assign(key=towns["TOWN"].map(normalize_town)).dissolve("key").geometry
     key = rel["town"].map(normalize_town)
-    bad = [k in shapes.index and shapes[k].distance(p) > TOWN_SLACK_M for k, p in zip(key, pts)]
+    bad = [k in shapes.index and shapes[k].distance(p) > TOWN_SLACK_M for k, p in zip(key, pts, strict=True)]
     return pd.Series(bad, index=rel.index)
 
 

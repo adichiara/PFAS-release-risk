@@ -70,7 +70,7 @@ def town_folds(towns: pd.Series, n_folds: int, seed: int) -> list[tuple[np.ndarr
     """Randomly assign whole towns to folds (a shuffled GroupKFold)."""
     rng = np.random.default_rng(seed)
     unique = towns.unique()
-    fold_of = dict(zip(unique, rng.permutation(len(unique)) % n_folds))
+    fold_of = dict(zip(unique, rng.permutation(len(unique)) % n_folds, strict=True))
     fold = towns.map(fold_of).to_numpy()
     return [(np.where(fold != k)[0], np.where(fold == k)[0]) for k in range(n_folds)]
 
