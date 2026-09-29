@@ -65,5 +65,6 @@
       "null_p95": 0.2569,
       "p_value": 0.0952
     }
-  }
+  },
+  "null_permutations": 20
 }

@@ -8,8 +8,7 @@ __pycache__/
 data/raw/
 data/interim/
 
-# Keep the evaluation summary and map; the rest is regenerated
+# Keep the evaluation summary; the rest is regenerated (the published map lives in docs/)
 outputs/*
 !outputs/evaluation.md
 !outputs/evaluation.json
-!outputs/risk_map.html

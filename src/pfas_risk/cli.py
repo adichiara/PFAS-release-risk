@@ -14,6 +14,7 @@ from .features import attach_releases, build_features
 from .mapping import risk_map
 from .model import evaluate, permutation_null
 from .releases import locate_releases
+from .site import build_site
 from .sources import download_all
 
 log = logging.getLogger("pfas_risk")
@@ -59,6 +60,7 @@ def cmd_evaluate(args) -> None:
         "release_block_groups": int((df["releases"] > 0).sum()),
         "unlocated_releases": df.attrs["unlocated_releases"],
         "repeats": args.repeats,
+        "null_permutations": args.null,
         "selection_metric": SELECTION_METRIC,
         "best_model": best,
         "mean": metrics.drop(columns="repeat").groupby("model").mean().round(4).to_dict("index"),
@@ -134,10 +136,15 @@ def cmd_map(args) -> None:
     print(path)
 
 
+def cmd_site(args) -> None:
+    print(build_site())
+
+
 def cmd_run(args) -> None:
     cmd_evaluate(args)
     args.model = None
     cmd_map(args)
+    cmd_site(args)
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -154,7 +161,7 @@ def main(argv: list[str] | None = None) -> None:
     p.set_defaults(func=cmd_features)
 
     for name, func, help_ in [("evaluate", cmd_evaluate, "cross-validate all models"),
-                              ("run", cmd_run, "evaluate, then build the map")]:
+                              ("run", cmd_run, "evaluate, then build the map and site")]:
         p = sub.add_parser(name, help=help_)
         p.add_argument("--repeats", type=int, default=10)
         p.add_argument("--null", type=int, default=20, help="label permutations for the null test")
@@ -163,6 +170,9 @@ def main(argv: list[str] | None = None) -> None:
     p = sub.add_parser("map", help="write outputs/risk_map.html")
     p.add_argument("--model", help="model to map (default: the selected model)")
     p.set_defaults(func=cmd_map)
+
+    p = sub.add_parser("site", help="write the GitHub Pages site to docs/")
+    p.set_defaults(func=cmd_site)
 
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO if args.verbose else logging.WARNING,

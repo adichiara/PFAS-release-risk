@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PFAS Release Risk</title>
+<meta name="description" content="Block-group PFAS release risk model for Massachusetts, built on public data.">
+<style>
+  :root {
+    color-scheme: light;
+    --surface: #fcfcfb; --panel: #ffffff; --border: #dddcd7; --row: #f4f3f0;
+    --text-primary: #0b0b0b; --text-secondary: #52514e; --text-muted: #7a7974;
+    --accent: #1c5cab; --accent-ink: #ffffff; --warn-bg: #fdf1e7; --highlight: #eaf2fd;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --surface: #1a1a19; --panel: #242423; --border: #3a3a37; --row: #2c2c2a;
+      --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #94938b;
+      --accent: #6da7ec; --accent-ink: #0b0b0b; --warn-bg: #3a2a1f; --highlight: #1d2c40;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface: #1a1a19; --panel: #242423; --border: #3a3a37; --row: #2c2c2a;
+    --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #94938b;
+    --accent: #6da7ec; --accent-ink: #0b0b0b; --warn-bg: #3a2a1f; --highlight: #1d2c40;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--surface); color: var(--text-primary);
+    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 880px; margin: 0 auto; padding: 40px 16px 64px; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 0 0 8px; letter-spacing: -0.01em; }
+  h2 { font-size: 20px; margin: 40px 0 12px; }
+  p, li { color: var(--text-secondary); }
+  a { color: var(--accent); }
+  .lede { font-size: 18px; margin: 0 0 20px; }
+  .warn { background: var(--warn-bg); color: var(--text-primary); padding: 12px 14px; border-radius: 8px; }
+  .cta { display: inline-block; margin: 8px 12px 0 0; padding: 10px 18px; border-radius: 8px; font-weight: 600;
+    text-decoration: none; background: var(--accent); color: var(--accent-ink); }
+  .cta.secondary { background: transparent; color: var(--accent); border: 1px solid var(--border); }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 24px 0 0; }
+  .kpi { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .kpi .v { font-size: 28px; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .kpi .l { color: var(--text-secondary); font-size: 14px; }
+  .scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; background: var(--panel); }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+  th, td { padding: 8px 12px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--border); }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--text-secondary); font-weight: 600; background: var(--row); white-space: normal; vertical-align: bottom; }
+  tr:last-child td { border-bottom: 0; }
+  tr.selected td { background: var(--highlight); font-weight: 600; }
+  td.wrap, th.wrap { white-space: normal; text-align: left; }
+  .note { font-size: 14px; color: var(--text-muted); }
+  .status { font-size: 12px; padding: 2px 8px; border-radius: 99px; border: 1px solid var(--border); color: var(--text-secondary); }
+  footer { margin-top: 48px; font-size: 14px; color: var(--text-muted); }
+</style>
+</head>
+<body>
+<main>
+  <h1>PFAS release risk in Massachusetts</h1>
+  <p class="lede">Relative risk of a reported PFAS release for each of the state's 5,109 census block
+     groups, built only from public data.</p>
+  <p class="warn"><b>Preliminary.</b> Trained on __N_RELEASES__ located PFAS releases from __SOURCE__.
+     Scores rank areas relative to each other. They are not probabilities of contamination.</p>
+  <a class="cta" href="map.html">Open the risk map</a>
+  <a class="cta secondary" href="__REPO__">Code and data on GitHub</a>
+
+  <div class="kpis">__KPIS__</div>
+
+  <h2>How well it validates</h2>
+  <p>Five-fold cross-validation that holds out whole towns, repeated __REPEATS__ times. Larger block
+     groups see more reported releases, so each model is compared with baselines that use size alone.
+     The highlighted row is the model shown on the map.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Model</th><th>ROC AUC</th><th>Avg precision</th>
+      <th>Releases in top 10% of block groups</th><th>Releases in top-risk 10% of land</th></tr></thead>
+    <tbody>__MODEL_ROWS__</tbody>
+  </table></div>
+
+  <h2>Does it beat size and density alone?</h2>
+  <p>Release labels were shuffled __N_NULL__ times among block groups of similar land area and population
+     density, then the same cross-validation was run. The shuffle keeps size effects and removes
+     everything else. <i>p</i> is the share of shuffles that did at least as well as the real model.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Metric</th><th>Observed</th><th>Null mean</th><th>Null 95th pct</th><th><i>p</i></th></tr></thead>
+    <tbody>__NULL_ROWS__</tbody>
+  </table></div>
+
+  <h2>Method</h2>
+  <ul>
+    <li><b>Unit:</b> 2020 census block groups, in Massachusetts State Plane meters.</li>
+    <li><b>Response:</b> MassDEP reportable releases (RTNs) with PFAS as a chemical, located by matching
+        addresses to MassGIS address points.</li>
+    <li><b>Features:</b> counts inside, counts within 2 km and distance to the nearest fire station,
+        MassDEP major facility, hazardous-waste generator, air-permitted facility and underground
+        storage tank; landfills; aquifers; major-road density; population and housing density.</li>
+    <li><b>Map scores</b> are out-of-fold: each block group is colored by a model trained without its
+        town, so known release sites are not simply echoed back.</li>
+  </ul>
+
+  <h2>Data sources</h2>
+  <div class="scroll"><table>
+    <thead><tr><th class="wrap">Dataset</th><th class="wrap">Publisher</th><th>Status</th></tr></thead>
+    <tbody>__SOURCE_ROWS__</tbody>
+  </table></div>
+
+  <footer>
+    Rebuilt from the 2021 WPI Data Science / MassDEP graduate capstone
+    (<a href="https://github.com/GQP-TeamMassDEP/Mass_PFAS-Analysis">GQP-TeamMassDEP/Mass_PFAS-Analysis</a>).
+    Last run __RUN_DATE__.
+  </footer>
+</main>
+</body>
+</html>
