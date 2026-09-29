@@ -112,11 +112,11 @@ src/pfas_risk/
 tests/
 outputs/                  evaluation.md / .json (other outputs are regenerated, not committed)
 docs/                     published site: index.html, map.html
-index.html                redirect into docs/ when Pages serves the repo root
 ```
 
 ## Publishing
 
-`pfas-risk site` (also run by `pfas-risk run`) writes the site to `docs/`. GitHub Pages works
-with either branch setting: **main / (root)** serves `index.html`, which redirects to `docs/`,
-and **main / docs** serves `docs/` directly. Commit `docs/` after each run to update the site.
+`pfas-risk site` (also run by `pfas-risk run`) writes the site to `docs/`. The
+`Deploy site to GitHub Pages` workflow publishes `docs/` whenever it changes on `main` (Pages
+source: GitHub Actions); it can also be run by hand from the Actions tab. Commit `docs/` after
+each run to update the site.
