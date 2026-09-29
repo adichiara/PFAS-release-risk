@@ -1,16 +1,16 @@
 # Evaluation
 
-Run 2026-09-29 on `massdep_pfas_releases_2021-11-07.csv`: 51 located releases in 42 of 5109 block groups (1 could not be located).
+Run 2026-09-29 on `massdep_pfas_releases.csv`: 194 located releases in 140 of 5109 block groups (20 could not be located).
 
 Town-grouped 5-fold cross-validation, 10 repeats (mean ± sd). Compare models with the two baselines, not with 10%: releases are not spread evenly over land or over block groups, so chance capture depends on the budget.
 
 | model | ROC AUC | avg precision | releases in top 10% of block groups | releases in top-risk 10% of land |
 |---|---|---|---|---|
-| baseline_area | 0.793 ± 0.006 | 0.032 ± 0.006 | 0.396 ± 0.015 | 0.180 ± 0.008 |
-| baseline_area_population | 0.786 ± 0.007 | 0.030 ± 0.006 | 0.355 ± 0.017 | 0.190 ± 0.013 |
-| gradient_boosting | 0.766 ± 0.016 | 0.052 ± 0.018 | 0.359 ± 0.061 | 0.261 ± 0.033 |
-| logistic | 0.747 ± 0.020 | 0.028 ± 0.003 | 0.406 ± 0.063 | 0.233 ± 0.041 |
-| poisson_rate | 0.796 ± 0.003 | 0.028 ± 0.002 | 0.400 ± 0.030 | 0.125 ± 0.065 |
+| baseline_area | 0.826 ± 0.001 | 0.090 ± 0.001 | 0.416 ± 0.016 | 0.131 ± 0.007 |
+| baseline_area_population | 0.823 ± 0.001 | 0.089 ± 0.002 | 0.379 ± 0.011 | 0.157 ± 0.007 |
+| gradient_boosting | 0.838 ± 0.006 | 0.111 ± 0.004 | 0.436 ± 0.038 | 0.316 ± 0.022 |
+| logistic | 0.835 ± 0.005 | 0.100 ± 0.005 | 0.418 ± 0.024 | 0.274 ± 0.015 |
+| poisson_rate | 0.827 ± 0.001 | 0.090 ± 0.001 | 0.409 ± 0.006 | 0.199 ± 0.050 |
 
 Selected model (best non-baseline on `capture_top10pct_area`): **gradient_boosting**.
 
@@ -20,7 +20,7 @@ Permutation null for gradient_boosting: release labels shuffled 20 times among b
 
 | metric | observed | null mean | null 95th pct | p |
 |---|---|---|---|---|
-| roc_auc | 0.766 | 0.677 | 0.739 | 0.095 |
-| avg_precision | 0.052 | 0.020 | 0.030 | 0.048 |
-| capture_top10pct_units | 0.359 | 0.253 | 0.359 | 0.095 |
-| capture_top10pct_area | 0.261 | 0.145 | 0.257 | 0.095 |
+| roc_auc | 0.838 | 0.774 | 0.791 | 0.048 |
+| avg_precision | 0.111 | 0.074 | 0.087 | 0.048 |
+| capture_top10pct_units | 0.436 | 0.302 | 0.377 | 0.048 |
+| capture_top10pct_area | 0.316 | 0.196 | 0.268 | 0.048 |

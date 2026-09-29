@@ -79,7 +79,8 @@ def _source_rows() -> str:
 
 def build_site() -> Path:
     report = json.loads((OUTPUT_DIR / "evaluation.json").read_text())
-    source = ("a MassDEP export" if report["release_source"] == "massdep_releases.csv"
+    source = ("MassDEP's release database plus the 2021 project list"
+              if report["release_source"] == "massdep_pfas_releases.csv"
               else "the 2021 list of MassDEP PFAS release sites")
     page = (TEMPLATE.read_text()
             .replace("__N_RELEASES__", str(report["located_releases"]))

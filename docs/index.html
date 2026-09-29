@@ -61,12 +61,12 @@
   <h1>PFAS release risk in Massachusetts</h1>
   <p class="lede">Relative risk of a reported PFAS release for each of the state's 5,109 census block
      groups, built only from public data.</p>
-  <p class="warn"><b>Preliminary.</b> Trained on 51 located PFAS releases from the 2021 list of MassDEP PFAS release sites.
+  <p class="warn"><b>Preliminary.</b> Trained on 194 located PFAS releases from MassDEP's release database plus the 2021 project list.
      Scores rank areas relative to each other. They are not probabilities of contamination.</p>
   <a class="cta" href="map.html">Open the risk map</a>
   <a class="cta secondary" href="https://github.com/adichiara/PFAS-release-risk">Code and data on GitHub</a>
 
-  <div class="kpis"><div class="kpi"><div class="v">51</div><div class="l">located PFAS releases</div></div><div class="kpi"><div class="v">26%</div><div class="l">of releases in the model&#x27;s top-risk 10% of land</div></div><div class="kpi"><div class="v">18%</div><div class="l">for land area alone</div></div></div>
+  <div class="kpis"><div class="kpi"><div class="v">194</div><div class="l">located PFAS releases</div></div><div class="kpi"><div class="v">32%</div><div class="l">of releases in the model&#x27;s top-risk 10% of land</div></div><div class="kpi"><div class="v">13%</div><div class="l">for land area alone</div></div></div>
 
   <h2>How well it validates</h2>
   <p>Five-fold cross-validation that holds out whole towns, repeated 10 times. Larger block
@@ -75,11 +75,11 @@
   <div class="scroll"><table>
     <thead><tr><th>Model</th><th>ROC AUC</th><th>Avg precision</th>
       <th>Releases in top 10% of block groups</th><th>Releases in top-risk 10% of land</th></tr></thead>
-    <tbody><tr><td>Baseline: land area</td><td>0.793</td><td>0.032</td><td>40%</td><td>18%</td></tr>
-<tr><td>Baseline: area + density</td><td>0.786</td><td>0.030</td><td>35%</td><td>19%</td></tr>
-<tr><td>Logistic regression</td><td>0.747</td><td>0.028</td><td>41%</td><td>23%</td></tr>
-<tr><td>Poisson rate (area as exposure)</td><td>0.796</td><td>0.028</td><td>40%</td><td>13%</td></tr>
-<tr class="selected"><td>Gradient boosting</td><td>0.766</td><td>0.052</td><td>36%</td><td>26%</td></tr></tbody>
+    <tbody><tr><td>Baseline: land area</td><td>0.826</td><td>0.090</td><td>42%</td><td>13%</td></tr>
+<tr><td>Baseline: area + density</td><td>0.823</td><td>0.089</td><td>38%</td><td>16%</td></tr>
+<tr><td>Logistic regression</td><td>0.835</td><td>0.100</td><td>42%</td><td>27%</td></tr>
+<tr><td>Poisson rate (area as exposure)</td><td>0.827</td><td>0.090</td><td>41%</td><td>20%</td></tr>
+<tr class="selected"><td>Gradient boosting</td><td>0.838</td><td>0.111</td><td>44%</td><td>32%</td></tr></tbody>
   </table></div>
 
   <h2>Does it beat size and density alone?</h2>
@@ -88,10 +88,10 @@
      everything else. <i>p</i> is the share of shuffles that did at least as well as the real model.</p>
   <div class="scroll"><table>
     <thead><tr><th>Metric</th><th>Observed</th><th>Null mean</th><th>Null 95th pct</th><th><i>p</i></th></tr></thead>
-    <tbody><tr><td>ROC AUC</td><td>0.766</td><td>0.677</td><td>0.739</td><td>0.10</td></tr>
-<tr><td>Average precision</td><td>0.052</td><td>0.020</td><td>0.030</td><td>0.05</td></tr>
-<tr><td>Releases in top 10% of block groups</td><td>36%</td><td>25%</td><td>36%</td><td>0.10</td></tr>
-<tr><td>Releases in top-risk 10% of land</td><td>26%</td><td>15%</td><td>26%</td><td>0.10</td></tr></tbody>
+    <tbody><tr><td>ROC AUC</td><td>0.838</td><td>0.774</td><td>0.791</td><td>0.05</td></tr>
+<tr><td>Average precision</td><td>0.111</td><td>0.074</td><td>0.087</td><td>0.05</td></tr>
+<tr><td>Releases in top 10% of block groups</td><td>44%</td><td>30%</td><td>38%</td><td>0.05</td></tr>
+<tr><td>Releases in top-risk 10% of land</td><td>32%</td><td>20%</td><td>27%</td><td>0.05</td></tr></tbody>
   </table></div>
 
   <h2>Method</h2>
@@ -111,7 +111,8 @@
     <thead><tr><th class="wrap">Dataset</th><th class="wrap">Publisher</th><th>Status</th></tr></thead>
     <tbody><tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/census2020/CENSUS2020_BLK_BG_TRCT.zip">2020 Census block groups (with 2020 population and housing counts)</a></td><td class="wrap">MassGIS / U.S. Census Bureau</td><td><span class="status">available</span></td></tr>
 <tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/towns.zip">Municipal boundaries (used for spatially grouped cross-validation)</a></td><td class="wrap">MassGIS</td><td><span class="status">available</span></td></tr>
-<tr><td class="wrap"><a href="https://eeaonline.eea.state.ma.us/portal#!/search/wastesite">MassDEP reportable releases (RTNs) with PFAS as a released chemical</a></td><td class="wrap">MassDEP Waste Site &amp; Reportable Release database</td><td><span class="status">manual</span></td></tr>
+<tr><td class="wrap"><a href="https://www.mass.gov/doc/downloadable-data-waste-site-cleanup-notifications-status/download">MassDEP Waste Site Cleanup notifications and chemicals (bulk download)</a></td><td class="wrap">MassDEP Bureau of Waste Site Cleanup</td><td><span class="status">manual</span></td></tr>
+<tr><td class="wrap"><a href="https://eeaonline.eea.state.ma.us/portal#!/search/wastesite">MassDEP data portal site details (official site coordinates)</a></td><td class="wrap">MassDEP / EEA Data Portal</td><td><span class="status">available</span></td></tr>
 <tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/gdbs/MassGIS_AddressPoints.zip">MassGIS statewide address points (offline geocoding of release addresses)</a></td><td class="wrap">MassGIS</td><td><span class="status">available</span></td></tr>
 <tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/firestations_pt.zip">Fire stations (MEMA)</a></td><td class="wrap">MassGIS</td><td><span class="status">available</span></td></tr>
 <tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/bwpmajor_pt.zip">MassDEP major permitted facilities (air, hazardous waste generators, TSDFs)</a></td><td class="wrap">MassGIS / MassDEP</td><td><span class="status">available</span></td></tr>
