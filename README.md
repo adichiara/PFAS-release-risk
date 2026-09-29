@@ -21,8 +21,9 @@ releases (RTNs) compiled in November 2021 (`data/seed/`). MassDEP's release
 database is public but has to be exported by hand (see below). Many more PFAS releases
 have been reported since 2021, and more releases matter more than any modeling change.
 
-Latest evaluation: [`outputs/evaluation.md`](outputs/evaluation.md). Interactive map:
-`outputs/risk_map.html`.
+**Site:** https://adichiara.github.io/PFAS-release-risk/ (results, method and data sources,
+with a link to the interactive map). Latest evaluation:
+[`outputs/evaluation.md`](outputs/evaluation.md).
 
 In short, land area alone explains most of what the data shows, because larger block groups
 contain more reported releases. The best model (gradient boosting) finds about 26% of
@@ -35,11 +36,12 @@ with 20 permutations). Treat the map as a starting point, not a finding.
 ```bash
 pip install -e ".[dev]"
 pfas-risk download        # public MassGIS layers (~1 GB, mostly address points and roads)
-pfas-risk run             # geocode releases, build features, cross-validate, write outputs/
+pfas-risk run             # geocode releases, build features, cross-validate, write outputs/ and docs/
 pytest
 ```
 
-Steps can also be run one at a time: `pfas-risk features`, `pfas-risk evaluate`, `pfas-risk map`.
+Steps can also be run one at a time: `pfas-risk features`, `pfas-risk evaluate`, `pfas-risk map`,
+`pfas-risk site`.
 Add `-v` for progress logging. A full run takes about 15 minutes.
 
 ### Updating the release list
@@ -105,7 +107,16 @@ src/pfas_risk/
   features.py             block-group feature table
   model.py                models, town-grouped CV, permutation null
   mapping.py              interactive Leaflet map
+  site.py                 GitHub Pages landing page
   cli.py                  `pfas-risk` command
 tests/
-outputs/                  evaluation.md / .json, risk_map.html
+outputs/                  evaluation.md / .json (other outputs are regenerated, not committed)
+docs/                     published site: index.html, map.html
+index.html                redirect into docs/ when Pages serves the repo root
 ```
+
+## Publishing
+
+`pfas-risk site` (also run by `pfas-risk run`) writes the site to `docs/`. GitHub Pages works
+with either branch setting: **main / (root)** serves `index.html`, which redirects to `docs/`,
+and **main / docs** serves `docs/` directly. Commit `docs/` after each run to update the site.
