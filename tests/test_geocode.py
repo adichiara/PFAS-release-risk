@@ -24,6 +24,13 @@ def test_split_address_handles_ranges_and_missing_numbers():
     assert split_address("Water Street") == (None, "WATER ST")
 
 
+def test_split_address_drops_location_qualifiers():
+    assert split_address("Near 875 Spring St") == (875, "SPRING ST")
+    assert split_address("Off Fish Rd") == (None, "FISH RD")
+    assert split_address("104 Powdermill Rd, Rear of property") == (104, "POWDERMILL RD")
+    assert split_address("Near") == (None, "NEAR")  # nothing left to strip
+
+
 def test_match_levels():
     df = pd.DataFrame({
         "address": ["20 Main Street", "24 Main St", "Main Street", "5 North Pleasant St", "Route 6", "1 Nowhere Rd"],

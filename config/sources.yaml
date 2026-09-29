@@ -30,18 +30,26 @@ sources:
 
   # ---- Response ------------------------------------------------------------
   massdep_releases:
-    title: MassDEP reportable releases (RTNs) with PFAS as a released chemical
-    publisher: MassDEP Waste Site & Reportable Release database
-    url: https://eeaonline.eea.state.ma.us/portal#!/search/wastesite
-    file: massdep_releases.csv
+    title: MassDEP Waste Site Cleanup notifications and chemicals (bulk download)
+    publisher: MassDEP Bureau of Waste Site Cleanup
+    url: https://www.mass.gov/doc/downloadable-data-waste-site-cleanup-notifications-status/download
+    file: massdep_release_data.zip
     role: response
     status: manual
     notes: >
-      Export the reportable release search results (all RTNs, with chemical and
-      address fields) to CSV and save as data/raw/massdep_releases.csv. Until then
-      the pipeline falls back to data/seed/massdep_pfas_releases_2021-11-07.csv,
-      the 52 PFAS RTNs compiled from the same database for the 2021 WPI/MassDEP
-      project.
+      Zip of RELEASE.DBF, CHEMICAL.DBF and related tables for every RTN (listed on
+      https://www.mass.gov/info-details/downloadable-contaminated-site-lists). mass.gov refuses
+      scripted downloads, so save it from a browser as data/raw/massdep_release_data.zip and
+      run `pfas-risk releases`. That writes data/releases/massdep_pfas_releases.csv (committed),
+      which the rest of the pipeline reads.
+
+  massdep_site_api:
+    title: MassDEP data portal site details (official site coordinates)
+    publisher: MassDEP / EEA Data Portal
+    url: https://eeaonline.eea.state.ma.us/portal#!/search/wastesite
+    role: geocoding
+    status: available
+    notes: Queried per RTN by `pfas-risk releases` (searchablesite/{RTN}) for Latitude/Longitude.
 
   address_points:
     title: MassGIS statewide address points (offline geocoding of release addresses)

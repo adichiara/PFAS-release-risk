@@ -43,7 +43,7 @@ def download(name: str, force: bool = False) -> Path:
 
 
 def download_all(force: bool = False) -> list[Path]:
-    names = [n for n, m in catalog()["sources"].items() if m["status"] == "available"]
+    names = [n for n, m in catalog()["sources"].items() if m["status"] == "available" and "path" in m]
     return [download(n, force=force) for n in names]
 
 

@@ -16,10 +16,12 @@ fixing what limited that version:
 
 ## Current status
 
-**Preliminary.** The release list (the thing we predict) still comes from the 52 PFAS
-releases (RTNs) compiled in November 2021 (`data/seed/`). MassDEP's release
-database is public but has to be exported by hand (see below). Many more PFAS releases
-have been reported since 2021, and more releases matter more than any modeling change.
+**Preliminary.** The release list (`data/releases/massdep_pfas_releases.csv`) has 214 PFAS
+releases (RTNs): 194 from MassDEP's May 2026 bulk download of all waste site notifications
+and chemicals, plus 20 sites from the 2021 project list that the current database no
+longer tags with a PFAS chemical. 194 of the 214 are located (see Method). About 22% of RTNs
+notified since 2019 have no chemical recorded at all, so some PFAS releases are
+necessarily missing from the labels.
 
 **Site:** https://adichiara.github.io/PFAS-release-risk/ (results, method and data sources,
 with a link to the interactive map). Latest evaluation:
@@ -46,20 +48,27 @@ Add `-v` for progress logging. A full run takes about 15 minutes.
 
 ### Updating the release list
 
-1. Search MassDEP's [Waste Site & Reportable Release database](https://eeaonline.eea.state.ma.us/portal#!/search/wastesite)
-   and export the results, including address, town and chemical fields.
-2. Save the export as `data/raw/massdep_releases.csv`. Column names are matched flexibly
-   (`src/pfas_risk/releases.py`), and non-PFAS chemicals are filtered out by pattern.
-3. Rerun `pfas-risk run`, then check `geocode_precision` for unmatched addresses. Place
-   them by hand in `data/seed/geocode_overrides.csv` (x/y in EPSG:26986, with a note).
+1. Download **Downloadable Data: Waste Site Cleanup Notifications & Status** from
+   [Downloadable Contaminated Site Lists](https://www.mass.gov/info-details/downloadable-contaminated-site-lists)
+   in a browser (mass.gov refuses scripted downloads) and save it as
+   `data/raw/massdep_release_data.zip`.
+2. Run `pfas-risk releases`. It keeps RTNs whose chemical list matches PFAS names (any
+   spelling), adds 2021-list sites no longer tagged, drops RTNs MassDEP closed into another
+   RTN on the list, and looks up MassDEP's published site coordinates (reusing ones already
+   fetched). The result is `data/releases/massdep_pfas_releases.csv`; commit it.
+3. Run `pfas-risk run`, then check the `geocode_precision` log line. Unplaced sites can be
+   placed by hand in `data/seed/geocode_overrides.csv` (x/y in EPSG:26986, with a note).
 
 ## Method
 
 **Unit.** 2020 census block groups (MassGIS), in Massachusetts State Plane meters.
 
-**Response.** Number of PFAS release sites (RTNs) located in each block group. Addresses are
-matched to MassGIS address points: `address` (exact), `street` (nearest house number on the
-street), `override` (placed by hand) or `unmatched` (excluded).
+**Response.** Number of PFAS release sites (RTNs) located in each block group. Sites are
+placed with MassDEP's published coordinates (`massdep`) unless those fall more than 1 km
+outside the site's stated town. Otherwise the address is matched to MassGIS address points:
+`address` (exact), `street` (nearest house number on the street, after dropping qualifiers
+like "Near" or "Off"), `override` (placed by hand) or `unmatched` (excluded; mostly RTNs
+listed as "MULTIPLE LOCATIONS").
 
 **Features.** For each point source (fire stations, MassDEP major facilities, hazardous-waste
 large-quantity generators, air-permitted facilities, underground storage tanks): the count
@@ -99,6 +108,7 @@ military installations (DoD MIRTA), 2016 land cover, and EPA UCMR 5 results for 
 
 ```
 config/sources.yaml       data catalog
+data/releases/            PFAS release list built from the MassDEP download
 data/seed/                2021 release list, hand-placed geocodes
 src/pfas_risk/
   sources.py              download + read public layers

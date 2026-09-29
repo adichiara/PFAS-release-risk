@@ -13,7 +13,7 @@ from .config import OUTPUT_DIR
 from .features import attach_releases, build_features
 from .mapping import risk_map
 from .model import evaluate, permutation_null
-from .releases import locate_releases
+from .releases import build_release_list, locate_releases
 from .site import build_site
 from .sources import download_all
 
@@ -31,6 +31,10 @@ def _dataset(force: bool = False):
 def cmd_download(args) -> None:
     for p in download_all(force=args.force):
         print(p)
+
+
+def cmd_releases(args) -> None:
+    print(build_release_list(args.zip, coordinates=not args.no_coordinates))
 
 
 def cmd_features(args) -> None:
@@ -129,7 +133,7 @@ def cmd_map(args) -> None:
     model = args.model or report["best_model"]
     df, releases = _dataset()
     oof = pd.read_parquet(OUTPUT_DIR / "oof_scores.parquet")
-    note = ("MassDEP export" if report["release_source"] == "massdep_releases.csv"
+    note = ("MassDEP PFAS release list" if report["release_source"] == "massdep_pfas_releases.csv"
             else "2021 seed list of MassDEP PFAS RTNs")
     path = risk_map(df, oof[model], releases, model, report["mean"][model], report["mean"]["baseline_area"],
                     OUTPUT_DIR / "risk_map.html", note)
@@ -155,6 +159,11 @@ def main(argv: list[str] | None = None) -> None:
     p = sub.add_parser("download", help="fetch all automatically available public sources")
     p.add_argument("--force", action="store_true")
     p.set_defaults(func=cmd_download)
+
+    p = sub.add_parser("releases", help="build the PFAS release list from the MassDEP bulk download")
+    p.add_argument("--zip", help="path to the MassDEP download (default: data/raw/massdep_release_data.zip)")
+    p.add_argument("--no-coordinates", action="store_true", help="skip MassDEP site coordinate lookups")
+    p.set_defaults(func=cmd_releases)
 
     p = sub.add_parser("features", help="build the block-group feature table")
     p.add_argument("--force", action="store_true", help="rebuild even if cached")

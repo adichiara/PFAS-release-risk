@@ -48,10 +48,18 @@ def normalize_town(s: str | None) -> str:
     return " ".join(re.sub(r"[^A-Z ]", " ", s.upper()).split())
 
 
+_QUALIFIER = re.compile(r"^\s*(NEAR|OFF|REAR( OF)?|BEHIND|ACROSS FROM|ADJACENT TO|ADJ(\.)?( TO)?)\s+", re.IGNORECASE)
+
+
 def split_address(addr: str | None) -> tuple[int | None, str]:
-    """'121-125 Liberty Street' -> (121, 'LIBERTY ST'). Number is None if absent."""
+    """'121-125 Liberty Street' -> (121, 'LIBERTY ST'). Number is None if absent.
+
+    Location qualifiers MassDEP uses ("Near 875 Spring St", "Off Fish Rd") and anything after
+    a comma ("104 Powdermill Rd, Rear of property") are dropped.
+    """
     if not isinstance(addr, str):
         return None, ""
+    addr = _QUALIFIER.sub("", addr.split(",")[0])
     m = re.match(r"\s*(\d+)[A-Za-z]?(?:\s*-\s*\d+[A-Za-z]?)?\s+(.*)", addr)
     if m:
         return int(m.group(1)), normalize_street(m.group(2))
