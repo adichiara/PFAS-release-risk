@@ -1,0 +1,78 @@
+name: Refresh data and model
+
+# Weekly: download MassDEP's release data; if it changed, rebuild the PFAS release list,
+# rerun the model, commit the results to main and redeploy the Pages site.
+on:
+  schedule:
+    - cron: "17 9 * * 1"   # Mondays 09:17 UTC
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Rebuild even if MassDEP's data has not changed
+        type: boolean
+        default: false
+
+permissions:
+  contents: write   # commit refreshed results to main
+  actions: write    # start the Pages deploy (pushes made with GITHUB_TOKEN don't trigger workflows)
+
+concurrency:
+  group: refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install
+        run: |
+          pip install -e ".[refresh]"
+          python -m playwright install --with-deps chromium
+
+      - name: Download MassDEP release data
+        id: fetch
+        run: pfas-risk -v fetch-releases | tee fetch.log && grep '^changed=' fetch.log >> "$GITHUB_OUTPUT"
+
+      - name: Restore cached public layers
+        if: steps.fetch.outputs.changed == 'true' || inputs.force
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/raw
+            data/interim
+            !data/raw/massdep_release_data.zip
+          key: layers-${{ hashFiles('config/sources.yaml', 'src/pfas_risk/features.py', 'src/pfas_risk/geocode.py') }}
+
+      - name: Rebuild release list and model
+        if: steps.fetch.outputs.changed == 'true' || inputs.force
+        run: |
+          pfas-risk -v download
+          pfas-risk -v releases
+          pfas-risk -v run
+
+      - name: Commit results
+        id: commit
+        if: steps.fetch.outputs.changed == 'true' || inputs.force
+        run: |
+          git add data/releases outputs docs
+          if git diff --cached --quiet; then
+            echo "Nothing changed"; echo "pushed=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Refresh PFAS release list and model ($(jq -r .tables_dated data/releases/massdep_source.json) MassDEP data)"
+          git push origin HEAD:main
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy site
+        if: steps.commit.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --ref main

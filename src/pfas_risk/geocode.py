@@ -114,9 +114,9 @@ def geocode(df: pd.DataFrame, address_col: str = "address", town_col: str = "tow
             return float(nearest.x), float(nearest.y), "street"
         return float(cand.x.median()), float(cand.y.median()), "street"
 
-    matched = [match(a, t) for a, t in zip(df[address_col], df[town_col])]
+    matched = [match(a, t) for a, t in zip(df[address_col], df[town_col], strict=True)]
     out = df.copy()
-    out["x"], out["y"], out["geocode_precision"] = (list(col) for col in zip(*matched)) if matched else ([], [], [])
+    out["x"], out["y"], out["geocode_precision"] = (list(col) for col in zip(*matched, strict=True)) if matched else ([], [], [])
     return apply_overrides(out)
 
 

@@ -20,6 +20,7 @@ import geopandas as gpd
 import pandas as pd
 
 from .config import CRS, DATA_DIR, SEED_RELEASES, WGS84
+from .fetch import record_source
 from .geocode import geocode, normalize_town
 from .sources import local_path, read
 
@@ -104,16 +105,17 @@ def fetch_coordinates(rtns: list[str], pause: float = 0.2) -> pd.DataFrame:
             with urllib.request.urlopen(SITE_API + rtn, timeout=30) as r:
                 d = json.load(r)
             lat, lon = d.get("Latitude") or None, d.get("Longitude") or None
-        except Exception as e:  # noqa: BLE001 - a missing site just stays unplaced
+        except Exception as e:  # a missing site just stays unplaced
             log.warning("no coordinates for %s: %s", rtn, e)
         rows.append({"rtn": rtn, "lat": lat, "lon": lon})
         time.sleep(pause)
-    out = pd.DataFrame(rows)
+    out = pd.DataFrame(rows, columns=["rtn", "lat", "lon"])
     out[["lat", "lon"]] = out[["lat", "lon"]].apply(pd.to_numeric, errors="coerce")
     return out
 
 
-def build_release_list(zip_path: Path | None = None, coordinates: bool = True) -> Path:
+def build_release_list(zip_path: Path | None = None, coordinates: bool = True,
+                       refresh_coordinates: bool = False) -> Path:
     zip_path = zip_path or local_path("massdep_releases")
     if not Path(zip_path).exists():
         raise FileNotFoundError(f"{zip_path} not found; see massdep_releases in config/sources.yaml")
@@ -122,15 +124,17 @@ def build_release_list(zip_path: Path | None = None, coordinates: bool = True) -
     seed = _standardize(pd.read_csv(SEED_RELEASES, dtype=str))
     out = pfas_rtns(pd.DataFrame(release), pd.DataFrame(chemical), seed)
     if coordinates:
-        # Reuse coordinates from a previous build; only look up RTNs that don't have them yet.
+        # Reuse lookups from the previous build (including RTNs MassDEP has no coordinates for);
+        # only query RTNs that are new to the list.
         known = pd.DataFrame(columns=["rtn", "lat", "lon"])
-        if RELEASE_LIST.exists():
-            known = pd.read_csv(RELEASE_LIST, dtype={"rtn": str})[["rtn", "lat", "lon"]].dropna()
+        if RELEASE_LIST.exists() and not refresh_coordinates:
+            known = pd.read_csv(RELEASE_LIST, dtype={"rtn": str})[["rtn", "lat", "lon"]]
         todo = [r for r in out["rtn"] if r not in set(known["rtn"])]
         coords = pd.concat([known, fetch_coordinates(todo)], ignore_index=True)
         out = out.merge(coords.drop_duplicates("rtn"), on="rtn", how="left")
     RELEASE_LIST.parent.mkdir(parents=True, exist_ok=True)
     out.to_csv(RELEASE_LIST, index=False)
+    record_source(Path(zip_path), len(out))
     log.info("wrote %d PFAS releases to %s", len(out), RELEASE_LIST)
     return RELEASE_LIST
 
@@ -161,7 +165,7 @@ def outside_town(rel: pd.DataFrame, pts: gpd.GeoSeries, towns: gpd.GeoDataFrame)
     """
     shapes = towns.assign(key=towns["TOWN"].map(normalize_town)).dissolve("key").geometry
     key = rel["town"].map(normalize_town)
-    bad = [k in shapes.index and shapes[k].distance(p) > TOWN_SLACK_M for k, p in zip(key, pts)]
+    bad = [k in shapes.index and shapes[k].distance(p) > TOWN_SLACK_M for k, p in zip(key, pts, strict=True)]
     return pd.Series(bad, index=rel.index)
 
 

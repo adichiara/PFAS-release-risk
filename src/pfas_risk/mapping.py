@@ -37,7 +37,7 @@ def risk_map(features: gpd.GeoDataFrame, scores: pd.Series, releases: gpd.GeoDat
     rel = releases[releases["x"].notna()].to_crs(WGS84)
     cols = [c for c in ["rtn", "site_name", "town", "address", "notification_date", "chemical",
                         "geocode_precision"] if c in rel]
-    rel = rel[cols + ["geometry"]].copy()
+    rel = rel[[*cols, "geometry"]].copy()
     if "notification_date" in rel:
         rel["notification_date"] = pd.to_datetime(rel["notification_date"]).dt.strftime("%Y-%m-%d")
     points = _round_geojson(rel.fillna(""))

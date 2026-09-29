@@ -5,12 +5,13 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-from datetime import date
+from datetime import datetime, timezone
 
 import pandas as pd
 
 from .config import OUTPUT_DIR
 from .features import attach_releases, build_features
+from .fetch import fetch_release_zip, recorded_sha256, sha256
 from .mapping import risk_map
 from .model import evaluate, permutation_null
 from .releases import build_release_list, locate_releases
@@ -33,12 +34,21 @@ def cmd_download(args) -> None:
         print(p)
 
 
+def cmd_fetch_releases(args) -> None:
+    """Download the MassDEP zip; print `changed=true|false` (for GitHub Actions outputs)."""
+    path = fetch_release_zip()
+    changed = sha256(path) != recorded_sha256()
+    print(f"downloaded {path} ({path.stat().st_size:,} bytes)")
+    print(f"changed={'true' if changed else 'false'}")
+
+
 def cmd_releases(args) -> None:
-    print(build_release_list(args.zip, coordinates=not args.no_coordinates))
+    print(build_release_list(args.zip, coordinates=not args.no_coordinates,
+                             refresh_coordinates=args.refresh_coordinates))
 
 
 def cmd_features(args) -> None:
-    df, releases = _dataset(force=args.force)
+    df, _ = _dataset(force=args.force)
     print(f"{len(df)} block groups, {int(df['releases'].sum())} located releases in "
           f"{int((df['releases'] > 0).sum())} block groups; "
           f"{df.attrs['unlocated_releases']} releases could not be located")
@@ -57,7 +67,7 @@ def cmd_evaluate(args) -> None:
     null.to_csv(OUTPUT_DIR / "null_metrics.csv", index=False)
     oof.to_parquet(OUTPUT_DIR / "oof_scores.parquet")
     report = {
-        "run_date": date.today().isoformat(),
+        "run_date": datetime.now(timezone.utc).date().isoformat(),
         "release_source": releases.attrs.get("source"),
         "block_groups": len(df),
         "located_releases": int(df["releases"].sum()),
@@ -94,16 +104,16 @@ def _markdown(report: dict, summary: pd.DataFrame, null: pd.DataFrame) -> str:
     lines = [
         "# Evaluation",
         "",
-        f"Run {report['run_date']} on `{report['release_source']}`: {report['located_releases']} located "
-        f"releases in {report['release_block_groups']} of {report['block_groups']} block groups "
-        f"({report['unlocated_releases']} could not be located).",
+        (f"Run {report['run_date']} on `{report['release_source']}`: {report['located_releases']} located "
+         f"releases in {report['release_block_groups']} of {report['block_groups']} block groups "
+         f"({report['unlocated_releases']} could not be located)."),
         "",
-        f"Town-grouped 5-fold cross-validation, {report['repeats']} repeats (mean ± sd). "
-        "Compare models with the two baselines, not with 10%: releases are not spread evenly "
-        "over land or over block groups, so chance capture depends on the budget.",
+        (f"Town-grouped 5-fold cross-validation, {report['repeats']} repeats (mean ± sd). "
+         "Compare models with the two baselines, not with 10%: releases are not spread evenly "
+         "over land or over block groups, so chance capture depends on the budget."),
         "",
-        "| model | ROC AUC | avg precision | releases in top 10% of block groups "
-        "| releases in top-risk 10% of land |",
+        ("| model | ROC AUC | avg precision | releases in top 10% of block groups "
+         "| releases in top-risk 10% of land |"),
         "|---|---|---|---|---|",
     ]
     for model, row in summary.iterrows():
@@ -115,9 +125,9 @@ def _markdown(report: dict, summary: pd.DataFrame, null: pd.DataFrame) -> str:
         "",
         "## Does it beat size and density alone?",
         "",
-        f"Permutation null for {report['best_model']}: release labels shuffled {len(null)} times among "
-        "block groups in the same land-area x population-density quintile, then the same "
-        "cross-validation. This keeps the size and density effects and removes everything else.",
+        (f"Permutation null for {report['best_model']}: release labels shuffled {len(null)} times among "
+         "block groups in the same land-area x population-density quintile, then the same "
+         "cross-validation. This keeps the size and density effects and removes everything else."),
         "",
         "| metric | observed | null mean | null 95th pct | p |",
         "|---|---|---|---|---|",
@@ -160,9 +170,14 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--force", action="store_true")
     p.set_defaults(func=cmd_download)
 
+    p = sub.add_parser("fetch-releases", help="download the MassDEP bulk data and report whether it changed")
+    p.set_defaults(func=cmd_fetch_releases)
+
     p = sub.add_parser("releases", help="build the PFAS release list from the MassDEP bulk download")
     p.add_argument("--zip", help="path to the MassDEP download (default: data/raw/massdep_release_data.zip)")
     p.add_argument("--no-coordinates", action="store_true", help="skip MassDEP site coordinate lookups")
+    p.add_argument("--refresh-coordinates", action="store_true",
+                   help="look up coordinates for every RTN, not just ones new to the list")
     p.set_defaults(func=cmd_releases)
 
     p = sub.add_parser("features", help="build the block-group feature table")
