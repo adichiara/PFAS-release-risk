@@ -1,7 +1,6 @@
 """Static GitHub Pages site: a landing page plus the interactive map, written to docs/.
 
-Works with Pages set to deploy from ``main`` at either the repository root (a root
-``index.html`` redirects into docs/) or the ``/docs`` folder.
+.github/workflows/pages.yml publishes docs/ whenever it changes on main.
 """
 
 from __future__ import annotations
@@ -30,13 +29,6 @@ METRIC_LABELS = {
     "capture_top10pct_units": "Releases in top 10% of block groups",
     "capture_top10pct_area": "Releases in top-risk 10% of land",
 }
-REDIRECT = """<!doctype html>
-<meta charset="utf-8">
-<title>PFAS Release Risk</title>
-<meta http-equiv="refresh" content="0; url=docs/">
-<link rel="canonical" href="docs/">
-<p><a href="docs/">PFAS release risk in Massachusetts</a></p>
-"""
 
 
 def _fmt(metric: str, v: float) -> str:
@@ -103,8 +95,4 @@ def build_site() -> Path:
     SITE_DIR.mkdir(exist_ok=True)
     (SITE_DIR / "index.html").write_text(page)
     shutil.copyfile(OUTPUT_DIR / "risk_map.html", SITE_DIR / "map.html")
-    # Serve files as-is (no Jekyll) whether Pages publishes from the root or from docs/.
-    for d in (ROOT, SITE_DIR):
-        (d / ".nojekyll").touch()
-    (ROOT / "index.html").write_text(REDIRECT)
     return SITE_DIR / "index.html"
