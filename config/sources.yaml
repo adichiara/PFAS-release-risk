@@ -3,6 +3,8 @@
 # status:
 #   available  - downloaded automatically by `pfas-risk download`
 #   manual     - public, but must be exported by hand from a web portal (see notes)
+#   evaluated  - loader written and tested as features; left out because it did not help
+#                (`result` gives the cross-validated change). `pfas-risk download` skips it.
 #   planned    - public source identified; loader not written yet
 #
 # MassGIS files are fetched from the public MassGIS download bucket.
@@ -118,7 +120,84 @@ sources:
     role: feature
     status: available
 
-  # ---- Identified, not yet wired in -----------------------------------------
+  airports:
+    title: Airports (FAA NASR), public-use aerodromes and military airfields (AFFF use)
+    publisher: FAA Aeronautical Data Delivery Service
+    url: https://adds-faa.opendata.arcgis.com/datasets/faa::airports-1
+    file: faa_airports_ma.geojson
+    fetch:
+      kind: arcgis
+      service: https://services6.arcgis.com/ssFJjBXIUyZDrSYZ/arcgis/rest/services/US_Airport/FeatureServer/0
+      where: STATE='MA'
+    role: feature
+    status: evaluated
+    result: ROC AUC 0.714 -> 0.713, top-10%-land capture 35% -> 34% (4 km² hexagons, smoothed logistic); not used
+    notes: >
+      The layer does not flag Part 139 certification, so public-use aerodromes (37) and
+      military airfields stand in for airports with crash-rescue firefighting.
+
+  military_installations:
+    title: Military installations, ranges and training areas (MIRTA)
+    publisher: U.S. Department of Defense
+    url: https://catalog.data.gov/dataset/military-installations-ranges-and-training-areas
+    file: dod_mirta_ma.geojson
+    fetch:
+      kind: arcgis
+      service: https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/MIRTA_Polygons_A_view/FeatureServer/0
+      where: STATENAMECODE='MA'
+    role: feature
+    status: evaluated
+    result: ROC AUC 0.714 -> 0.707, capture 35% -> 32% (4 km² hexagons, smoothed logistic); not used
+
+  epa_tri:
+    title: EPA Toxics Release Inventory reporters, Massachusetts, 2014-2024
+    publisher: U.S. EPA
+    url: https://www.epa.gov/toxics-release-inventory-tri-program/tri-basic-data-files-calendar-years-1987-present
+    file: epa_tri_ma.csv
+    fetch:
+      kind: tri
+      url: https://data.epa.gov/efservice/downloads/tri/mv_tri_basic_download/{year}_MA/csv
+      first_year: 2014
+      last_year: 2024
+    role: feature
+    status: evaluated
+    result: ROC AUC 0.714 -> 0.706, capture 35% -> 32% (4 km² hexagons, smoothed logistic); not used
+    notes: No Massachusetts facility reported a PFAS chemical in these years, so all reporters are used.
+
+  pws_sources:
+    title: Public water supply sources (wells and intakes)
+    publisher: MassGIS / MassDEP
+    path: shapefiles/state/pwsdep_pt.zip
+    layer: PWSDEP_PT.shp
+    role: feature
+    status: available
+
+  massdep_dw_pfas:
+    title: PFAS6 results for public water systems (MassDEP drinking-water data)
+    publisher: MassDEP / EEA Data Portal
+    url: https://eeaonline.eea.state.ma.us/portal#!/search/drinking-water
+    file: massdep_dw_pfas6.csv
+    fetch:
+      kind: eea_drinking_water
+      url: https://eeaonline.eea.state.ma.us/EEA/DataLake/V1.0/DataLakeAPI/drinkingWater
+      chemical: PFAS6
+      systems_from: pws_sources
+      skip_types: [TNC]
+    role: feature
+    status: available
+    notes: >
+      Only samples collected before the forward-test cutoff (2023-01-01) are used, so the
+      forward test stays honest. Transient systems (not required to test) are skipped.
+
+  sewer_service:
+    title: Sewer service areas of municipal wastewater treatment plants
+    publisher: MassGIS / MassDEP
+    path: shapefiles/state/DEP_Sewer_Service_Areas.zip
+    layer: SEWER_SERVICE_AREA_POTW_POLY.shp
+    role: feature
+    status: evaluated
+    result: ROC AUC 0.714 -> 0.722, capture 35% -> 30% (4 km² hexagons, smoothed logistic); not used
+
   epa_frs:
     title: EPA Facility Registry Service, Massachusetts facilities and NAICS codes
     publisher: U.S. EPA
@@ -131,20 +210,7 @@ sources:
       Facilities in the PFAS-related sectors of config/pfas_sectors.yaml (by NAICS prefix)
       become point features. Public replacement for the non-public BAW industry list used in 2021.
 
-  airports:
-    title: Public-use airports (AFFF use)
-    publisher: FAA / MassDOT Aeronautics
-    url: https://adds-faa.opendata.arcgis.com/
-    role: feature
-    status: planned
-
-  military_installations:
-    title: Military installations, ranges and training areas (MIRTA)
-    publisher: U.S. Department of Defense
-    url: https://catalog.data.gov/dataset/military-installations-ranges-and-training-areas
-    role: feature
-    status: planned
-
+  # ---- Identified, not yet wired in -----------------------------------------
   land_cover_2016:
     title: 2016 land cover / land use (industrial, commercial, impervious fractions)
     publisher: MassGIS

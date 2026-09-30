@@ -176,8 +176,12 @@ __OTHER_UNITS__
         MassDEP major facility, hazardous-waste generator, air-permitted facility and underground
         storage tank, and to EPA-registered facilities in eight PFAS-related industries (textiles,
         paper, chemicals and plastics, metal finishing, electronics, petroleum, aviation and
-        military, waste and wastewater); landfills; aquifers; major-road density; population and
-        housing density.</li>
+        military, waste and wastewater); public water supply wells and intakes tested for PFAS6,
+        with PFAS6 detected, and at or above the 20 ng/L standard, using only samples collected before
+        __FWD_CUTOFF_YEAR__ so the forward test stays honest; landfills; aquifers; major-road density;
+        population and housing density. Airports, military installations, EPA Toxics Release Inventory
+        reporters and sewer service areas were tested and left out because they did not improve the
+        model (see Data sources).</li>
     <li><b>Validation:</b> five-fold cross-validation holding out whole towns, a size- and density-matched
         permutation test, and a forward-in-time test on releases reported after a cutoff.</li>
     <li><b>Map scores</b> are out-of-fold: each cell is colored by a model trained without its town, so

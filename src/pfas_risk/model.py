@@ -241,6 +241,8 @@ def permutation_null(df: pd.DataFrame, model: str, permutations: int = 20, n_fol
 def feature_group(column: str) -> str:
     """Collapse the count/near-count/distance trio of a source into one group name."""
     base = re.sub(r"_km$", "", re.sub(r"^(n2k_|n_|d_)", "", column))
+    if base.startswith("pws_"):
+        return "drinking_water"
     return {"landfill_frac": "landfill", "pop_density": "population", "housing_density": "population",
             "land_km2": "land_area"}.get(base, base)
 

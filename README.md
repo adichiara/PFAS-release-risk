@@ -114,7 +114,10 @@ facilities, hazardous-waste large-quantity generators, air-permitted facilities,
 storage tanks, and facilities in eight PFAS-related industry sectors from EPA's Facility
 Registry Service: textiles/leather, paper/printing, chemicals/plastics, metal finishing,
 electronics, petroleum, aviation/military and waste/wastewater. Sectors are defined by NAICS
-prefix in [`config/pfas_sectors.yaml`](config/pfas_sectors.yaml), with the reason for each. Also:
+prefix in [`config/pfas_sectors.yaml`](config/pfas_sectors.yaml), with the reason for each. And
+public water supply sources (wells and intakes) with PFAS6 results: all tested sources,
+sources with PFAS6 detected (≥ 2 ng/L) and sources at or above the 20 ng/L state standard,
+using only samples collected before the forward-test cutoff. Also:
 distance to the nearest landfill and the landfill share of area, the share of area over high-
 or medium-yield aquifers, major-road density, population and housing density, land area and
 water share.
@@ -150,9 +153,21 @@ at least half a cell there, so dividing by a tiny land area doesn't push them to
 Every source, its publisher, URL and status is in [`config/sources.yaml`](config/sources.yaml).
 Downloads are recorded with a sha256 in `data/raw/manifest.json`.
 
+Drinking-water results come from MassDEP's data on the EEA Data Portal API, which returns at most
+100 records per query and ignores paging, so `pfas-risk download` queries each water system
+(raw and finished water separately; about 20 minutes). Systems with more results are
+represented by the 100 the API returns. Results are tied to a source by sampling-point code,
+or to all of the system's sources when sampled at a plant or entry point.
+
+**Tested and left out** (`status: evaluated` in the catalog, with the measured change): FAA
+public-use airports and military airfields, DoD military installations (MIRTA), EPA Toxics
+Release Inventory reporters (no Massachusetts facility has reported a PFAS chemical) and
+municipal sewer service areas. None improved the hexagon model; airports and military sites
+are already represented by the aviation/military NAICS sector. No public layer exists for fire
+training academies or biosolids land application.
+
 Planned additions (public, identified, not yet wired in): 2016 land cover and EPA UCMR 5
-results for context. Airports and military sites are covered through their NAICS codes in the
-EPA facility data; FAA airport and DoD MIRTA layers could sharpen those.
+results.
 
 ## Layout
 
@@ -166,6 +181,8 @@ src/pfas_risk/
   releases.py             load and filter PFAS releases
   units.py                block groups and the equal-area hexagon grid
   features.py             feature table for a unit
+  pfas_sources.py         drinking-water, airport, military, TRI and sewer layers
+  api_sources.py          fetchers for sources served by web APIs
   model.py                models, town-grouped CV, permutation null
   mapping.py              interactive Leaflet map
   site.py                 GitHub Pages landing page

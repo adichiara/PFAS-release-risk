@@ -23,7 +23,7 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 180   # the first run on a new cache key re-downloads drinking-water results (~20 min)
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6

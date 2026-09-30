@@ -135,14 +135,19 @@ def _kpis(u: UnitResult) -> str:
                    for v, label in tiles)
 
 
+STATUS_LABELS = {"available": "used", "evaluated": "tested, not used"}
+
+
 def _source_rows() -> str:
     rows = []
     for meta in catalog()["sources"].values():
         title = html.escape(meta["title"])
         url = meta.get("url") or (f"{catalog()['massgis_base']}/{meta['path']}" if "path" in meta else None)
         name = f'<a href="{html.escape(url)}">{title}</a>' if url else title
-        rows.append(f'<tr><td class="wrap">{name}</td><td class="wrap">{html.escape(meta["publisher"])}</td>'
-                    f'<td><span class="status">{html.escape(meta["status"])}</span></td></tr>')
+        status = STATUS_LABELS.get(meta["status"], meta["status"])
+        result = f'<br><span class="note">{html.escape(meta["result"])}</span>' if "result" in meta else ""
+        rows.append(f'<tr><td class="wrap">{name}{result}</td><td class="wrap">{html.escape(meta["publisher"])}</td>'
+                    f'<td><span class="status">{html.escape(status)}</span></td></tr>')
     return "\n".join(rows)
 
 
