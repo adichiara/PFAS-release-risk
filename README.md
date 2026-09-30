@@ -1,15 +1,15 @@
 # PFAS release risk (Massachusetts)
 
 Ranks Massachusetts by the relative risk of a reported PFAS release, on a grid of equal-area
-4 km² hexagons (with 2020 census block groups as a comparison), using only publicly available
-data. It is a rebuild of the release risk model from
+1 km² hexagons (with 2 km² and 4 km² hexagons and 2020 census block groups as comparisons),
+using only publicly available data. It is a rebuild of the release risk model from
 the 2021 WPI Data Science / MassDEP graduate capstone
 ([GQP-TeamMassDEP/Mass_PFAS-Analysis](https://github.com/GQP-TeamMassDEP/Mass_PFAS-Analysis)),
 fixing what limited that version:
 
 | 2021 model | This rebuild |
 |---|---|
-| Aggregated to 64 groups built from tract-number prefixes (`GEOID[:7]`), which are not towns or Census places; group size alone predicted the label (AUC 0.76) | Predicts on 5,587 equal-area hexagons, where size no longer predicts the label (AUC 0.51), and on 5,109 block groups for comparison |
+| Aggregated to 64 groups built from tract-number prefixes (`GEOID[:7]`), which are not towns or Census places; group size alone predicted the label (AUC 0.76) | Predicts on 21,774 equal-area 1 km² hexagons, where size no longer predicts the label (AUC 0.50), and on larger cells and 5,109 block groups for comparison |
 | Random train/test split | Whole towns held out in cross-validation |
 | Compared against chance | Compared against size and density baselines, a size- and density-matched permutation null, and a forward-in-time test on releases reported later |
 | Industry features from a non-public business list | Public sources only (see `config/sources.yaml`) |
@@ -26,24 +26,39 @@ necessarily missing from the labels.
 
 **Site:** https://adichiara.github.io/PFAS-release-risk/ (results, method and data sources,
 with links to the interactive maps). Latest evaluations:
-[`outputs/hex4/evaluation.md`](outputs/hex4/evaluation.md) (primary) and
-[`outputs/bg/evaluation.md`](outputs/bg/evaluation.md).
+[`outputs/hex1/evaluation.md`](outputs/hex1/evaluation.md) (primary),
+[`outputs/hex2/`](outputs/hex2/evaluation.md), [`outputs/hex4/`](outputs/hex4/evaluation.md)
+and [`outputs/bg/`](outputs/bg/evaluation.md).
 
-On **4 km² hexagons** land area alone predicts nothing (ROC AUC 0.51), so the features have to
-carry the signal. The selected model (logistic regression, smoothed over neighbors within 3 km)
-finds about 34% of releases in the top-risk 10% of land, against 10% for population and housing
-density (ROC AUC 0.71 vs 0.68). It beat all 20 permutations of a null that keeps size and
-density effects, on every metric (p < 0.05, the smallest p 20 permutations can show). MassDEP
-major facilities, electronics and chemical/plastics plants, and aviation/military sites rank as
-the most useful features after population density.
+On **1 km² hexagons** land area alone predicts nothing (ROC AUC 0.50), so the features have to
+carry the signal. The selected model (logistic regression) finds about 53% of releases in the
+top-risk 10% of land, against 12% for population and housing density (ROC AUC 0.84 vs 0.66).
+It beat all 20 permutations of a null that keeps size and density effects, on every metric
+(p < 0.05, the smallest p 20 permutations can show).
 
-**Forward in time:** trained only on the 104 releases reported before 2023, it put 22% of the
-67 cells with a first release reported since then in its top-risk 10% of land, against 10% for
-density (ROC AUC 0.68 vs 0.67). The gain holds, though smaller than in cross-validation.
+**Forward in time:** trained only on the 104 releases reported before 2023, it put 44% of the
+77 cells with a first release reported since then in its top-risk 10% of land, against 10% for
+density (ROC AUC 0.79 vs 0.65).
 
-On **block groups** the model also adds information beyond size: gradient boosting finds 31%
-of releases in the top-risk 10% of land, against 13% for land area alone (ROC AUC 0.84 vs 0.82),
-but land area explains much of the ranking there.
+**Cell size.** Smaller cells rank better with the same features:
+
+| Unit | Top-risk 10% of land: CV (baseline) | Forward test (baseline) | ROC AUC, CV |
+|---|---|---|---|
+| 1 km² hexagons | 53% (12%) | 44% (10%) | 0.84 |
+| 2 km² hexagons | 48% (11%) | 34% (9%) | 0.82 |
+| 4 km² hexagons | 43% (10%) | 37% (10%) | 0.78 |
+| Block groups | 36% (13%, land area) | 34% (15%) | 0.86 (land area alone 0.83) |
+
+The forward test scores only 61–77 cells, so its differences between sizes are noisy.
+
+**What drives it.** Drinking-water PFAS results and MassDEP major facilities rank first, then
+electronics, chemical/plastics and petroleum facilities, hazardous-waste generators and
+landfills. The drinking-water features need care: 34 of the 194 releases (18%) sit within
+250 m of a supply well that had PFAS6 ≥ 20 ng/L before 2023, mostly releases found through
+drinking-water testing and filed at the well, so part of their cross-validation gain is
+recognizing those. For releases reported since 2023 the overlap is smaller (8 of 96). Without
+the drinking-water features, 1 km² cells still reach 41% in cross-validation and 43% in the
+forward test, so the finer grid's gain doesn't depend on them.
 
 Scores are relative risk of a *reported* release, which also reflects where investigations
 happen.
@@ -58,11 +73,12 @@ pytest
 ```
 
 Steps can also be run one at a time: `pfas-risk features`, `pfas-risk evaluate`, `pfas-risk map`,
-`pfas-risk site`. The unit is 4 km² hexagons by default; put `--unit bg` before the command for
-block groups, or `--cell-km2 1` for another cell size. Results go to `outputs/<unit>/` (for
-example `outputs/hex4/`, `outputs/bg/`); `pfas-risk site` leads with `hex4` and compares every
+`pfas-risk site`. The unit is 1 km² hexagons by default; put `--unit bg` before the command for
+block groups, or `--cell-km2 4` for another cell size. Results go to `outputs/<unit>/` (for
+example `outputs/hex1/`, `outputs/bg/`); `pfas-risk site` leads with `hex1` and compares every
 other evaluated unit below it.
-Add `-v` for progress logging. A full run takes about 15 minutes.
+Add `-v` for progress logging. A full run of one unit takes 10–45 minutes (the permutation
+null is most of it).
 
 ### Updating the release list
 
@@ -89,9 +105,10 @@ To do the same by hand:
 
 ## Method
 
-**Units.** Two, evaluated separately:
+**Units.** Evaluated separately:
 
-- *Equal-area hexagons* (the default and the main map; 4 km², `--cell-km2` to change), clipped
+- *Equal-area hexagons* (1 km² is the default and the main map; 2 km² and 4 km² are compared;
+  `--cell-km2` to change), clipped
   to the state. Every full cell has the same exposure, so the size effect drops out.
   Population, housing, land and water area come from 2020 census blocks weighted by the
   share of each block inside a cell, and each cell is assigned the town holding most of its
@@ -145,8 +162,8 @@ release later ahead of the others.
 
 **Map.** The map shows out-of-fold scores, so each cell is colored by a model trained
 without its town and known release sites are not simply echoed back. Colors show the
-percentile of risk per km². Hexagons with only a sliver of land (coast, state line) count as
-at least half a cell there, so dividing by a tiny land area doesn't push them to the top.
+percentile of risk per km². Hexagons clipped at the coast or state line count as a full cell
+there, so dividing by a small land area doesn't push them to the top.
 
 ## Data
 

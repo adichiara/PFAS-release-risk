@@ -1,6 +1,6 @@
 """Specific PFAS source and evidence layers beyond the MassGIS and EPA facility data.
 
-Only the drinking-water layers improved the model on 4 km² hexagons and are used as
+Only the drinking-water layers improved the model (tested on 4 km² hexagons) and are used as
 features; the others are kept so the comparison can be rerun.
 
 - Airports: FAA public-use aerodromes and military airfields (AFFF for crash rescue and training).

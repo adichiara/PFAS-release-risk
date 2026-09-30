@@ -9,7 +9,7 @@
   "repeats": 10,
   "null_permutations": 20,
   "selection_metric": "capture_top10pct_area",
-  "best_model": "logistic+smooth",
+  "best_model": "logistic",
   "mean": {
     "baseline_area": {
       "roc_auc": 0.5085,
@@ -24,163 +24,168 @@
       "capture_top10pct_area": 0.0964
     },
     "gradient_boosting": {
-      "roc_auc": 0.717,
-      "avg_precision": 0.0702,
-      "capture_top10pct_units": 0.3222,
-      "capture_top10pct_area": 0.3103
+      "roc_auc": 0.7774,
+      "avg_precision": 0.0962,
+      "capture_top10pct_units": 0.4119,
+      "capture_top10pct_area": 0.3954
     },
     "gradient_boosting+smooth": {
-      "roc_auc": 0.7246,
-      "avg_precision": 0.0801,
-      "capture_top10pct_units": 0.3423,
-      "capture_top10pct_area": 0.3258
+      "roc_auc": 0.7787,
+      "avg_precision": 0.1069,
+      "capture_top10pct_units": 0.4196,
+      "capture_top10pct_area": 0.3876
     },
     "logistic": {
-      "roc_auc": 0.713,
-      "avg_precision": 0.0706,
-      "capture_top10pct_units": 0.3448,
-      "capture_top10pct_area": 0.3149
+      "roc_auc": 0.7813,
+      "avg_precision": 0.1183,
+      "capture_top10pct_units": 0.4433,
+      "capture_top10pct_area": 0.4284
     },
     "logistic+smooth": {
-      "roc_auc": 0.7107,
-      "avg_precision": 0.0766,
-      "capture_top10pct_units": 0.3557,
-      "capture_top10pct_area": 0.3356
+      "roc_auc": 0.7803,
+      "avg_precision": 0.1197,
+      "capture_top10pct_units": 0.417,
+      "capture_top10pct_area": 0.4103
     },
     "poisson_rate": {
-      "roc_auc": 0.6589,
-      "avg_precision": 0.0541,
-      "capture_top10pct_units": 0.2351,
-      "capture_top10pct_area": 0.2026
+      "roc_auc": 0.7328,
+      "avg_precision": 0.0874,
+      "capture_top10pct_units": 0.3381,
+      "capture_top10pct_area": 0.3134
     },
     "poisson_rate+smooth": {
-      "roc_auc": 0.6459,
-      "avg_precision": 0.0496,
-      "capture_top10pct_units": 0.2175,
-      "capture_top10pct_area": 0.1691
+      "roc_auc": 0.7131,
+      "avg_precision": 0.0754,
+      "capture_top10pct_units": 0.3149,
+      "capture_top10pct_area": 0.2598
     }
   },
   "null": {
     "roc_auc": {
-      "observed": 0.7107,
-      "null_mean": 0.6389,
-      "null_p95": 0.6657,
+      "observed": 0.7813,
+      "null_mean": 0.6232,
+      "null_p95": 0.6451,
       "p_value": 0.0476
     },
     "avg_precision": {
-      "observed": 0.0766,
-      "null_mean": 0.042,
-      "null_p95": 0.0452,
+      "observed": 0.1183,
+      "null_mean": 0.0404,
+      "null_p95": 0.0445,
       "p_value": 0.0476
     },
     "capture_top10pct_units": {
-      "observed": 0.3557,
-      "null_mean": 0.1799,
-      "null_p95": 0.217,
+      "observed": 0.4433,
+      "null_mean": 0.1784,
+      "null_p95": 0.2425,
       "p_value": 0.0476
     },
     "capture_top10pct_area": {
-      "observed": 0.3356,
-      "null_mean": 0.1637,
-      "null_p95": 0.2222,
+      "observed": 0.4284,
+      "null_mean": 0.1613,
+      "null_p95": 0.2126,
       "p_value": 0.0476
     }
   },
   "importance": [
     {
-      "group": "bwp_major",
-      "mean": 0.0891,
-      "std": 0.0156
+      "group": "drinking_water",
+      "mean": 0.1236,
+      "std": 0.0076
     },
     {
-      "group": "population",
-      "mean": 0.0628,
-      "std": 0.0108
+      "group": "bwp_major",
+      "mean": 0.105,
+      "std": 0.0118
+    },
+    {
+      "group": "haz_waste_lqg",
+      "mean": 0.0241,
+      "std": 0.0093
     },
     {
       "group": "ind_electronics",
-      "mean": 0.0497,
-      "std": 0.0062
+      "mean": 0.0192,
+      "std": 0.0056
+    },
+    {
+      "group": "air_permit",
+      "mean": 0.0168,
+      "std": 0.0094
+    },
+    {
+      "group": "population",
+      "mean": 0.0133,
+      "std": 0.0059
     },
     {
       "group": "ind_chemicals_plastics",
-      "mean": 0.0336,
+      "mean": 0.0132,
+      "std": 0.0045
+    },
+    {
+      "group": "fire_station",
+      "mean": 0.011,
       "std": 0.0042
     },
     {
       "group": "ind_aviation_military",
-      "mean": 0.0255,
-      "std": 0.0047
-    },
-    {
-      "group": "fire_station",
-      "mean": 0.0233,
-      "std": 0.0054
-    },
-    {
-      "group": "haz_waste_lqg",
-      "mean": 0.017,
-      "std": 0.0208
-    },
-    {
-      "group": "air_permit",
-      "mean": 0.0119,
-      "std": 0.0106
-    },
-    {
-      "group": "landfill",
-      "mean": 0.0112,
-      "std": 0.008
+      "mean": 0.0101,
+      "std": 0.0035
     },
     {
       "group": "ind_petroleum",
-      "mean": 0.0102,
-      "std": 0.0047
+      "mean": 0.0093,
+      "std": 0.0067
     },
     {
-      "group": "land_area",
-      "mean": 0.0034,
-      "std": 0.0048
+      "group": "landfill",
+      "mean": 0.0076,
+      "std": 0.0043
     },
     {
       "group": "water_frac",
-      "mean": 0.0018,
-      "std": 0.0022
-    },
-    {
-      "group": "ind_waste_wastewater",
-      "mean": 0.001,
-      "std": 0.0033
-    },
-    {
-      "group": "ind_metal_finishing",
-      "mean": 0.0005,
-      "std": 0.0078
+      "mean": 0.0037,
+      "std": 0.0039
     },
     {
       "group": "ust",
-      "mean": -0.0004,
-      "std": 0.0097
-    },
-    {
-      "group": "major_road_km_per_km2",
-      "mean": -0.0014,
-      "std": 0.0032
-    },
-    {
-      "group": "aquifer_frac",
-      "mean": -0.002,
-      "std": 0.0018
+      "mean": 0.0007,
+      "std": 0.0034
     },
     {
       "group": "ind_paper_printing",
-      "mean": -0.0043,
-      "std": 0.0046
+      "mean": -0.0002,
+      "std": 0.0038
+    },
+    {
+      "group": "ind_waste_wastewater",
+      "mean": -0.0012,
+      "std": 0.0026
+    },
+    {
+      "group": "land_area",
+      "mean": -0.0017,
+      "std": 0.0012
+    },
+    {
+      "group": "major_road_km_per_km2",
+      "mean": -0.0019,
+      "std": 0.002
+    },
+    {
+      "group": "aquifer_frac",
+      "mean": -0.0025,
+      "std": 0.0014
+    },
+    {
+      "group": "ind_metal_finishing",
+      "mean": -0.0039,
+      "std": 0.0052
     },
     {
       "group": "ind_textiles_leather",
-      "mean": -0.0084,
-      "std": 0.0091
+      "mean": -0.0069,
+      "std": 0.0083
     }
   ],
   "forward": {
@@ -189,11 +194,11 @@
     "test_releases": 110,
     "new_units": 67,
     "results": {
-      "logistic+smooth": {
-        "roc_auc": 0.6821,
-        "avg_precision": 0.0312,
-        "capture_top10pct_units": 0.2836,
-        "capture_top10pct_area": 0.2239
+      "logistic": {
+        "roc_auc": 0.6967,
+        "avg_precision": 0.0476,
+        "capture_top10pct_units": 0.3731,
+        "capture_top10pct_area": 0.3731
       },
       "baseline_area": {
         "roc_auc": 0.4929,

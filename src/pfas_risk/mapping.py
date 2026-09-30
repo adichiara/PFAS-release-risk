@@ -1,8 +1,9 @@
-"""Self-contained interactive Leaflet map of block-group risk and known releases."""
+"""Self-contained interactive Leaflet map of unit risk and known releases."""
 
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 
 import geopandas as gpd
@@ -22,6 +23,28 @@ def _round_geojson(gdf: gpd.GeoDataFrame, decimals: int = 5) -> dict:
     return json.loads(gdf.to_json(drop_id=True))
 
 
+def compact_units(units: gpd.GeoDataFrame, hex_km2: float | None = None, decimals: int = 5) -> dict:
+    """Units as compact rows, so a 1 km² grid (about 22,000 cells) stays a reasonable page size.
+
+    Each row is [id, town index, population, land km², releases, percentile, shape]. ``shape``
+    is the [lon, lat] center of a full hexagon, which the page draws itself (``hex_side_m``),
+    or a GeoJSON geometry for block groups and hexagons clipped at the coast or state line.
+    """
+    towns = sorted(units["town"].astype(str).unique())
+    town_index = {t: i for i, t in enumerate(towns)}
+    side = math.sqrt(2 * hex_km2 * 1e6 / (3 * math.sqrt(3))) if hex_km2 else None
+    full = (units.area >= 0.999 * hex_km2 * 1e6).to_numpy() if hex_km2 else np.zeros(len(units), bool)
+    centers = gpd.GeoSeries(units.centroid, crs=units.crs).to_crs(WGS84)
+    shapes = shapely.set_precision(units.geometry.simplify(25).to_crs(WGS84).values, 10 ** -decimals)
+    rows = []
+    for i, (uid, r) in enumerate(units.iterrows()):
+        shape = ([round(centers.iloc[i].x, decimals), round(centers.iloc[i].y, decimals)] if full[i]
+                 else shapely.geometry.mapping(shapes[i]))
+        rows.append([str(uid), town_index[str(r["town"])], int(r["POP20"]), round(float(r["land_km2"]), 2),
+                     int(r["releases"]), float(r["pct"]), shape])
+    return {"towns": towns, "hex_side_m": side, "rows": rows}
+
+
 BASELINE_TEXT = {
     "bg": "The baseline uses block-group land area only. Larger areas see more reported releases, "
           "so the useful signal is how far the model gets beyond it.",
@@ -33,16 +56,13 @@ BASELINE_TEXT = {
 def risk_map(features: gpd.GeoDataFrame, scores: pd.Series, releases: gpd.GeoDataFrame,
              model: str, metrics: dict[str, float], baseline: dict[str, float], out_path: Path,
              source_note: str, unit_labels: tuple[str, str] = ("block group", "block groups"),
-             baseline_text: str = BASELINE_TEXT["bg"]) -> Path:
+             baseline_text: str = BASELINE_TEXT["bg"], hex_km2: float | None = None) -> Path:
     """Write a single HTML file. ``scores`` are out-of-fold P(release) per unit."""
     bg = features[["geometry", "town", "POP20", "land_km2", "releases"]].copy()
     bg["score"] = scores.reindex(bg.index)
     # Percentile of risk per km², so small units are comparable to large ones.
     bg["pct"] = risk_density(bg["score"], bg).rank(pct=True).mul(100).round(1)
-    bg["geometry"] = bg.geometry.simplify(25)
-    bg = bg.to_crs(WGS84).reset_index()
-    bg["land_km2"] = bg["land_km2"].round(2)
-    polys = _round_geojson(bg[["geoid", "town", "POP20", "land_km2", "releases", "pct", "geometry"]])
+    cells = compact_units(bg, hex_km2)
 
     rel = releases[releases["x"].notna()].to_crs(WGS84)
     cols = [c for c in ["rtn", "site_name", "town", "address", "notification_date", "chemical",
@@ -53,7 +73,7 @@ def risk_map(features: gpd.GeoDataFrame, scores: pd.Series, releases: gpd.GeoDat
     points = _round_geojson(rel.fillna(""))
 
     page = (TEMPLATE.read_text()
-            .replace("__POLYGONS__", json.dumps(polys, separators=(",", ":")))
+            .replace("__CELLS__", json.dumps(cells, separators=(",", ":")))
             .replace("__POINTS__", json.dumps(points, separators=(",", ":")))
             .replace("__MODEL__", model)
             .replace("__METRICS__", json.dumps({k: [round(float(v), 3), round(float(baseline[k]), 3)]

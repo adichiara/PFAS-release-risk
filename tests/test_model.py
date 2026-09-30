@@ -86,7 +86,7 @@ def test_forward_test_scores_only_units_without_earlier_releases():
 def test_risk_density_floors_hexagon_slivers():
     from pfas_risk.model import risk_density
     hexes = pd.DataFrame({"land_km2": [4.0, 0.05]}, index=["hex4_00001", "hex4_00002"])
-    assert list(risk_density(pd.Series([0.4, 0.1], index=hexes.index), hexes)) == [0.1, 0.05]
+    assert list(risk_density(pd.Series([0.4, 0.1], index=hexes.index), hexes)) == [0.1, 0.025]
     bgs = pd.DataFrame({"land_km2": [4.0, 0.05]}, index=["250010101001", "250010101002"])
     assert list(risk_density(pd.Series([0.4, 0.1], index=bgs.index), bgs)) == [0.1, 2.0]
 

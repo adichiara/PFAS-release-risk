@@ -31,7 +31,7 @@ from .site_sections import (
 SITE_DIR = ROOT / "docs"
 TEMPLATE = Path(__file__).with_name("site_template.html")
 REPO_URL = "https://github.com/adichiara/PFAS-release-risk"
-PRIMARY_UNIT = "hex4"
+PRIMARY_UNIT = "hex1"
 
 MODEL_LABELS = {
     "baseline_area": "Baseline: land area",
@@ -48,7 +48,7 @@ MODEL_LABELS = {
 @dataclass
 class UnitResult:
     key: str                      # 'hex4', 'bg', ...
-    labels: tuple[str, str]       # ('4 km² hexagon', '4 km² hexagons')
+    labels: tuple[str, str]       # ('1 km² hexagon', '1 km² hexagons')
     report: dict
     df: gpd.GeoDataFrame
     oof: pd.DataFrame
@@ -170,7 +170,10 @@ def _other_units_section(primary: UnitResult, others: list[UnitResult]) -> str:
   <h2>Compared with other units</h2>
   <p>The same features, validation and permutation test on other spatial units. Census block groups range
      from under 0.1 km² to over 200 km², so land area alone explains much of which ones contain a reported
-     release; equal-area hexagons remove that effect, which is why they lead this page.</p>
+     release; equal-area hexagons remove that effect, which is why they lead this page. Smaller cells
+     rank better: with the same 10% of land, 1 km² cells capture more releases than 2 km² or 4 km²
+     cells. Average precision depends on how many cells contain a release, so compare it within a
+     row, not between rows.</p>
   <div class="scroll"><table>
     <thead><tr><th>Unit</th><th>Cells</th><th>With a release</th>
       <th>ROC AUC<br><span class="note">model / area + density</span></th>

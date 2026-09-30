@@ -29,7 +29,7 @@ GROUP_LABELS = {
     "landfill": "Landfills",
     "aquifer_frac": "High/medium-yield aquifers",
     "major_road_km_per_km2": "Major roads",
-    "drinking_water": "PFAS in public water supplies (before 2023)",
+    "drinking_water": "Drinking-water PFAS (pre-2023)",
 }
 SECTOR_LABELS = {
     "textiles_leather": "Textiles and leather",
