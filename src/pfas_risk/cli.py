@@ -42,7 +42,7 @@ def _out_dir(args):
     return OUTPUT_DIR / _key(args)
 
 
-def _dataset(args=None, force: bool = False, unit: str = "hex", cell_km2: float = 4.0):
+def _dataset(args=None, force: bool = False, unit: str = "hex", cell_km2: float = 1.0):
     if args is not None:
         unit, cell_km2 = args.unit, args.cell_km2
     releases = locate_releases()
@@ -210,12 +210,13 @@ def cmd_map(args) -> None:
     kind = "hex" if args.unit == "hex" else "bg"
     base = report["mean"]["baseline_area_population" if kind == "hex" else "baseline_area"]
     path = risk_map(df, oof[model], releases, model, report["mean"][model], base,
-                    out_dir / "risk_map.html", note, unit_labels(_key(args)), BASELINE_TEXT[kind])
+                    out_dir / "risk_map.html", note, unit_labels(_key(args)), BASELINE_TEXT[kind],
+                    hex_km2=args.cell_km2 if kind == "hex" else None)
     print(path)
 
 
 def cmd_site(args) -> None:
-    """Lead with the primary unit (4 km² hexagons); add every other evaluated unit for comparison."""
+    """Lead with the primary unit (1 km² hexagons); add every other evaluated unit for comparison."""
     releases = locate_releases()
     results = []
     for report_path in sorted(OUTPUT_DIR.glob("*/evaluation.json")):
@@ -229,7 +230,10 @@ def cmd_site(args) -> None:
     if not results:
         raise SystemExit("no evaluated units in outputs/; run `pfas-risk --unit hex evaluate` first")
     primary = next((u for u in results if u.key == PRIMARY_UNIT), results[0])
-    print(build_site(primary, [u for u in results if u is not primary], releases))
+    # Other hexagon sizes, smallest first, then block groups.
+    others = sorted((u for u in results if u is not primary),
+                    key=lambda u: (not u.is_hex, float(u.key[3:]) if u.is_hex else 0.0))
+    print(build_site(primary, others, releases))
 
 
 def cmd_run(args) -> None:
@@ -244,7 +248,7 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("-v", "--verbose", action="store_true")
     parser.add_argument("--unit", choices=["bg", "hex"], default="hex",
                         help="spatial unit: equal-area hexagons (default) or census block groups")
-    parser.add_argument("--cell-km2", type=float, default=4.0, help="hexagon area in km² (default 4)")
+    parser.add_argument("--cell-km2", type=float, default=1.0, help="hexagon area in km² (default 1)")
     sub = parser.add_subparsers(dest="command", required=True)
 
     p = sub.add_parser("download", help="fetch all automatically available public sources")

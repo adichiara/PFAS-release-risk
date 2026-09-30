@@ -23,7 +23,7 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 300   # four units, plus ~20 min of drinking-water downloads on a new cache key
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
@@ -58,10 +58,12 @@ jobs:
         run: |
           pfas-risk -v download
           pfas-risk -v releases
-          pfas-risk --unit bg -v features --force
-          pfas-risk --unit hex -v features --force
-          pfas-risk --unit bg -v run
-          pfas-risk --unit hex -v run
+          # Every unit with a committed evaluation is rerun, since the site compares them all;
+          # 1 km² hexagons (the primary unit) go last so their run writes the final site.
+          for unit in "--unit bg" "--unit hex --cell-km2 4" "--unit hex --cell-km2 2" "--unit hex --cell-km2 1"; do
+            pfas-risk $unit -v features --force
+            pfas-risk $unit -v run
+          done
 
       - name: Commit results
         id: commit

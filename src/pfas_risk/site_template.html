@@ -138,6 +138,10 @@
      on that group more. Correlated groups share credit: industrial sites cluster together, so shuffling one
      sector leaves others carrying similar information. This shows association with reported releases, not cause.</p>
   <div class="figure">__IMPORTANCE_CHART__</div>
+  <p class="note">Drinking-water PFAS uses only samples collected before __FWD_CUTOFF_YEAR__. Some releases were
+     found through drinking-water testing and filed at the supply well, so part of this group's weight is
+     recognizing those. The forward test, which scores only releases reported after the cutoff, is the
+     check that it still helps.</p>
 
   <h2>How well it validates</h2>
   <p>Five-fold cross-validation that holds out whole towns, repeated __REPEATS__ times. "Smoothed" models
@@ -167,7 +171,7 @@ __OTHER_UNITS__
 
   <h2>Method</h2>
   <ul>
-    <li><b>Unit:</b> equal-area 4 km² hexagons clipped to the state (Massachusetts State Plane meters).
+    <li><b>Unit:</b> equal-area __UNITS__ clipped to the state (Massachusetts State Plane meters).
         Population, housing and land area come from 2020 census blocks, weighted by the share of each block
         in a cell; each cell belongs to the town holding most of its land.</li>
     <li><b>Response:</b> MassDEP reportable releases (RTNs) with PFAS as a chemical, located by matching
@@ -176,8 +180,12 @@ __OTHER_UNITS__
         MassDEP major facility, hazardous-waste generator, air-permitted facility and underground
         storage tank, and to EPA-registered facilities in eight PFAS-related industries (textiles,
         paper, chemicals and plastics, metal finishing, electronics, petroleum, aviation and
-        military, waste and wastewater); landfills; aquifers; major-road density; population and
-        housing density.</li>
+        military, waste and wastewater); public water supply wells and intakes tested for PFAS6,
+        with PFAS6 detected, and at or above the 20 ng/L standard, using only samples collected before
+        __FWD_CUTOFF_YEAR__ so the forward test stays honest; landfills; aquifers; major-road density;
+        population and housing density. Airports, military installations, EPA Toxics Release Inventory
+        reporters and sewer service areas were tested and left out because they did not improve the
+        model (see Data sources).</li>
     <li><b>Validation:</b> five-fold cross-validation holding out whole towns, a size- and density-matched
         permutation test, and a forward-in-time test on releases reported after a cutoff.</li>
     <li><b>Map scores</b> are out-of-fold: each cell is colored by a model trained without its town, so

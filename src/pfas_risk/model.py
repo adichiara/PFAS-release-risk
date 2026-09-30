@@ -90,12 +90,13 @@ def capture(scores: np.ndarray, releases: np.ndarray, budget: np.ndarray, frac: 
 def risk_density(scores, df: pd.DataFrame):
     """Risk per km² of land, for ranking units on the map, watch list and downloads.
 
-    Hexagon cells mostly over water or outside the state keep only a sliver of land, and
-    dividing their score by it would put them first. Their land counts as at least half a
-    full cell. Block groups are divided by their own land area.
+    Hexagon cells clipped at the coast or state line keep only part of their land, and dividing
+    their score by it would put them first: the score comes mostly from distances and nearby
+    counts that don't shrink with the cell. Their land counts as a full cell, so a clipped cell
+    ranks by its score alone. Block groups are divided by their own land area.
     """
     first = str(df.index[0])
-    floor = 0.5 * float(first[3:first.index("_")]) if first.startswith("hex") else 0.0
+    floor = float(first[3:first.index("_")]) if first.startswith("hex") else 0.0
     return scores / np.maximum(df[AREA_COL], floor)
 
 
@@ -241,6 +242,8 @@ def permutation_null(df: pd.DataFrame, model: str, permutations: int = 20, n_fol
 def feature_group(column: str) -> str:
     """Collapse the count/near-count/distance trio of a source into one group name."""
     base = re.sub(r"_km$", "", re.sub(r"^(n2k_|n_|d_)", "", column))
+    if base.startswith("pws_"):
+        return "drinking_water"
     return {"landfill_frac": "landfill", "pop_density": "population", "housing_density": "population",
             "land_km2": "land_area"}.get(base, base)
 

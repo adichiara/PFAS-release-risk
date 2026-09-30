@@ -27,7 +27,7 @@ def local_path(name: str) -> Path:
 def download(name: str, force: bool = False) -> Path:
     """Fetch one `available` source into data/raw, recording its sha256."""
     meta = source(name)
-    if meta["status"] != "available":
+    if meta["status"] not in ("available", "evaluated"):
         raise RuntimeError(f"{name} is '{meta['status']}', not downloadable: {meta.get('notes', '')}")
     dest = local_path(name)
     if dest.exists() and not force:

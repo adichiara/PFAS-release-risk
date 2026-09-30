@@ -15,6 +15,7 @@ import pandas as pd
 
 from .config import CRS, INTERIM_DIR
 from .industry import industry_points
+from .pfas_sources import pws_pfas_points
 from .sources import read
 from .units import block_groups, hex_grid
 
@@ -43,7 +44,7 @@ def point_sources() -> dict[str, gpd.GeoDataFrame]:
         "haz_waste_lqg": bwp[(bwp["LQG_RCRA"] == "Y") | (bwp["LQG_MA"] == "Y")],
         "air_permit": bwp[bwp["AIR"] == "Y"],
         "ust": read("ust"),
-    }
+    } | pws_pfas_points()
 
 
 def point_measures(bg: gpd.GeoDataFrame, pts: gpd.GeoDataFrame, name: str) -> pd.DataFrame:

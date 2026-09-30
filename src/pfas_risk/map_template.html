@@ -87,7 +87,7 @@
 </div>
 
 <script>
-const POLYGONS = __POLYGONS__;
+const CELLS = __CELLS__;
 const POINTS = __POINTS__;
 const METRICS = __METRICS__;
 
@@ -103,7 +103,7 @@ const labels = {
 };
 const fmt = (k, v) => k.startsWith('capture') ? Math.round(v * 100) + '%' : v.toFixed(2);
 document.getElementById('metrics').innerHTML =
-  '<tr><td></td><td><b>Model</b></td><td><b>Area only</b></td></tr>' +
+  '<tr><td></td><td><b>Model</b></td><td><b>Baseline</b></td></tr>' +
   Object.entries(METRICS).map(([k, [m, b]]) =>
     `<tr><td>${labels[k] || k}</td><td>${fmt(k, m)}</td><td>${fmt(k, b)}</td></tr>`).join('');
 
@@ -119,8 +119,32 @@ L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/${canva
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
+// Full hexagons arrive as their center and are drawn here: offsets in State Plane meters,
+// rotated by the Lambert grid convergence and converted to degrees (within ~2 m of exact).
+function hexRing([lon, lat], side) {
+  const g = -0.6717 * (lon + 71.5) * Math.PI / 180, k = 111320, c = Math.cos(lat * Math.PI / 180);
+  const ring = [];
+  for (let i = 0; i <= 6; i++) {
+    const a = (i % 6) * Math.PI / 3, dx = side * Math.cos(a), dy = side * Math.sin(a);
+    const ex = dx * Math.cos(g) - dy * Math.sin(g), ny = dx * Math.sin(g) + dy * Math.cos(g);
+    ring.push([lon + ex / (k * c), lat + ny / k]);
+  }
+  return ring;
+}
+const POLYGONS = {
+  type: 'FeatureCollection',
+  features: CELLS.rows.map(([geoid, t, pop, land, releases, pct, shape]) => ({
+    type: 'Feature',
+    properties: { geoid, town: CELLS.towns[t], POP20: pop, land_km2: land, releases, pct },
+    geometry: typeof shape[0] === 'number'
+      ? { type: 'Polygon', coordinates: [hexRing(shape, CELLS.hex_side_m)] } : shape,
+  })),
+};
+
 const bg = L.geoJSON(POLYGONS, {
-  style: f => ({ fillColor: colorFor(f.properties.pct), fillOpacity: 0.72, color: '#ffffff', weight: 0.4 }),
+  // Hairline borders only when zoomed in; at state zoom they wash out small cells.
+  style: f => ({ fillColor: colorFor(f.properties.pct), fillOpacity: 0.72, color: '#ffffff',
+                 weight: CELLS.rows.length > 8000 && map.getZoom() < 10 ? 0 : 0.4 }),
   onEachFeature: (f, layer) => {
     const p = f.properties;
     layer.bindTooltip(
@@ -135,6 +159,7 @@ const bg = L.geoJSON(POLYGONS, {
     });
   },
 }).addTo(map);
+map.on('zoomend', () => bg.setStyle(bg.options.style));
 
 L.geoJSON(POINTS, {
   pointToLayer: (f, latlng) => L.circleMarker(latlng, {

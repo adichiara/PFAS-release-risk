@@ -1,5 +1,8 @@
 """Specific PFAS source and evidence layers beyond the MassGIS and EPA facility data.
 
+Only the drinking-water layers improved the model (tested on 4 km² hexagons) and are used as
+features; the others are kept so the comparison can be rerun.
+
 - Airports: FAA public-use aerodromes and military airfields (AFFF for crash rescue and training).
 - Military installations: DoD MIRTA boundaries (AFFF, fire training areas).
 - EPA Toxics Release Inventory reporters: facilities handling listed toxic chemicals. None in
@@ -25,14 +28,14 @@ PWS_MCL_NG_L = 20.0       # Massachusetts PFAS6 drinking-water standard
 
 
 def airport_points() -> gpd.GeoDataFrame:
-    a = read("faa_airports")
+    a = read("airports")
     public = (a["TYPE_CODE"] == "AD") & (a["PRIVATEUSE"] == 0)
     military = a["MIL_CODE"].isin(["MIL", "ALL"])
     return a[public | military]
 
 
 def military_areas() -> gpd.GeoDataFrame:
-    return read("dod_mirta")
+    return read("military_installations")
 
 
 def tri_points() -> gpd.GeoDataFrame:
@@ -75,5 +78,6 @@ def sewer_areas() -> gpd.GeoDataFrame:
     return read("sewer_service")
 
 
-def point_layers() -> dict[str, gpd.GeoDataFrame]:
-    return {"airport": airport_points(), "tri": tri_points()} | pws_pfas_points()
+def evaluated_point_layers() -> dict[str, gpd.GeoDataFrame]:
+    """Layers tested as features and left out (see `status: evaluated` in config/sources.yaml)."""
+    return {"airport": airport_points(), "tri": tri_points()}
