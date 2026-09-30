@@ -1,0 +1,141 @@
+{
+  "headline": {
+    "residents": 7029917,
+    "public_water": 6009298,
+    "public_by_current_band": {
+      "10 to <20": 496714,
+      "2 to <10": 2294190,
+      "20 or more (state standard)": 45191,
+      "Not detected (<2)": 3173203
+    },
+    "public_by_peak_band": {
+      "10 to <20": 1149966,
+      "2 to <10": 1765785,
+      "20 or more (state standard)": 433814,
+      "Not detected (<2)": 2659733
+    },
+    "public_purchased": 2179454,
+    "private_wells": 1020619,
+    "private_expected_over20": 175097,
+    "private_expected_detected": 642582,
+    "private_with_nearby_public_wells": 792731
+  },
+  "groups": [
+    {
+      "group": "All residents",
+      "residents": 7029917,
+      "public_water": 6009298,
+      "current_over20": 0.0075,
+      "current_10_20": 0.0827,
+      "current_detected": 0.472,
+      "peak_over20": 0.0722,
+      "private_wells": 1020619,
+      "private_expected_over20": 0.1716,
+      "private_expected_detected": 0.6296
+    },
+    {
+      "group": "In EJ block groups",
+      "residents": 3482860,
+      "public_water": 3340518,
+      "current_over20": 0.0021,
+      "current_10_20": 0.0559,
+      "current_detected": 0.4159,
+      "peak_over20": 0.0455,
+      "private_wells": 142342,
+      "private_expected_over20": 0.221,
+      "private_expected_detected": 0.754
+    },
+    {
+      "group": "EJ: minority criterion",
+      "residents": 3232896,
+      "public_water": 3129309,
+      "current_over20": 0.002,
+      "current_10_20": 0.0585,
+      "current_detected": 0.4154,
+      "peak_over20": 0.0441,
+      "private_wells": 103587,
+      "private_expected_over20": 0.2474,
+      "private_expected_detected": 0.7992
+    },
+    {
+      "group": "EJ: income criterion",
+      "residents": 1301284,
+      "public_water": 1245043,
+      "current_over20": 0.0028,
+      "current_10_20": 0.0144,
+      "current_detected": 0.4326,
+      "peak_over20": 0.0202,
+      "private_wells": 56241,
+      "private_expected_over20": 0.1845,
+      "private_expected_detected": 0.6933
+    },
+    {
+      "group": "EJ: English isolation",
+      "residents": 408157,
+      "public_water": 404794,
+      "current_over20": 0.0,
+      "current_10_20": 0.0045,
+      "current_detected": 0.4195,
+      "peak_over20": 0.0047,
+      "private_wells": 3363,
+      "private_expected_over20": 0.3188,
+      "private_expected_detected": 0.8689
+    },
+    {
+      "group": "Not in EJ block groups",
+      "residents": 3547057,
+      "public_water": 2668780,
+      "current_over20": 0.0143,
+      "current_10_20": 0.1161,
+      "current_detected": 0.5421,
+      "peak_over20": 0.1055,
+      "private_wells": 878277,
+      "private_expected_over20": 0.1636,
+      "private_expected_detected": 0.6094
+    }
+  ],
+  "private_bands": {
+    "Under 10%": 307321,
+    "10 to 20%": 341287,
+    "20 to 30%": 267280,
+    "30% or more": 104731
+  },
+  "groundwater_validation": {
+    "wells": 1030,
+    "over20": {
+      "prevalence": 0.18,
+      "baseline_population": {
+        "roc_auc": 0.616,
+        "avg_precision": 0.269
+      },
+      "gradient_boosting": {
+        "roc_auc": 0.609,
+        "avg_precision": 0.264
+      },
+      "logistic": {
+        "roc_auc": 0.669,
+        "avg_precision": 0.295
+      }
+    },
+    "detect": {
+      "prevalence": 0.656,
+      "baseline_population": {
+        "roc_auc": 0.761,
+        "avg_precision": 0.855
+      },
+      "gradient_boosting": {
+        "roc_auc": 0.746,
+        "avg_precision": 0.845
+      },
+      "logistic": {
+        "roc_auc": 0.781,
+        "avg_precision": 0.87
+      }
+    }
+  },
+  "ucmr5_check": {
+    "systems": 257,
+    "correlation": 0.67
+  },
+  "run_date": "2026-09-30"
+}

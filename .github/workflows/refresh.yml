@@ -58,6 +58,7 @@ jobs:
         run: |
           pfas-risk -v download
           pfas-risk -v releases
+          pfas-risk -v exposure   # drinking water: public systems and private wells (front page)
           # Every unit with a committed evaluation is rerun, since the site compares them all;
           # 1 km² hexagons (the primary unit) go last so their run writes the final site.
           for unit in "--unit bg" "--unit hex --cell-km2 4" "--unit hex --cell-km2 2" "--unit hex --cell-km2 1"; do

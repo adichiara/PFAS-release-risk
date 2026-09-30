@@ -10,6 +10,8 @@ from datetime import datetime, timezone
 import pandas as pd
 
 from .config import FORWARD_CUTOFF, OUTPUT_DIR
+from .exposure import block_exposure, exposure_report, system_table
+from .exposure import block_group_table as exposure_block_groups
 from .features import attach_releases, build_features, unit_key
 from .fetch import fetch_release_zip, recorded_sha256, sha256
 from .mapping import BASELINE_TEXT, risk_map
@@ -18,6 +20,7 @@ from .population import population_report
 from .releases import build_release_list, locate_releases
 from .site import PRIMARY_UNIT, UnitResult, build_site
 from .sources import download_all
+from .water_map import water_map
 
 log = logging.getLogger("pfas_risk")
 
@@ -255,6 +258,24 @@ def cmd_population(args) -> None:
               f"  (x{r['top10_vs_density']} vs density alone)")
 
 
+def cmd_exposure(args) -> None:
+    """Drinking-water exposure: public systems (measured) and private wells (groundwater model)."""
+    out_dir = OUTPUT_DIR / "water"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    blocks = block_exposure()
+    systems = system_table()
+    report = exposure_report(blocks, systems)
+    report["run_date"] = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    (out_dir / "exposure.json").write_text(json.dumps(report, indent=2))
+    exposure_block_groups(blocks).to_csv(out_dir / "block_group_drinking_water.csv")
+    systems.to_csv(out_dir / "water_systems_pfas6.csv", index=False)
+    print(water_map(blocks, locate_releases(), out_dir / "water_map.html"))
+    h = report["headline"]
+    print(f"public water {h['public_water']:,}: now >= 20 ng/L "
+          f"{h['public_by_current_band'].get('20 or more (state standard)', 0):,}; "
+          f"private wells {h['private_wells']:,}: expected >= 20 ng/L {h['private_expected_over20']:,}")
+
+
 def cmd_run(args) -> None:
     cmd_evaluate(args)
     args.model = None
@@ -302,6 +323,9 @@ def main(argv: list[str] | None = None) -> None:
     p = sub.add_parser("map", help="write outputs/<unit>/risk_map.html")
     p.add_argument("--model", help="model to map (default: the selected model)")
     p.set_defaults(func=cmd_map)
+
+    p = sub.add_parser("exposure", help="drinking-water PFAS exposure: public systems and private wells")
+    p.set_defaults(func=cmd_exposure)
 
     p = sub.add_parser("population", help="who lives in higher-risk areas (census blocks, EJ, private wells)")
     p.set_defaults(func=cmd_population)

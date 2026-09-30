@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PFAS Drinking Water</title>
+<meta name="description" content="Who in Massachusetts drinks water with PFAS: measured public water results and a groundwater model for private wells, built on public data.">
+__STYLE__
+<style>
+  :root { --pub-0: #e7e5df; --pub-1: #f5c58a; --pub-2: #e07b39; --pub-3: #a8251b; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --pub-0: #3a3935; --pub-1: #b8864a; --pub-2: #e07b39; --pub-3: #f0584a; }
+  }
+  :root[data-theme="dark"] { --pub-0: #3a3935; --pub-1: #b8864a; --pub-2: #e07b39; --pub-3: #f0584a; }
+  .stack .seg-0 { fill: var(--pub-0); } .stack .seg-1 { fill: var(--pub-1); }
+  .stack .seg-2 { fill: var(--pub-2); } .stack .seg-3 { fill: var(--pub-3); }
+  .stack rect { stroke: var(--panel); stroke-width: 1; }
+  .legend i.sw { width: 12px; height: 12px; border: 0; border-radius: 2px; }
+  .legend i.seg-0 { background: var(--pub-0); } .legend i.seg-1 { background: var(--pub-1); }
+  .legend i.seg-2 { background: var(--pub-2); } .legend i.seg-3 { background: var(--pub-3); }
+</style>
+</head>
+<body>
+<main>
+  <h1>PFAS in Massachusetts drinking water</h1>
+  <p class="lede">Who drinks water with PFAS: measured results for every community water system,
+     and a groundwater model for the homes on private wells. Built only from public data.</p>
+  <a class="cta" href="water_map.html">Open the drinking-water map</a>
+  <a class="cta secondary" href="releases.html">Reported-release risk</a>
+  <a class="cta secondary" href="__REPO__">Code and data on GitHub</a>
+
+  <div class="kpis">__KPIS__</div>
+
+  <h2>Public water: measured</h2>
+  <p>Every community water system had to test its treated water for PFAS6 (six PFAS compounds)
+     under the 2020 state standard of 20 ng/L, so these are measurements, not estimates. Towns
+     that buy their water, such as the MWRA communities around Boston, take their supplier's
+     results. "Now" is each system's average over its last 12 months of results (for small systems that
+     tested less often after low early results, that can be 2021 or 2022); "highest year" is its worst
+     calendar-year average, often before treatment was installed.</p>
+  <div class="figure">__STACK_CHART__
+    <div class="legend">__STACK_LEGEND__</div>
+  </div>
+  <p class="note">__UCMR5_NOTE__</p>
+
+  <h3>Systems at 10 ng/L or more now</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>Water system</th><th>People served</th><th>PFAS6 now (ng/L)</th>
+      <th>Highest year (ng/L)</th><th>EPA UCMR 5, 2023–25 (ng/L)</th></tr></thead>
+    <tbody>__SYSTEM_ROWS__</tbody>
+  </table></div>
+
+  <h2>Private wells: estimated</h2>
+  <p>About __PRIVATE_POP__ people live outside every community water service area and are presumed to
+     drink from private wells, which no public program tests. Their risk is estimated from public wells,
+     which were tested systematically: a model trained on the highest raw (untreated) PFAS6 result at
+     __N_WELLS__ public groundwater wells, using measured PFAS at other public wells within 5 km and how
+     developed the area is (population, sewer service, aquifer).</p>
+  <div class="scroll"><table>
+    <thead><tr><th>How well it predicts, holding out whole towns</th><th>PFAS6 20 ng/L or more</th>
+      <th>PFAS detected</th></tr></thead>
+    <tbody>__GW_ROWS__</tbody>
+  </table></div>
+  <p>ROC AUC is 0.5 for a coin flip and 1.0 for perfect ranking. The model beats development alone, but
+     it cannot say which well is contaminated: groundwater PFAS here is widespread and depends on things
+     public data does not capture (past spills, well depth, local geology). Distance to mapped industries,
+     airports, landfills and other likely sources added nothing once nearby well results and development
+     were included. Private wells also tend to be shallower than public wells, so the public-well rates
+     may not carry over. Read these as area-level odds; only testing a well answers the question for a home.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Estimated chance that water at the location has PFAS6 of 20 ng/L or more</th>
+      <th>Private-well residents</th></tr></thead>
+    <tbody>__PRIVATE_ROWS__</tbody>
+  </table></div>
+
+  <h2>Who is affected</h2>
+  <p>By the state's 2020 Environmental Justice block groups (minority, income and English-isolation
+     criteria). Shares for public water are of that group's residents on public water; private-well
+     figures are model estimates.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Group</th><th>Residents</th><th>Public water: 20+ now</th><th>10 to &lt;20 now</th>
+      <th>Detected now</th><th>20+ in highest year</th><th>On private wells</th>
+      <th>Private wells: est. share 20+</th></tr></thead>
+    <tbody>__GROUP_ROWS__</tbody>
+  </table></div>
+  <p class="note">Many EJ neighborhoods are in cities served by MWRA reservoir water, where PFAS6 is not
+     detected; their residents are less likely than others to have PFAS in their tap water.</p>
+
+  <h2>Method</h2>
+  <ul>
+    <li><b>Public water:</b> finished-water PFAS6 results per system (MassDEP drinking-water data on the
+        EEA Data Portal; non-detects count as zero). Purchased water follows EPA SDWIS buyer-seller links.
+        Census blocks take the community system whose service area holds them.</li>
+    <li><b>Private wells:</b> census blocks outside every community service area. Estimates come from a
+        logistic model trained on public groundwater wells and applied at each block.</li>
+    <li><b>Checks:</b> state PFAS6 levels against EPA's UCMR 5 results; the groundwater model with
+        town-grouped cross-validation.</li>
+    <li><b>Limits:</b> the drinking-water API returns at most 100 results per system and water type, so
+        about 40 large systems are represented by a sample of their results; small non-community
+        systems (schools, workplaces) and bottled water are not modeled.</li>
+  </ul>
+
+  <h2>Reported releases</h2>
+  <p>The companion analysis ranks where MassDEP is most likely to receive a PFAS release report. It
+     reflects where testing and investigations happen as much as where PFAS is (metro Boston, on
+     reservoir water with few wells to test, has almost no reported PFAS releases), so it is kept as
+     supporting context: <a href="releases.html">reported-release risk</a>.</p>
+
+  <h2>Data sources</h2>
+  <div class="scroll"><table>
+    <thead><tr><th class="wrap">Dataset</th><th class="wrap">Publisher</th><th>Status</th></tr></thead>
+    <tbody>__SOURCE_ROWS__</tbody>
+  </table></div>
+
+  <h2>Downloads</h2>
+  <ul class="downloads">__DOWNLOADS__</ul>
+
+  <footer>Run __RUN_DATE__. Code, data catalog and method: <a href="__REPO__">GitHub</a>.</footer>
+</main>
+</body>
+</html>

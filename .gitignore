@@ -15,3 +15,4 @@ outputs/*/*
 !outputs/*/evaluation.md
 !outputs/*/evaluation.json
 !outputs/*/population.json
+!outputs/*/exposure.json

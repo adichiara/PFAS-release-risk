@@ -27,6 +27,7 @@ from .site_sections import (
     watchlist_rows,
     write_downloads,
 )
+from .water_site import build_water_page
 
 SITE_DIR = ROOT / "docs"
 TEMPLATE = Path(__file__).with_name("site_template.html")
@@ -281,8 +282,12 @@ def build_site(primary: UnitResult, others: list[UnitResult], releases: gpd.GeoD
             .replace("__POPULATION__", population)
             .replace("__DOWNLOADS__", "".join(f'<li><a href="{h}">{html.escape(t)}</a></li>'
                                               for h, t in downloads)))
-    (SITE_DIR / "index.html").write_text(page)
+    (SITE_DIR / "releases.html").write_text(page)
     for u in [primary, *others]:
         if u.map_path.exists():
             shutil.copyfile(u.map_path, SITE_DIR / u.map_file)
+    # The drinking-water analysis is the front page when its outputs exist.
+    front = build_water_page(SITE_DIR, REPO_URL, _source_rows())
+    if front is None:
+        shutil.copyfile(SITE_DIR / "releases.html", SITE_DIR / "index.html")
     return SITE_DIR / "index.html"
