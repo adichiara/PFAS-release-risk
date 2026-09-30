@@ -16,7 +16,7 @@ from pathlib import Path
 import geopandas as gpd
 import pandas as pd
 
-from .config import ROOT, catalog
+from .config import OUTPUT_DIR, ROOT, catalog
 from .fetch import SOURCE_RECORD
 from .site_sections import (
     capture_chart,
@@ -27,6 +27,7 @@ from .site_sections import (
     watchlist_rows,
     write_downloads,
 )
+from .water_site import build_water_page
 
 SITE_DIR = ROOT / "docs"
 TEMPLATE = Path(__file__).with_name("site_template.html")
@@ -194,6 +195,47 @@ def _other_units_section(primary: UnitResult, others: list[UnitResult]) -> str:
     return "".join(parts)
 
 
+def _population_section(u: UnitResult, site_dir: Path) -> tuple[str, list[tuple[str, str]]]:
+    """'Who lives in higher-risk areas' from outputs/<unit>/population.json, if it was computed."""
+    path = OUTPUT_DIR / u.key / "population.json"
+    if not path.exists():
+        return "", []
+    groups = json.loads(path.read_text())["groups"]
+    rows = []
+    for g in groups:
+        cls = ' class="selected"' if g["group"] == "All residents" else ""
+        rows.append(
+            f'<tr{cls}><td class="wrap">{html.escape(g["group"])}</td><td>{g["residents"]:,}</td>'
+            f'<td>{g["top10"] * 100:.0f}%</td><td>{g["top10_vs_density"]:.2f}</td>'
+            f'<td>{g["top25"] * 100:.0f}%</td><td>{g["top25_vs_density"]:.2f}</td></tr>')
+    wells = next(g for g in groups if g["group"].startswith("Outside community water"))
+    downloads = []
+    csv = OUTPUT_DIR / u.key / "block_group_risk.csv"
+    if csv.exists():
+        shutil.copyfile(csv, site_dir / "data" / "block_group_risk.csv")
+        downloads.append(("data/block_group_risk.csv",
+                          "Risk for each 2020 block group (population-weighted), with EJ fields and private-well share"))
+    section = f"""
+  <h2>Who lives in higher-risk areas</h2>
+  <p>Each 2020 census block takes the score of the {html.escape(u.labels[0])} it sits in (area-weighted
+     when it straddles cells), so the question becomes how many people live in the areas the model ranks
+     highest. Groups come from the state's 2020 Environmental Justice block groups (minority, income and
+     English-isolation criteria) and from community water service areas: residents outside them are
+     presumed to be on private wells. "vs density" divides a group's share by the share expected from
+     where it lives on the density scale alone (1.00 means no difference beyond density; population
+     density is a model input, and many demographics follow it).</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Group</th><th>Residents</th><th>In top-risk 10% of land</th><th>vs density</th>
+      <th>In top-risk 25% of land</th><th>vs density</th></tr></thead>
+    <tbody>{"".join(rows)}</tbody>
+  </table></div>
+  <p class="note">About {round(wells["residents"] * wells["top10"], -3):,.0f} people on private wells live in the
+     top-risk 10% of land; a release nearby matters most for them, since their water is not tested
+     or treated by a public system. Scores describe the area, not any one home, and reflect where
+     releases have been reported, which also depends on where testing and investigations happen.</p>"""
+    return section, downloads
+
+
 def build_site(primary: UnitResult, others: list[UnitResult], releases: gpd.GeoDataFrame) -> Path:
     r = primary.report
     model = r["best_model"]
@@ -201,6 +243,8 @@ def build_site(primary: UnitResult, others: list[UnitResult], releases: gpd.GeoD
     base_col, base_label = primary.baseline
     SITE_DIR.mkdir(exist_ok=True)
     downloads = write_downloads(SITE_DIR, primary.key, plural, primary.df, primary.oof, model, releases)
+    population, more = _population_section(primary, SITE_DIR)
+    downloads += more
     source = ("MassDEP's release database plus the 2021 project list"
               if r["release_source"] == "massdep_pfas_releases.csv"
               else "the 2021 list of MassDEP PFAS release sites")
@@ -235,10 +279,15 @@ def build_site(primary: UnitResult, others: list[UnitResult], releases: gpd.GeoD
             .replace("__YEAR_CHART__", releases_by_year_chart(releases))
             .replace("__N_ALL_RELEASES__", str(len(releases)))
             .replace("__OTHER_UNITS__", _other_units_section(primary, others))
+            .replace("__POPULATION__", population)
             .replace("__DOWNLOADS__", "".join(f'<li><a href="{h}">{html.escape(t)}</a></li>'
                                               for h, t in downloads)))
-    (SITE_DIR / "index.html").write_text(page)
+    (SITE_DIR / "releases.html").write_text(page)
     for u in [primary, *others]:
         if u.map_path.exists():
             shutil.copyfile(u.map_path, SITE_DIR / u.map_file)
+    # The drinking-water analysis is the front page when its outputs exist.
+    front = build_water_page(SITE_DIR, REPO_URL, _source_rows())
+    if front is None:
+        shutil.copyfile(SITE_DIR / "releases.html", SITE_DIR / "index.html")
     return SITE_DIR / "index.html"

@@ -131,7 +131,7 @@ sources:
       where: STATE='MA'
     role: feature
     status: evaluated
-    result: ROC AUC 0.714 -> 0.713, top-10%-land capture 35% -> 34% (4 km² hexagons, smoothed logistic); not used
+    result: ROC AUC 0.714 -> 0.713, top-10%-land capture 35% -> 34% (4 km² hexagons, smoothed logistic); also no gain in the groundwater model; not used
     notes: >
       The layer does not flag Part 139 certification, so public-use aerodromes (37) and
       military airfields stand in for airports with crash-rescue firefighting.
@@ -147,7 +147,7 @@ sources:
       where: STATENAMECODE='MA'
     role: feature
     status: evaluated
-    result: ROC AUC 0.714 -> 0.707, capture 35% -> 32% (4 km² hexagons, smoothed logistic); not used
+    result: ROC AUC 0.714 -> 0.707, capture 35% -> 32% (4 km² hexagons, smoothed logistic); also no gain in the groundwater model; not used
 
   epa_tri:
     title: EPA Toxics Release Inventory reporters, Massachusetts, 2014-2024
@@ -161,7 +161,7 @@ sources:
       last_year: 2024
     role: feature
     status: evaluated
-    result: ROC AUC 0.714 -> 0.706, capture 35% -> 32% (4 km² hexagons, smoothed logistic); not used
+    result: ROC AUC 0.714 -> 0.706, capture 35% -> 32% (4 km² hexagons, smoothed logistic); also no gain in the groundwater model; not used
     notes: No Massachusetts facility reported a PFAS chemical in these years, so all reporters are used.
 
   pws_sources:
@@ -195,8 +195,10 @@ sources:
     path: shapefiles/state/DEP_Sewer_Service_Areas.zip
     layer: SEWER_SERVICE_AREA_POTW_POLY.shp
     role: feature
-    status: evaluated
-    result: ROC AUC 0.714 -> 0.722, capture 35% -> 30% (4 km² hexagons, smoothed logistic); not used
+    status: available
+    notes: >
+      Used by the groundwater model (sewered or on septic systems). Tested as a release-model
+      feature and left out there (ROC AUC 0.714 -> 0.722, capture 35% -> 30%).
 
   epa_frs:
     title: EPA Facility Registry Service, Massachusetts facilities and NAICS codes
@@ -210,6 +212,45 @@ sources:
       Facilities in the PFAS-related sectors of config/pfas_sectors.yaml (by NAICS prefix)
       become point features. Public replacement for the non-public BAW industry list used in 2021.
 
+  # ---- Who lives in higher-risk areas (context, not model features) -----------
+  ej_populations:
+    title: 2020 Environmental Justice populations (block groups; minority, income, limited-English criteria)
+    publisher: MassGIS / Executive Office of Energy and Environmental Affairs
+    path: shapefiles/census2020/ej2020.zip
+    layer: EJ_POLY.shp
+    role: context
+    status: available
+
+  sdwis_sellers:
+    title: Purchased-water links between public water systems (who buys from whom)
+    publisher: U.S. EPA Safe Drinking Water Information System (Envirofacts)
+    url: https://www.epa.gov/enviro/sdwis-overview
+    file: sdwis_sellers_ma.csv
+    fetch:
+      kind: envirofacts
+      url: https://data.epa.gov/efservice/WATER_SYSTEM_FACILITY/PRIMACY_AGENCY_CODE/=/MA/SELLER_PWSID/!=/null
+    role: context
+    status: available
+    notes: Systems that buy their water (MWRA members, for example) take their sellers' PFAS results.
+
+  ucmr5:
+    title: EPA UCMR 5 PFAS results for public water systems, 2023-2025 (29 PFAS)
+    publisher: U.S. EPA
+    url: https://www.epa.gov/dwucmr/occurrence-data-unregulated-contaminant-monitoring-rule
+    download_url: https://www.epa.gov/system/files/other-files/2023-08/ucmr5-occurrence-data.zip
+    file: ucmr5-occurrence-data.zip
+    role: context
+    status: available
+    notes: Federal cross-check on the state PFAS6 results; the six PFAS6 compounds are summed per sample.
+
+  water_service_areas:
+    title: Community public water system service areas (outside them, homes are presumed on private wells)
+    publisher: MassGIS / MassDEP
+    path: shapefiles/state/DEP_PWS_Water_Service_Areas.zip
+    layer: PWS_WATER_SERVICE_AREA_COMM_POLY.shp
+    role: context
+    status: available
+
   # ---- Identified, not yet wired in -----------------------------------------
   land_cover_2016:
     title: 2016 land cover / land use (industrial, commercial, impervious fractions)
@@ -219,9 +260,3 @@ sources:
     status: planned
     notes: 294 tiles, ~5.4 GB. Optional heavy step.
 
-  ucmr5:
-    title: EPA UCMR 5 PFAS occurrence data for public water systems
-    publisher: U.S. EPA
-    url: https://www.epa.gov/dwucmr/occurrence-data-unregulated-contaminant-monitoring-rule
-    role: context
-    status: planned

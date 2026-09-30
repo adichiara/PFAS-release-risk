@@ -1,0 +1,524 @@
+pws_id,system,population_served,pfas6_current_ng_l,pfas6_peak_ng_l,results_from,results_systems,ucmr5_pfas6_ng_l,ucmr5_samples
+2037007,Brook Village Condominium,400,37.5,42.4,own,2037007,,
+2037001,Codman Hill Condominium,360,32.9,34.0,own,2037001,,
+4334078,Maynard State Llc,35,30.9,34.1,own,4334078,,
+2037013,Applewood Community Corporation,500,24.5,25.8,own,2037013,,
+2002010,Pine Hill Condominium,95,24.1,27.3,own,2002010,,
+3023000,Bedford Water Dept.,14394,23.7,23.7,own,3023000,0.0,4.0
+2037002,Harvard Ridge Condominium,350,22.8,34.1,own,2037002,,
+2286018,Pilot Grove Apartments,175,22.6,26.7,own,2286018,,
+3119000,Hamilton Water Dept,7377,22.4,27.9,own,3119000,8.5,5.0
+3078001,Old Farm Road Water Trust,40,21.9,24.2,own,3078001,,
+4042000,Bridgewater Water Department,28633,20.5,21.9,own,4042000,12.0,6.0
+2037006,Centre Village Apartments,36,20.1,23.4,own,2037006,,
+3056000,Chelmsford Water District,28750,19.4,20.2,own,3056000,10.1,8.0
+2286031,Pilot Grove Apartments Ii,134,19.2,19.9,own,2286031,,
+4211001,Kings Grant Water Co Inc,434,18.0,19.1,own,4211001,,
+2151000,Leicester Water Supply District,3200,17.8,19.6,own,2151000,,
+4244000,Randolph Water Department,34362,17.3,23.9,purchased,4244001,18.6,4.0
+4133000,Holbrook Public Works Dept,11405,17.3,23.9,purchased,4244001,16.2,4.0
+4218000,Norton Water Department,19161,17.0,17.1,own,4218000,7.1,6.0
+3056001,East Chelmsford Water District,2800,16.2,18.3,own,3056001,,
+3038020,"Andrews Farm Water Co.,Inc.",145,16.0,29.8,own,3038020,,
+2139008,The Preserve At Hopkinton Condo,80,15.7,15.8,own,2139008,,
+4040000,Braintree Water And Sewer Dept.,39143,15.3,24.9,own,4040000,12.4,4.0
+3295001,Tewksbury Hospital,2500,15.2,15.8,own,3295001,,
+4285000,Stoughton Water Department,29281,14.8,16.9,own,4285000,5.6,13.0
+3320000,Wenham Water Dept.,3942,14.5,14.4,own,3320000,12.2,2.0
+3301008,Benchmark Condominiums,60,14.4,14.4,own,3301008,,
+2125014,Harvard Green Condominiums,150,14.1,15.6,own,2125014,,
+4082000,Duxbury Water Department,15636,14.0,19.3,own,4082000,10.4,16.0
+4219000,Norwell Water Department,11495,13.9,19.3,own,4219000,15.3,6.0
+2304000,"Uxbridge Dpw,  Water Division",11525,13.7,14.9,own,2304000,2.6,6.0
+4239049,Herring Cove Condominiums Trust,25,13.3,14.6,own,4239049,,
+2187002,Sunny Spring/Ann And Hope  (Blk),25,13.2,14.4,own,2187002,,
+3330000,Westford Water Department,18680,13.0,16.4,own,3330000,6.2,7.0
+3078006,Aquarion Water Company (Dover),1922,12.8,13.4,own,3078006,,
+3298000,Topsfield Water Department,5435,12.7,21.5,own,3298000,14.2,2.0
+4118000,Halifax Water Department,7553,12.7,13.4,own,4118000,5.2,8.0
+4307000,Walpole Water Dept,24070,12.5,13.6,own,4307000,5.5,4.0
+3157001,Hanscom Family Housing (Landings),3067,11.8,11.8,purchased,"3023000,6000000",,
+3023002,Hanscom Afb,11789,11.8,11.8,purchased,"3023000,6000000",0.0,8.0
+2174000,"Maynard Dpw, Water Division",10401,11.7,13.1,own,2174000,2.7,6.0
+2037014,Liberty House Condominium,80,11.7,11.7,own,2037014,,
+2290014,Wilkinsonville Water District,2773,11.6,11.6,own,2290014,,
+3229000,Peabody Water Dept.,54481,11.5,11.4,own,3229000,4.1,12.0
+2151009,Staffordshire Country Estates,140,11.4,20.0,own,2151009,,
+2282000,Sterling Water Department,6754,11.1,13.6,own,2282000,1.3,4.0
+2271000,Shrewsbury Water Department,38325,11.0,14.4,own,2271000,5.5,2.0
+3073000,Dedham Westwood Water Dist.,41630,11.0,14.6,own,3073000,4.7,8.0
+4265000,Seekonk Water District,14704,10.8,11.6,own,4265000,4.6,2.0
+2110000,Grafton Water District,10925,10.7,10.5,own,2110000,7.0,8.0
+3305000,Wakefield Water Dept,27090,10.6,24.9,own,3305000,2.1,8.0
+3347000,Woburn Water Dept.,40876,10.6,21.2,own,3347000,4.5,6.0
+3166000,Manchester By The Sea Dpw,5170,10.5,18.6,own,3166000,8.7,6.0
+4099000,Foxboro Water Department,18639,10.3,17.1,own,4099000,9.5,6.0
+3038001,Four Mile Village,116,10.2,13.0,own,3038001,,
+2208000,Norfolk Water Division,7602,10.1,12.4,own,2208000,2.1,8.0
+3269028,Leland Farms,25,10.1,14.5,own,3269028,,
+2232000,Pepperell Dpw Water Division,9217,10.0,15.4,own,2232000,9.6,5.0
+3079000,Dracut Water Supply District,25789,9.9,12.2,own,3079000,1.9,8.0
+2270000,Shirley Water District,4113,9.7,12.4,own,2270000,2.8,6.0
+2175000,Medfield Water Dept.,12894,9.7,13.3,own,2175000,4.5,6.0
+4076000,Dighton Water District,5264,9.7,9.3,own,4076000,3.5,4.0
+3116000,Groveland Water Department,6743,9.6,12.0,own,3116000,4.1,4.0
+2025000,Bellingham Dpw Water  Sewer Division,16061,9.5,22.5,own,2025000,3.4,4.0
+4350001,Wrentham Developmental Center,937,9.4,11.2,own,4350001,,
+4001000,Abington/Rockland Joint Wtr. Works,33647,9.2,15.8,own,4001000,12.7,10.0
+3315000,Wayland Water Department,13196,9.2,15.2,own,3315000,4.0,8.0
+3199000,Needham Water Dept,33130,9.0,10.6,own,3199000,2.3,6.0
+2286033,Regency At Stow Condominiums,132,9.0,11.3,own,2286033,,
+4122000,Hanover Water Dept,14984,8.8,18.7,own,4122000,6.5,6.0
+3288000,Sudbury Water District,18416,8.8,13.0,own,3288000,5.2,10.0
+3157000,Lincoln Water Dept,5539,8.6,9.4,own,3157000,5.5,8.0
+2017000,Auburn Water District,12255,8.5,12.2,own,2017000,3.8,12.0
+2270001,Mci Shirley,3500,8.4,12.2,own,2270001,8.6,2.0
+2162000,Lunenburg Water District,7045,8.2,10.8,own,2162000,2.5,4.0
+2125000,Harvard Water Department,1422,8.1,10.0,own,2125000,,
+4131000,Weir River Water System,33739,8.0,8.0,own,4131000,3.4,8.0
+4131005,Linden Ponds,384,8.0,8.0,purchased,4131000,,
+3317000,Wellesley Water Division,29550,7.7,15.4,own,3317000,3.5,10.0
+2136000,Holliston Water Department,15713,7.7,10.1,own,2136000,5.1,6.0
+3206000,Newburyport Water Department,20335,7.6,7.2,own,3206000,0.8,6.0
+2002000,Acton Water Supply District,20780,7.6,20.7,own,2002000,13.3,10.0
+1015000,Athol Dpw  Water Division,10418,7.4,7.4,own,1015000,0.0,4.0
+2140010,Hubbardston House Apartments,40,7.4,9.1,own,2140010,,
+4182000,Middleborough Water Supply,15350,7.3,13.8,own,4182000,5.2,20.0
+1289001,Cliffside Apartments,500,7.2,7.9,own,1289001,,
+4018000,Town Of Avon,4777,7.2,14.9,own,4018000,5.2,4.0
+4065000,Cohasset Water Dept,7555,7.2,20.7,own,4065000,5.2,4.0
+2177000,Medway Water Department,13115,7.0,8.1,own,2177000,5.8,4.0
+3269002,Woodhaven Elder Housing Committee,30,7.0,9.6,own,3269002,,
+1111001,The Macduffie School,305,6.9,10.1,own,1111001,,
+3163000,Lynn Water And Sewer Comm,101253,6.8,7.4,own,3163000,2.2,4.0
+4123000,Hanson Water Department,9546,6.7,9.0,own,4123000,7.4,2.0
+4211000,North Attleboro Water Dept,28863,6.6,19.5,own,4211000,13.0,8.0
+2287020,Sturbridge Retirement Coop. Corp.,320,6.5,6.6,own,2287020,,
+2032000,Blackstone Water Department,9868,6.5,10.0,own,2032000,2.8,2.0
+2028015,Whitney Estates Condominiums,40,6.5,7.0,own,2028015,,
+4052054,Meadow Woods Mobile Home Park,120,6.4,8.3,own,4052054,,
+4350000,Wrentham Water Division,11795,6.4,8.6,own,4350000,2.4,6.0
+2286000,Juniper Hill Water Company,220,6.3,6.7,own,2286000,,
+4238000,Plainville Water Department,8805,6.1,13.2,own,4238000,3.2,8.0
+3258000,Salem Water Department,44480,6.0,8.6,purchased,3030001,0.0,4.0
+3030000,Beverly Water Dept,47461,6.0,8.6,purchased,3030001,0.0,4.0
+4245000,Raynham Center Water District,10824,5.9,15.1,own,4245000,22.4,6.0
+4310003,Onset Fire Districtwater Dept.,4458,5.8,6.3,own,4310003,1.5,8.0
+4145000,Kingston Water Department,14640,5.8,6.1,own,4145000,0.0,5.0
+2110001,South Grafton Water District,3262,5.7,6.6,own,2110001,,
+2028020,Riverbridge,1330,5.7,7.5,own,2028020,,
+2294000,Templeton Munic. Light And Water Plant,6152,5.4,10.2,own,2294000,1.7,8.0
+3198000,Natick Water And Sewer Division,37006,5.3,25.2,own,3198000,15.0,8.0
+3295000,Tewksbury Water Department,31342,5.3,6.2,own,3295000,3.5,4.0
+3078005,Meadowbrook Water Trust,57,5.3,25.2,purchased,3198000,,
+3078002,Glen Ridge Residents Trust,135,5.3,25.2,purchased,3198000,,
+3164000,Lynnfield Center Water District,8569,5.2,15.5,own,3164000,1.9,6.0
+1024002,Pine Valley Plantation,600,5.2,6.6,own,1024002,,
+1283017,Heron Pond At Stockbridge,50,5.2,5.4,own,1283017,,
+3149000,Lawrence Water Works,88877,5.1,6.2,own,3149000,0.0,4.0
+4266000,Sharon Water Dept,16991,5.1,18.7,own,4266000,8.9,12.0
+2028007,Northbrook Village I / Berlin Ret.,48,5.0,7.0,own,2028007,,
+3330019,Haystack Estates,60,5.0,5.0,own,3330019,5.4,2.0
+2054005,Charlton Manor Rest Home,26,4.9,4.9,own,2054005,,
+2101000,Franklin Water Department,33399,4.8,12.7,own,2101000,2.0,14.0
+2115000,Groton Water Department,5456,4.8,5.5,own,2115000,0.0,4.0
+4095000,Fall River Water Department,94000,4.7,5.3,own,4095000,0.0,4.0
+2290001,Manchaug Water District Of Sutton,476,4.7,7.0,own,2290001,,
+4334090,Town Of Westport,250,4.7,5.3,purchased,4095000,,
+3301000,Tyngsborough Water District,4382,4.7,4.8,purchased,3160000,0.6,8.0
+4172035,Beechwood Point Condos,88,4.7,4.7,own,4172035,,
+4336000,Weymouth Water Department,57613,4.7,10.8,own,4336000,0.0,6.0
+4336007,Southfield Redevelopement Authority,1800,4.7,10.8,purchased,4336000,,
+3160000,Lowell Regional Water Utility,115000,4.7,4.8,own,3160000,1.2,4.0
+2226009,Maplebrook Apartments,33,4.6,6.0,own,2226009,,
+4171000,Marshfield Water Department,27750,4.5,8.3,own,4171000,1.7,31.0
+4231000,Pembroke Water Division Dpw,18251,4.5,4.5,own,4231000,0.0,6.0
+3031000,Billerica Water Works,42119,4.5,7.5,own,3031000,2.4,4.0
+2151002,Hillcrest Water District,1500,4.5,4.5,own,2151002,,
+2323000,West Brookfield Water Department,2114,4.4,5.2,own,2323000,,
+4318056,Massasoit Hills Trailer Park,50,4.4,5.7,own,4318056,,
+1309000,Ware Water Dept,10066,4.3,6.8,own,1309000,4.4,4.0
+3014000,Ashland Water And Sewer Dept.,18832,4.3,7.5,own,3014000,0.0,2.0
+2103000,Gardner Water Department,21287,4.3,4.3,own,2103000,0.0,6.0
+4083000,East Bridgewater Water Dept,14526,4.2,4.2,own,4083000,2.5,4.0
+4264000,Scituate Water Division,18297,4.2,5.4,own,4264000,2.7,10.0
+2216006,Northbridge Water Division,7889,4.2,7.6,purchased,2216000,0.0,4.0
+2216000,Whitinsville Water Company,7933,4.2,7.6,own,2216000,0.0,8.0
+2081000,Dunstable Water Department,337,4.1,5.0,own,2081000,,
+4102035,Freetown Water Commission,1600,4.1,4.4,purchased,"4095000,4201000",,
+1148000,Lanesborough Fire And Water District,2324,4.0,128.6,own,1148000,,
+1192003,Montague Center Water District,450,4.0,6.1,own,1192003,,
+3301020,Colony Heights Condominium,120,4.0,12.1,own,3301020,,
+4146006,Clark Shores Water Corporation,125,3.9,8.1,own,4146006,,
+2316000,Webster Water Department,17776,3.9,9.8,own,2316000,1.1,4.0
+2179000,Mendon Water Department,470,3.9,11.1,purchased,2138000,,
+4016000,Attleboro Water Dept,46654,3.9,16.3,own,4016000,5.1,8.0
+2138000,Hopedale Water Department,6017,3.9,11.1,own,2138000,6.4,4.0
+3259000,Salisbury Water Division,9189,3.8,6.1,own,3259000,1.5,4.0
+2134000,"Holden Water Division, Dpw",17951,3.8,5.6,own,2134000,1.3,10.0
+3128000,Haverhill Water Dept,63235,3.8,4.1,own,3128000,0.0,4.0
+3259001,Rings Island Water District,250,3.8,6.1,purchased,3259000,,
+4052025,Pinetree Village,348,3.7,4.6,own,4052025,,
+4334092,Noquochoke Village Llc,180,3.6,3.6,own,4334092,,
+2187000,Millis Water Dept,9002,3.6,11.7,own,2187000,3.5,8.0
+4003000,Acushnet Water Department,8384,3.6,3.6,purchased,4201000,0.0,4.0
+4201000,City Of New Bedford Dpi,101079,3.6,3.6,own,4201000,0.0,4.0
+4088000,Easton Water Div,23112,3.5,24.1,own,4088000,9.5,7.0
+3301035,Curtis Hill Condominium,96,3.5,20.9,own,3301035,,
+4322000,West Bridgewater Water Dept,7856,3.5,16.1,own,4322000,1.8,8.0
+4292000,Swansea Water District,17375,3.4,5.6,own,4292000,2.1,12.0
+4020002,Centerville Osterville Marstons Mills Wd,25000,3.4,4.9,own,4020002,0.7,30.0
+3049000,Cambridge Water Department,118214,3.4,17.0,own,3049000,1.2,4.0
+2139006,Deerfield Estates,100,3.4,3.7,own,2139006,,
+1124000,Hardwick Center Water District,80,3.4,4.9,own,1124000,,
+3067000,Concord Water Dept,18788,3.3,4.9,own,3067000,1.8,11.0
+4072000,Dartmouth Water Division,24630,3.3,5.2,own,4072000,5.8,10.0
+4273000,Somerset Water Department,18303,3.3,4.6,own,4273000,0.0,4.0
+2147000,Lancaster Water Department,6000,3.3,4.5,own,2147000,0.0,4.0
+1127000,Hatfield Water Dept,3183,3.2,5.2,own,1127000,0.0,8.0
+2017001,Elm Hill Water District,2278,3.2,3.3,purchased,2348000,,
+4052070,Townhouses @ Copper Lantern,176,3.2,3.2,own,4052070,,
+2348000,"Worcester Dpwp, Water Supply Division",206518,3.2,3.3,own,2348000,0.0,4.0
+2186001,Millbury Ind. Park/ Park Hill Village,400,3.2,3.3,purchased,2348000,,
+2228000,Paxton Water Department,4300,3.2,3.3,purchased,2348000,0.0,4.0
+2332005,Leino Park Water District,80,3.1,3.2,purchased,2097000,,
+2097000,Fitchburg Dpw  Division Of Water Supply,41946,3.1,3.2,own,2097000,0.6,8.0
+2332001,Holmes Park Water District,131,3.1,3.2,purchased,2097000,,
+2287000,Sturbridge Water Department,4567,3.1,3.3,own,2287000,0.0,8.0
+2332000,Westminster Department Of Public Works,3741,3.1,3.2,purchased,2097000,0.0,4.0
+3079001,Kenwood Water District,2000,3.0,3.7,purchased,"3160000,3181000",2.0,8.0
+3205001,Byfield Water District,2228,3.0,4.7,own,3205001,,
+2139007,Village At Highland Park,50,3.0,15.5,own,2139007,,
+2280000,Spencer Water Department,7037,2.9,3.2,own,2280000,0.0,4.0
+2286017,Elizabeth Brook Apartments,54,2.9,2.9,own,2286017,,
+2226000,Aquarion Water Company Oxford,7343,2.8,5.7,own,2226000,0.0,6.0
+2034028,Sunset Ridge Condominiums,42,2.8,2.9,own,2034028,,
+4055000,Chatham Water Department,6472,2.8,14.6,own,4055000,0.0,10.0
+3252000,Rockport Water Dept,5023,2.8,3.5,own,3252000,0.0,4.0
+2039000,Boylston Water District,3343,2.6,7.1,own,2039000,1.7,6.0
+4096001,Otis Air National Guard Base,3000,2.6,4.1,own,4096001,0.0,2.0
+4036002,North Sagamore Water District,3793,2.6,2.9,own,4036002,0.0,4.0
+1024015,Washington Acres,30,2.6,7.5,own,1024015,,
+2328000,Westborough Water Department,21567,2.6,6.1,own,2328000,1.4,12.0
+4221000,Oak Bluffs Water District,5341,2.6,7.0,own,4221000,0.0,10.0
+2115001,West Groton Water Supply District,1853,2.6,5.5,own,2115001,,
+2054040,Woodland Walk Apartments,76,2.5,5.9,own,2054040,,
+1111000,Bachelor Knolls,101,2.4,4.3,own,1111000,,
+4338000,Whitman Water System,14837,2.4,14.6,purchased,4044000,0.0,4.0
+2037036,Paddock Estates,463,2.4,3.6,own,2037036,,
+4044000,Brockton Water Department,105643,2.4,14.6,own,4044000,0.0,4.0
+1227003,Three Rivers Fire District,3258,2.4,3.7,own,1227003,,
+1203000,Mill River Water Takers Association,100,2.4,3.9,own,1203000,,
+4239045,Aquarion Water Company,2267,2.4,2.6,own,4239045,,
+4003004,Acushnet Manufactured Homes,85,2.4,6.4,own,4003004,,
+4240008,Cranberry Knoll,40,2.3,4.0,own,4240008,,
+4052069,Townhouses At Chance Court,40,2.3,2.3,own,4052069,,
+1120015,White Birch Garden Apartments,25,2.3,4.2,own,1120015,,
+3144000,Ipswich Dpu  Water Dept,13090,2.2,10.4,own,3144000,2.2,12.0
+3009000,Andover Water Dept,36569,2.2,3.4,own,3009000,0.0,4.0
+3342000,Wilmington Water Dept,22481,2.2,10.4,own,3342000,0.0,10.0
+2045004,"Wagon Wheel Community, Inc.",215,2.2,5.2,own,2045004,,
+2185000,Milford Water Department,30379,2.2,15.2,own,2185000,6.0,5.0
+3213000,North Reading Water Dept.,16054,2.2,3.4,purchased,3009000,0.0,4.0
+2208001,Mci Norfolk/Cedar Junction/Walpole,2200,1.9,3.8,own,2208001,0.0,2.0
+4020003,Cotuit Fire District  Water Department,3292,1.9,2.4,own,4020003,0.0,10.0
+2110006,Laurel Hill Condominiums,64,1.9,4.5,own,2110006,,
+2321000,West Boylston Water District,7132,1.8,2.1,own,2321000,0.9,10.0
+3254000,Rowley Water Department,6283,1.8,12.1,own,3254000,7.4,4.0
+2303000,Upton Dpw Water/Wastewater Division,4420,1.6,2.8,own,2303000,0.0,6.0
+2019000,Ayer Dpw  Water Division,8479,1.5,41.7,own,2019000,0.0,4.0
+4351000,Yarmouth Water Department,24918,1.4,5.9,own,4351000,0.6,30.0
+3071000,Danvers Water Dept.,28087,1.4,23.1,own,3071000,1.0,5.0
+3184000,Middleton Water Dept.,7255,1.4,23.1,purchased,3071000,2.6,4.0
+3181000,Methuen Water Dept,53059,1.2,2.5,own,3181000,1.0,4.0
+1279000,Southwick Water Dept,7646,1.2,3.0,own,1279000,0.0,8.0
+1227001,Thorndike Fire And Water District,1435,1.2,2.7,purchased,"1227003,1227002",,
+4020000,Barnstable Fire District,3672,1.2,15.8,own,4020000,3.5,7.0
+1337010,Whately Water Department,900,1.1,2.3,own,1337010,0.0,2.0
+1124003,Eagle Hill School,300,1.1,2.2,own,1124003,,
+2077000,Douglas Water Department,4326,1.1,3.0,own,2077000,1.0,4.0
+3210000,North Andover Water Dept,30915,1.1,2.4,own,3210000,0.0,4.0
+2286024,Villages At Stow,300,1.1,2.2,own,2286024,,
+2186000,"Aquarion Water Company, Millbury",11326,1.1,2.9,own,2186000,4.0,10.0
+4076002,North Dighton Fire District,1300,1.0,2.1,purchased,4293000,,
+4167000,Mansfield Water Division,23289,1.0,14.6,own,4167000,2.3,6.0
+4042001,Mci Bridgewater,2802,1.0,2.1,purchased,4293000,,
+1214000,Northampton Water Division,29571,1.0,2.2,own,1214000,0.0,8.0
+4293000,Taunton Water Division,62165,1.0,2.1,own,4293000,0.0,4.0
+3056002,North Chelmsford Water Dist,7350,0.9,2.6,own,3056002,0.0,2.0
+4261000,Sandwich Water District,17775,0.9,2.2,own,4261000,0.0,20.0
+4169000,Marion Water Division,4943,0.7,2.0,own,4169000,0.0,2.0
+4224000,Orleans Water Department,6307,0.6,0.6,own,4224000,0.0,4.0
+4239000,Plymouth Water Department,46314,0.6,0.6,own,4239000,0.0,22.0
+2153000,Leominster Water Division,41683,0.6,1.3,own,2153000,0.3,14.0
+4245002,North Raynham Water District,3902,0.6,6.6,own,4245002,0.0,4.0
+4172039,Mashpee Water District,15632,0.6,6.6,own,4172039,0.0,12.0
+4334088,Westport Senior Village,125,0.5,1.5,own,4334088,,
+2141000,Hudson Water Supply,20032,0.4,11.8,own,2141000,0.0,4.0
+4197001,Siasconset Water Department,150,0.4,2.2,own,4197001,,
+2125021,Ayer Road Properties Llc,150,0.4,66.3,own,2125021,,
+3092000,Essex Water Dept.,2300,0.4,0.8,own,3092000,,
+4094000,Fairhaven Water Dept,14470,0.3,1.0,purchased,"4173000,4169000",0.0,1.0
+4096000,Falmouth Water Dept,32517,0.3,58.0,own,4096000,0.0,10.0
+4310000,Wareham Fire District,21418,0.2,0.3,own,4310000,0.0,4.0
+2299000,Townsend Water Department,6500,0.2,27.6,own,2299000,1.2,9.0
+3317001,Wellesley College,3000,0.2,19.8,own,3317001,,
+2139000,Hopkinton Water Department,12586,0.2,21.0,own,2139000,2.5,7.0
+4075000,Dennis Water District,15087,0.1,2.0,own,4075000,0.0,18.0
+1137000,Holyoke Water Works,40124,0.0,0.0,own,1137000,0.0,7.0
+1132008,Ashmere Water Service,66,0.0,0.0,own,1132008,,
+1132002,South Ashmere Water Association Inc,25,0.0,0.0,own,1132002,,
+1203002,Southfield Water Company,60,0.0,0.0,own,1203002,,
+1193003,Gould Farm,93,0.0,0.0,own,1193003,,
+1193000,Monterey Water Company,107,0.0,0.0,own,1193000,,
+1192000,Turners Falls Water Dept,8080,0.0,0.0,own,1192000,0.0,4.0
+1191000,Monson Water And Sewer Dept,4212,0.0,1.2,own,1191000,0.0,7.0
+1190000,Monroe Water District,55,0.0,2.4,own,1190000,,
+1132009,Bisselville Estate,74,0.0,0.0,own,1132009,,
+1143000,Huntington Water Dept,2000,0.0,0.0,own,1143000,,
+1148008,Greylock Estates Homeowners Association,25,0.0,0.0,own,1148008,,
+1159000,Longmeadow Water Dept,15815,0.0,0.0,purchased,1281000,0.0,4.0
+1150003,High Lawn Farm,43,0.0,0.0,own,1150003,,
+4052061,Carver Municipal Buildings,100,0.0,0.0,own,4052061,,
+3301002,River Crossing Condominium,150,0.0,24.4,own,3301002,,
+3308000,Waltham Water Department,65218,0.0,0.0,purchased,6000000,0.0,4.0
+3314000,Watertown Water Dept. (Mwra),35329,0.0,0.0,purchased,6000000,0.0,4.0
+3324000,West Newbury Water Department,3080,0.0,3.4,own,3324000,0.0,4.0
+3333000,Weston Water Dept.,11941,0.0,0.0,purchased,6000000,0.0,4.0
+1132000,Hinsdale Water Dept,1200,0.0,0.0,own,1132000,,
+1341004,Waubeeka Springs,50,0.0,0.0,own,1341004,,
+1341030,Sweet Farm Homeowners Association,25,0.0,0.0,purchased,1341000,,
+1349000,Worthington Fire District,550,0.0,0.0,own,1349000,,
+2011000,Ashburnham Water Department,3680,0.0,1.0,purchased,2011004,0.0,4.0
+1150000,Lee Water Dept,5420,0.0,0.0,own,1150000,0.0,4.0
+1283019,Oronoque Condominium Trust,25,0.0,12.2,own,1283019,,
+1283015,White Pines Condominiums,50,0.0,0.0,own,1283015,,
+2084000,East Brookfield Water Department,1526,0.0,0.0,own,2084000,,
+2080000,Dudley Water Department,5515,0.0,18.5,own,2080000,0.0,2.0
+2064000,Clinton Water Dept,15530,0.0,2.2,own,2064000,0.0,4.0
+2054050,Cady Brook Crossing Condominiums,75,0.0,0.0,own,2054050,,
+2045005,Brookfield Meadows Mhp,100,0.0,0.0,own,2045005,,
+3243000,Quincy Water Dept. (Mwra),106000,0.0,0.0,purchased,6000000,0.0,4.0
+1341003,Sweet Wood Retirement Community,200,0.0,0.0,own,1341003,,
+1341000,Williamstown Water Dept,7326,0.0,0.0,own,1341000,0.0,6.0
+1340000,Williamsburg Water Dept,1575,0.0,0.0,own,1340000,,
+1339000,Wilbraham Water Dept (Mwra),8533,0.0,0.0,purchased,6000000,0.0,4.0
+1329009,Liberty Manor Inc,500,0.0,0.7,purchased,1329000,,
+1306001,Brookside Village,80,0.0,0.0,own,1306001,,
+1289002,Pond Ridge Condo Assn,88,0.0,0.8,own,1289002,,
+1289000,Sunderland Water District,3190,0.0,0.5,own,1289000,,
+2045001,Nanatomqua Mobile Home Park,92,0.0,0.0,own,2045001,,
+1152000,Lenox Dpw Water Division,4868,0.0,0.0,own,1152000,0.0,4.0
+4050000,Canton Water Dept,22453,0.0,7.5,own,4050000,1.8,8.0
+3207000,Newton Water Dept. (Mwra),88415,0.0,0.0,purchased,6000000,0.0,4.0
+2179001,Mendon Housing Authority,31,0.0,0.0,own,2179001,,
+1268000,Shelburne Falls Fire District,1806,0.0,0.0,own,1268000,,
+1267001,Berkshire School,475,0.0,0.0,own,1267001,,
+1267000,Aquarion Water Company,987,0.0,0.0,own,1267000,,
+3262000,Saugus Water Dept. (Mwra),27082,0.0,0.0,purchased,6000000,0.0,4.0
+1256000,Russell Water Dept,1228,0.0,0.0,own,1256000,,
+3057000,Chelsea Water Dept. (Mwra),38319,0.0,0.0,purchased,6000000,0.0,4.0
+3051023,Woodward Village,54,0.0,0.0,own,3051023,,
+3155000,Lexington Water Dept.    (Mwra),34074,0.0,0.0,purchased,6000000,0.0,4.0
+3291000,Swampscott Water Dept. (Mwra),15175,0.0,0.0,purchased,6000000,0.0,4.0
+3284000,Stoneham Water Dept (Mwra Supply),23244,0.0,0.0,purchased,6000000,0.0,4.0
+3274000,Somerville Water Dept. (Mwra),81045,0.0,0.0,purchased,6000000,0.0,4.0
+3269032,Fields At Sherborn Condo Trust,110,0.0,0.0,own,3269032,,
+1260001,Berkshire Rehab Skilled Care Ctr,100,0.0,0.0,own,1260001,,
+1074005,Eaglebrook School,350,0.0,0.0,own,1074005,,
+1058001,Hutchinson Water Llc,400,0.0,0.0,own,1058001,,
+1058002,Berkshire Estates,174,0.0,0.0,own,1058002,,
+1059000,Chester Water Dept,750,0.0,0.0,own,1059000,,
+1061000,Chicopee Water Dept (Mwra),55560,0.0,0.0,purchased,6000000,0.0,4.0
+1063003,Briggsville Water District,180,0.0,0.0,own,1063003,,
+1085000,East Longmeadow Dpw Water Dept,16161,0.0,0.0,purchased,1281000,0.0,4.0
+1087000,Easthampton Water Dept,16211,0.0,0.0,own,1087000,0.0,8.0
+4338002,Eliot Woods Condos,140,0.0,0.0,own,4338002,,
+1069001,Cummington Water Dept,275,0.0,0.0,own,1069001,,
+1069002,West Cummington Water Dept,94,0.0,0.0,own,1069002,,
+1070000,Dalton Fire District,6330,0.0,0.0,own,1070000,0.0,8.0
+1074000,Deerfield Fire District,1300,0.0,2.0,own,1074000,,
+1074001,South Deerfield Water Supply District,3800,0.0,0.0,own,1074001,0.0,4.0
+1053030,Woodland Mhp Llc,36,0.0,0.0,own,1053030,,
+4300040,Stones Throw Condos,25,0.0,18.8,own,4300040,,
+1058000,Cheshire Water Dept,1407,0.0,0.0,own,1058000,,
+4318094,Wellfleet Municipal Water System,250,0.0,0.0,own,4318094,,
+1066001,Griswoldville Water District,125,0.0,0.0,own,1066001,,
+1015006,Applewood Home For Elders,50,0.0,0.0,own,1015006,,
+1024000,Belchertown Water District,3098,0.0,2.5,own,1024000,0.0,4.0
+1024001,Sports Haven Mobile Home Park,107,0.0,12.3,own,1024001,,
+1024009,Cedarwood Apartments,25,0.0,0.0,own,1024009,,
+1066000,Colrain Fire District #1,100,0.0,0.0,own,1066000,,
+1029000,Bernardston Fire  Water Dist,1462,0.0,0.0,own,1029000,,
+4146004,Lake Point Village,66,0.0,0.0,own,4146004,,
+4172033,Sea Oaks Condominiums,222,0.0,0.0,own,4172033,,
+4173000,Mattapoisett Water Department,7685,0.0,0.0,own,4173000,0.0,2.0
+4182015,Nemasket Health Care Center,90,0.0,0.0,own,4182015,,
+4197000,Wannacomet Water Company,14255,0.0,4.3,own,4197000,0.0,6.0
+4318040,Harborside Village,15,0.0,0.0,own,4318040,,
+1053033,122 Main Street,30,0.0,0.0,own,1053033,,
+4052001,South Meadow Village,500,0.0,0.0,own,4052001,,
+4052026,Cranberry Village Residents Association,414,0.0,0.0,own,4052026,,
+4052044,Waterview Park Llc,101,0.0,31.7,own,4052044,,
+4003002,Brookside Mobile Home Park,67,0.0,0.0,own,4003002,,
+1090000,Egremont Water Dept,600,0.0,0.0,own,1090000,,
+1091000,Erving Water Dept,561,0.0,1.6,own,1091000,,
+1106000,Riverside Water District,341,0.0,0.0,purchased,1114000,,
+1106002,Northfield Mt Hermon School,750,0.0,20.0,own,1106002,,
+1108009,Wildwood Condominium,25,0.0,0.0,own,1108009,,
+1004000,Adams Fire District,7851,0.0,0.0,own,1004000,0.0,2.0
+1013000,Ashfield Water District,350,0.0,0.0,own,1013000,,
+4062000,Menemsha Water Company,31,0.0,1.0,own,4062000,,
+4089000,Edgartown Water Department,4101,0.0,0.0,own,4089000,0.0,10.0
+1033000,Blandford Water Dept,442,0.0,0.0,own,1033000,,
+4285007,Bishops Landing Condominiums,50,0.0,0.0,own,4285007,,
+1120001,Vantage At Hampden,100,0.0,0.0,own,1120001,,
+1117002,Hadley Dpw Water Division,4871,0.0,0.0,own,1117002,0.0,4.0
+1114000,Greenfield Water Department,17645,0.0,0.0,own,1114000,0.0,6.0
+1043002,Brimfield Housing Authority,60,0.0,0.0,own,1043002,,
+1043001,Meadowbrook Acres Mobile Home Park,127,0.0,0.0,own,1043001,,
+1283003,Stockbridge Water Dept,1800,0.0,2.4,own,1283003,,
+1281000,Springfield Water And Sewer Commission,167954,0.0,0.0,own,1281000,0.0,4.0
+4086095,Town Of Eastham,4904,0.0,0.0,own,4086095,0.0,4.0
+4296000,Tisbury Water Works,6082,0.0,0.0,own,4296000,0.0,6.0
+4239060,Agawam Springs Water Company,1989,0.0,0.0,own,4239060,,
+1124002,Wheelwright Water District,300,0.0,0.0,own,1124002,,
+1124001,Gilbertville Water District,1089,0.0,0.0,own,1124001,,
+1121011,Beaver Pond Meadows,160,0.0,0.0,own,1121011,,
+1121004,Jiminy Peak Resort,1000,0.0,0.0,own,1121004,,
+1120023,Scantic Valley Water District,100,0.0,0.0,own,1120023,,
+4296018,Kuehns Way Llc,80,0.0,0.6,own,4296018,,
+4296017,Scotts Grove Llc,36,0.0,0.0,own,4296017,,
+4242000,Provincetown Water Department,2942,0.0,0.0,own,4242000,0.0,4.0
+1214001,Linda Manor Nursing Home,120,0.0,0.0,own,1214001,,
+1217000,Northfield Water District,800,0.0,0.0,own,1217000,,
+1217001,East Northfield Water Co,541,0.0,0.0,own,1217001,,
+1268011,Dragon Hill Condominiums,30,0.0,0.0,own,1268011,,
+1275000,South Hadley Fd #1 (Mwra),14800,0.0,0.0,purchased,6000000,0.0,4.0
+1275001,South Hadley Fire District #2 Water Dept,6200,0.0,0.0,own,1275001,0.0,4.0
+2280002,Saint Josephs Abbey,45,0.0,0.0,own,2280002,,
+2286012,The Meeting House @ Stow Condo,92,0.0,0.0,own,2286012,,
+2212000,North Brookfield Water Department,3903,0.0,0.0,own,2212000,0.0,4.0
+2139010,Estates At Highland Ridge,100,0.0,0.0,own,2139010,,
+2139011,Maillet Woods Condominiums,55,0.0,0.0,own,2139011,,
+2028012,Meadowbrook Village Condominiums,150,0.0,0.0,own,2028012,,
+2028017,Sawyer Hill Ecovillage,272,0.0,0.0,own,2028017,,
+3023001,Bedford Va Hospital (Rogers Mem. Hosp.),177,0.0,0.0,purchased,6000000,,
+3026000,Belmont Water Dept. (Mwra),27295,0.0,0.0,purchased,6000000,0.0,4.0
+3105000,Georgetown Water Department,8733,0.0,2.2,own,3105000,0.0,2.0
+3038028,Willows At Boxford,30,0.0,0.0,own,3038028,,
+3046000,Brookline Water And Sewer Division,63191,0.0,0.0,purchased,6000000,0.0,4.0
+2270009,Woodland Ridge,125,0.0,0.0,own,2270009,,
+2277000,Southborough Dpw Water Division (Mwra),10514,0.0,0.0,purchased,6000000,0.0,4.0
+2278000,Southbridge Water Department,19180,0.0,0.0,own,2278000,0.0,4.0
+3168000,Marblehead Water Dept. (Mwra),20441,0.0,0.0,purchased,6000000,0.0,4.0
+3176000,Medford Water Dept. (Mwra),61700,0.0,0.0,purchased,6000000,0.0,4.0
+3178000,Melrose Water Division (Mwra),29357,0.0,0.0,purchased,6000000,0.0,4.0
+3180000,Merrimac Water Department,7193,0.0,1.6,own,3180000,3.1,4.0
+3246000,Reading Water Department (Mwra),27358,0.0,0.0,purchased,6000000,0.0,4.0
+3248000,Revere Water Division (Mwra),62186,0.0,0.0,purchased,6000000,0.0,4.0
+3189000,Milton Water Dept. (Mwra),28630,0.0,0.0,purchased,6000000,0.0,4.0
+3196000,Nahant Water Dept. (Mwra),3334,0.0,0.0,purchased,6000000,0.0,4.0
+2140013,Briarwood Townhomes,40,0.0,0.0,own,2140013,,
+2147008,Lancaster Woods Condominiums,120,0.0,0.0,own,2147008,,
+3035000,Boston Water And Sewer Commission (Mwra),675647,0.0,0.0,purchased,6000000,0.0,4.0
+4247061,The Reserve At Spring Hill,300,0.0,0.0,own,4247061,,
+1276000,Southampton Water Dept,4853,0.0,0.0,own,1276000,0.0,4.0
+2140011,Silverleaf Hollow Condominiums,40,0.0,0.0,own,2140011,,
+1120002,Hampden Housing Authority,59,0.0,0.0,own,1120002,,
+1113017,Bard College At Simons Rock,500,0.0,0.0,own,1113017,,
+4318091,Pleasant Water,25,0.0,1.0,own,4318091,,
+1074007,Pan Am Southern Railroad,120,0.0,0.0,purchased,1114000,,
+1005000,Agawam Water Department,28692,0.0,0.0,purchased,1281000,0.0,4.0
+1008000,Amherst Dpw  Water Division,39263,0.0,0.0,own,1008000,0.0,12.0
+1111002,Granby Housing Authority,61,0.0,0.0,own,1111002,,
+1111003,Granby Heights Condominiums,152,0.0,0.3,own,1111003,,
+1111025,Crescent Valley Condos,78,0.0,0.0,own,1111025,,
+1111039,Hillside Heights Of Granby,30,0.0,0.0,own,1111039,,
+1112000,Granville Centre Water Co,70,0.0,0.0,own,1112000,,
+1113000,Great Barrington Fire Dist,4375,0.0,0.0,own,1113000,0.0,2.0
+1209000,North Adams Water Dept,13000,0.0,0.0,own,1209000,1.5,4.0
+4350003,Mount St Marys Abbey,60,0.0,0.0,own,4350003,,
+4220000,Norwood Water Dept. (Mwra),29909,0.0,0.0,purchased,6000000,0.0,4.0
+4239010,Masac Plymouth,210,0.0,0.0,own,4239010,,
+4239051,Long Pond Realty Trust,90,0.0,0.0,own,4239051,,
+4239055,"Aquarion Water Company, Pinehills",9195,0.0,2.1,own,4239055,0.0,2.0
+4052072,North Carver Water District,300,0.0,0.0,own,4052072,,
+4052074,Pine Ridge Condominiums At Sampsons Pond,89,0.0,0.0,own,4052074,,
+4318107,Wellfleet Apartments,48,0.0,0.0,own,4318107,,
+2045000,Brookfield Water Department,1008,0.0,0.0,own,2045000,,
+3333001,Campion Residence And Renewal Ctr,350,0.0,0.0,purchased,6000000,,
+3344000,Winchester Water Dept,22970,0.0,0.0,own,3344000,0.0,8.0
+3346000,"Winthrop Water Division, (Mwra)",19316,0.0,0.0,purchased,6000000,0.0,4.0
+4109000,Gosnold Water Dept,40,0.0,0.0,own,4109000,,
+4126000,Harwich Water Department,13048,0.0,0.0,own,4126000,0.0,10.0
+4145006,Providence House,35,0.0,0.0,own,4145006,,
+1113003,Housatonic Water Works,1391,0.0,0.0,own,1113003,,
+2158000,Littleton Water Department,9611,0.0,13.1,own,2158000,0.0,2.0
+1329000,Westfield Dpwwater Division,41094,0.0,0.7,own,1329000,0.0,14.0
+1223000,Orange Water Dept,6526,0.0,0.0,own,1223000,0.5,10.0
+1227000,Palmer Water District No.1,4789,0.0,0.0,own,1227000,0.0,8.0
+1227002,Bondsville Fire And Water District,1429,0.0,1.7,own,1227002,,
+1227015,Breton Estates,48,0.0,0.0,own,1227015,,
+1236000,Pittsfield Dpu Water Dept,43927,0.0,0.0,own,1236000,0.0,8.0
+1249008,View Drive Water Association,35,0.0,0.0,own,1249008,,
+1255000,South Royalston Improvement Corp,275,0.0,0.0,own,1255000,,
+2021001,Barre Mhp/Waterwheel Village,106,0.0,0.0,own,2021001,,
+1306006,Silver Meadow,25,0.0,0.0,own,1306006,,
+1309001,Quabbin Sunrise Cooperative Inc,65,0.0,0.0,own,1309001,,
+1311000,Warren Water District,2289,0.0,2.4,own,1311000,,
+1311001,West Warren Water District,927,0.0,0.0,own,1311001,,
+1311002,Heritage Association,158,0.0,2.4,purchased,1311000,,
+2151001,Cherry Valley/ Rochdale Water District,3696,0.0,0.0,own,2151001,0.0,8.0
+1326000,West Stockbridge Water Dept,535,0.0,0.0,own,1326000,,
+4020004,"Hyannis Water System, Town Of Barnstable",18000,0.0,14.9,own,4020004,0.0,6.0
+4036000,Bourne Water District,10993,0.0,2.2,own,4036000,1.0,13.0
+4036001,Buzzards Bay Water District,5830,0.0,0.5,own,4036001,0.0,10.0
+4036011,Schooner Pass Trustees Condominiums,136,0.0,2.2,purchased,4036000,,
+4036015,Barnstable County Jail,600,0.0,1.1,purchased,"4261024,4036000",,
+4041000,Brewster Water Department,9739,0.0,0.0,own,4041000,0.0,10.0
+2019001,Devens  Massdevelopment,6100,0.0,24.8,own,2019001,0.0,6.0
+2021000,Barre Water Department,3406,0.0,0.0,own,2021000,0.0,6.0
+2125025,Pine Hill Village Condominiums,60,0.0,0.0,own,2125025,,
+2125026,Craftsman Village Condominiums,40,0.0,0.0,own,2125026,,
+4247055,"Horton Estates Condominium Trust, Inc.",62,0.0,0.0,own,4247055,,
+3107000,Gloucester Public Utility Division,29959,0.0,0.0,own,3107000,0.0,8.0
+3164001,Lynnfield Water Dist. (Mwra),4820,0.0,0.0,purchased,6000000,0.0,4.0
+3165000,Malden Water Division (Mwra),66263,0.0,0.0,purchased,6000000,0.0,4.0
+1325000,West Springfield Dpw Water Division,28835,0.0,0.7,own,1325000,0.0,2.0
+2323002,Madden Estates,50,0.0,0.0,own,2323002,,
+2343000,Winchendon Water Department,5706,0.0,1.0,purchased,2011004,0.0,4.0
+3007000,Amesbury Dpw  Water Div.,17366,0.0,0.6,own,3007000,0.0,3.0
+3010000,Arlington Water Dept. (Mwra),46308,0.0,0.0,purchased,6000000,0.0,4.0
+2226011,Pinewood On The Green Condos,50,0.0,0.0,own,2226011,,
+2257000,Rutland Water Department,5605,0.0,0.0,own,2257000,0.0,8.0
+2257003,Cool Sandy Beach Community Water System,27,0.0,0.0,own,2257003,,
+2110004,Countryside Condominium,30,0.0,0.0,own,2110004,,
+2115009,Still Meadow Village Condominiums,50,0.0,0.0,own,2115009,,
+2115012,The Village At Shepley Hill,25,0.0,0.0,own,2115012,,
+2125013,Foxglove Apartments,40,0.0,8.0,own,2125013,,
+2125016,Trail Ridge Condominiums,104,0.0,0.0,own,2125016,,
+2303004,Rockwood Meadows,100,0.0,0.0,own,2303004,,
+2303005,Cobblers Creek Condominiums,25,0.0,0.0,own,2303005,,
+3078008,Aquarion Water Co. (Springdale Farms),126,0.0,20.0,own,3078008,,
+2037038,Enclave At Boxborough,100,0.0,0.0,own,2037038,,
+2037009,Carriage House Condominium,68,0.0,38.9,own,2037009,,
+2034031,Century Mill Estates,135,0.0,0.0,own,2034031,,
+2034030,Regency At Bolton Condominiums,148,0.0,0.0,own,2034030,,
+2034027,Bolton Country Manor,60,0.0,3.1,own,2034027,,
+2028022,Highland Ridge Condominiums,132,0.0,0.0,own,2028022,,
+2028018,Northbrook Village Ii,80,0.0,0.0,own,2028018,,
+2287025,Sturbridge Crossing Condominium,52,0.0,0.0,own,2287025,,
+3093000,Everett Water Dept. (Mwra),49075,0.0,0.0,purchased,6000000,0.0,4.0
+3051022,Garrison Place,32,0.0,0.0,own,3051022,,
+3051021,Benfield Farms,50,0.0,0.0,own,3051021,,
+3048000,Burlington Water Dept,26680,0.0,44.6,own,3048000,0.0,8.0
+2215000,Northborough Water Department (Mwra),13535,0.0,0.0,purchased,6000000,0.0,4.0
+2170000,Marlborough Dpw  Water Div. (Mwra),41799,0.0,0.0,purchased,6000000,0.0,4.0
+2226008,Buffumville Heights Estates Condominium,40,0.0,3.8,own,2226008,,
+2226007,Toria Heights Condominium,60,0.0,2.1,own,2226007,,
+3100000,Framingham Water Dept. (Mwra),72362,0.0,0.0,purchased,6000000,0.0,4.0
+2286026,Arbor Glen Condominiums,132,0.0,0.0,own,2286026,,
+1066007,Foundry Brook Association,28,,,,,,
+1217006,Redemption Christian Academy,30,,,,,,
+3301027,400 Dunstable Road (Pine Knoll),30,,,,,,

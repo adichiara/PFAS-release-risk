@@ -92,11 +92,15 @@
 </head>
 <body>
 <main>
-  <h1>PFAS release risk in Massachusetts</h1>
+  <p class="note"><a href="index.html">PFAS in Massachusetts drinking water</a> · Reported-release risk</p>
+  <h1>Reported PFAS release risk in Massachusetts</h1>
   <p class="lede">Relative risk of a reported PFAS release across the state, on a grid of __UNIT_COUNT__
      __UNITS__, built only from public data.</p>
   <p class="warn"><b>Preliminary.</b> Trained on __N_RELEASES__ located PFAS releases from __SOURCE__.
-     Scores rank areas relative to each other. They are not probabilities of contamination.</p>
+     Scores rank areas relative to each other. They are not probabilities of contamination, and they
+     follow where testing and investigations happen: metro Boston, on reservoir water with few wells to
+     test, has almost no reported PFAS releases. For exposure, see
+     <a href="index.html">PFAS in drinking water</a>.</p>
   <a class="cta" href="map.html">Open the risk map</a>
   <a class="cta secondary" href="__REPO__">Code and data on GitHub</a>
 
@@ -132,6 +136,7 @@
     <tbody>__WATCH_ROWS__</tbody>
   </table></div>
 
+__POPULATION__
   <h2>What drives the scores</h2>
   <p>How much the model's held-out ROC AUC drops when one group of features is shuffled (count inside,
      count within 2 km and distance to the nearest site together). Larger drops mean the model leans

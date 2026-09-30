@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PFAS Drinking Water Map</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  :root {
+    color-scheme: light;
+    --surface: #fcfcfb; --panel: #ffffff; --border: #dddcd7;
+    --text-primary: #0b0b0b; --text-secondary: #52514e; --text-muted: #7a7974;
+    /* Public water: measured PFAS6 bands (ordinal, warm). */
+    --pub-0: #e7e5df; --pub-1: #f5c58a; --pub-2: #e07b39; --pub-3: #a8251b; --pub-na: #f7f6f2;
+    /* Private wells: estimated chance of PFAS6 >= 20 ng/L (ordinal, violet). */
+    --prv-0: #e6e0f3; --prv-1: #bba9e2; --prv-2: #8a6cc9; --prv-3: #553592;
+    --release: #0b0b0b; --warn-bg: #fdf1e7; --link: #1c5cab;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --surface: #1a1a19; --panel: #242423; --border: #3a3a37;
+      --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #94938b;
+      --pub-0: #3a3935; --pub-1: #b8864a; --pub-2: #e07b39; --pub-3: #f0584a; --pub-na: #2a2a28;
+      --prv-0: #3b3450; --prv-1: #6b58a3; --prv-2: #9a7fe0; --prv-3: #cbb8ff;
+      --release: #ffffff; --warn-bg: #3a2a1f; --link: #86b6ef;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface: #1a1a19; --panel: #242423; --border: #3a3a37;
+    --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #94938b;
+    --pub-0: #3a3935; --pub-1: #b8864a; --pub-2: #e07b39; --pub-3: #f0584a; --pub-na: #2a2a28;
+    --prv-0: #3b3450; --prv-1: #6b58a3; --prv-2: #9a7fe0; --prv-3: #cbb8ff;
+    --release: #ffffff; --warn-bg: #3a2a1f; --link: #86b6ef;
+  }
+  html, body { margin: 0; height: 100%; background: var(--surface); color: var(--text-primary);
+    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  #map { position: absolute; inset: 0; background: var(--surface); }
+  .panel { position: absolute; z-index: 1000; background: var(--panel); border: 1px solid var(--border);
+    border-radius: 8px; box-shadow: 0 2px 10px rgb(0 0 0 / .12); }
+  #info { top: 12px; left: 12px; width: 330px; max-width: calc(100vw - 48px); padding: 14px 16px; }
+  #info h1 { font-size: 17px; margin: 0 0 4px; }
+  #info p { margin: 6px 0; color: var(--text-secondary); }
+  #info a { color: var(--link); }
+  #info .warn { background: var(--warn-bg); padding: 8px 10px; border-radius: 6px; color: var(--text-primary); }
+  #info fieldset { border: 0; padding: 0; margin: 8px 0 0; }
+  #info label { display: block; color: var(--text-primary); margin: 3px 0; cursor: pointer; }
+  #legend { bottom: 24px; left: 12px; padding: 10px 12px; }
+  #legend .row { display: flex; align-items: center; gap: 8px; margin: 3px 0; color: var(--text-secondary); }
+  #legend .sw { width: 18px; height: 12px; border-radius: 2px; border: 1px solid var(--border); }
+  #legend .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--release); margin: 0 5px; }
+  #legend .row[hidden] { display: none; }
+  #legend .title { font-weight: 600; color: var(--text-primary); margin: 6px 0 2px; }
+  #legend .title:first-child { margin-top: 0; }
+  .leaflet-tooltip, .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+    background: var(--panel); color: var(--text-primary); border-color: var(--border); }
+  .tt b { color: var(--text-primary); } .tt span { color: var(--text-secondary); }
+  @media (max-width: 600px) {
+    #info { top: auto; bottom: 12px; left: 12px; right: 12px; width: auto; max-height: 38vh; overflow: auto; }
+    #legend { bottom: auto; top: 12px; left: auto; right: 12px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+<div id="map"></div>
+
+<div id="info" class="panel">
+  <h1>PFAS in Massachusetts drinking water</h1>
+  <p>Public water systems are colored by their measured PFAS6 in treated water. Areas outside
+     public water service, where homes use private wells, show the estimated chance that
+     groundwater there has PFAS6 at or above the 20 ng/L state standard.</p>
+  <p class="warn">Private-well estimates are rough (see the method page); only a test of the
+     well itself tells a household what is in its water.</p>
+  <fieldset>
+    <label><input type="radio" name="level" value="current" checked> Public water: current level</label>
+    <label><input type="radio" name="level" value="peak"> Public water: highest year (before treatment)</label>
+    <label><input type="checkbox" id="show-private" checked> Private-well areas</label>
+    <label><input type="checkbox" id="show-releases"> Reported PFAS release sites</label>
+  </fieldset>
+  <p><a href="index.html">Findings, method and data sources</a></p>
+</div>
+
+<div id="legend" class="panel">
+  <div class="title">Public water PFAS6 (ng/L)</div>
+  <div class="row"><span class="sw" style="background:var(--pub-3)"></span>20 or more</div>
+  <div class="row"><span class="sw" style="background:var(--pub-2)"></span>10 to &lt;20</div>
+  <div class="row"><span class="sw" style="background:var(--pub-1)"></span>2 to &lt;10</div>
+  <div class="row"><span class="sw" style="background:var(--pub-0)"></span>Not detected</div>
+  <div class="title">Private wells: chance of 20+</div>
+  <div class="row"><span class="sw" style="background:var(--prv-3)"></span>30% or more</div>
+  <div class="row"><span class="sw" style="background:var(--prv-2)"></span>20–30%</div>
+  <div class="row"><span class="sw" style="background:var(--prv-1)"></span>10–20%</div>
+  <div class="row"><span class="sw" style="background:var(--prv-0)"></span>Under 10%</div>
+  <div class="row" id="release-key" hidden><span class="dot"></span>Reported PFAS release</div>
+</div>
+
+<script>
+const SYSTEMS = __SYSTEMS__;
+const PRIVATE = __PRIVATE__;
+const RELEASES = __RELEASES__;
+
+const css = getComputedStyle(document.documentElement);
+const v = name => css.getPropertyValue(name).trim();
+const pubColor = x => x == null ? v('--pub-na') : x >= 20 ? v('--pub-3') : x >= 10 ? v('--pub-2') : x >= 2 ? v('--pub-1') : v('--pub-0');
+const prvColor = p => p >= 0.3 ? v('--prv-3') : p >= 0.2 ? v('--prv-2') : p >= 0.1 ? v('--prv-1') : v('--prv-0');
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const ng = x => x == null ? 'no results' : (x < 2 ? 'not detected' : x.toFixed(1) + ' ng/L');
+
+const map = L.map('map', { preferCanvas: true, zoomSnap: 0.25, zoomControl: false });
+L.control.zoom({ position: 'bottomright' }).addTo(map);
+const darkScheme = document.documentElement.dataset.theme === 'dark' ||
+  (document.documentElement.dataset.theme !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+const canvas = darkScheme ? 'World_Dark_Gray_Base' : 'World_Light_Gray_Base';
+L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/${canvas}/MapServer/tile/{z}/{y}/{x}`, {
+  attribution: 'Basemap &copy; Esri, HERE, Garmin, &copy; OpenStreetMap contributors', maxZoom: 16,
+}).addTo(map);
+
+// Private-well cells: full hexagons arrive as centers (see the release map for the geometry).
+function hexRing([lon, lat], side) {
+  const g = -0.6717 * (lon + 71.5) * Math.PI / 180, k = 111320, c = Math.cos(lat * Math.PI / 180);
+  const ring = [];
+  for (let i = 0; i <= 6; i++) {
+    const a = (i % 6) * Math.PI / 3, dx = side * Math.cos(a), dy = side * Math.sin(a);
+    const ex = dx * Math.cos(g) - dy * Math.sin(g), ny = dx * Math.sin(g) + dy * Math.cos(g);
+    ring.push([lon + ex / (k * c), lat + ny / k]);
+  }
+  return ring;
+}
+const privateLayer = L.geoJSON({
+  type: 'FeatureCollection',
+  features: PRIVATE.rows.map(([pop, p20, pdet, neigh, shape]) => ({
+    type: 'Feature', properties: { pop, p20, pdet, neigh },
+    geometry: typeof shape[0] === 'number'
+      ? { type: 'Polygon', coordinates: [hexRing(shape, PRIVATE.hex_side_m)] } : shape,
+  })),
+}, {
+  style: f => ({ fillColor: prvColor(f.properties.p20), fillOpacity: 0.75, color: '#ffffff', weight: 0 }),
+  onEachFeature: (f, layer) => {
+    const p = f.properties;
+    layer.bindTooltip(
+      `<div class="tt"><b>Private wells</b> <span>(about ${p.pop.toLocaleString()} residents in this 1 km² cell)</span><br>` +
+      `Estimated chance PFAS6 is 20 ng/L or more: <b>${Math.round(p.p20 * 100)}%</b><br>` +
+      `Chance PFAS is detected: <b>${Math.round(p.pdet * 100)}%</b><br>` +
+      `<span>${p.neigh ? p.neigh + ' tested public wells within 5 km' : 'No tested public wells within 5 km: estimate is weak'}</span></div>`,
+      { sticky: true });
+  },
+});
+
+let level = 'current';
+const systemLayer = L.geoJSON({
+  type: 'FeatureCollection',
+  features: SYSTEMS.map(([name, pws, pop, current, peak, source, via, shape]) => ({
+    type: 'Feature', properties: { name, pws, pop, current, peak, source, via }, geometry: shape,
+  })),
+}, {
+  style: f => ({ fillColor: pubColor(f.properties[level]), fillOpacity: 0.78, color: '#ffffff', weight: 0.6 }),
+  onEachFeature: (f, layer) => {
+    const p = f.properties;
+    layer.bindTooltip(
+      `<div class="tt"><b>${esc(p.name)}</b> <span>PWS ${esc(p.pws)} · about ${Number(p.pop).toLocaleString()} served</span><br>` +
+      `PFAS6 now: <b>${ng(p.current)}</b><br>Highest year: <b>${ng(p.peak)}</b>` +
+      (p.source === 'purchased' ? `<br><span>Buys its water; levels are its supplier's (${esc(p.via)})</span>` : '') +
+      '</div>', { sticky: true });
+    layer.on({
+      mouseover: e => e.target.setStyle({ weight: 2, color: '#0b0b0b' }),
+      mouseout: e => systemLayer.resetStyle(e.target),
+    });
+  },
+}).addTo(map);
+privateLayer.addTo(map);
+systemLayer.bringToFront();
+
+const releaseLayer = L.geoJSON(RELEASES, {
+  pointToLayer: (f, latlng) => L.circleMarker(latlng, {
+    radius: 3.5, fillColor: v('--release'), fillOpacity: 0.9, color: v('--surface'), weight: 1 }),
+  onEachFeature: (f, layer) => layer.bindTooltip(
+    `<div class="tt"><b>${esc(f.properties.site_name || 'PFAS release')}</b><br><span>RTN ${esc(f.properties.rtn)} · ${esc(f.properties.town)}</span></div>`),
+});
+
+document.querySelectorAll('input[name="level"]').forEach(r => r.addEventListener('change', e => {
+  level = e.target.value; systemLayer.setStyle(systemLayer.options.style);
+}));
+document.getElementById('show-private').addEventListener('change', e => {
+  if (e.target.checked) { privateLayer.addTo(map); systemLayer.bringToFront(); } else map.removeLayer(privateLayer);
+});
+document.getElementById('show-releases').addEventListener('change', e => {
+  document.getElementById('release-key').hidden = !e.target.checked;
+  if (e.target.checked) releaseLayer.addTo(map); else map.removeLayer(releaseLayer);
+});
+
+const wide = window.innerWidth > 600;
+map.fitBounds(systemLayer.getBounds().extend(privateLayer.getBounds()),
+  wide ? { paddingTopLeft: [360, 10], paddingBottomRight: [10, 10] } : { padding: [10, 10] });
+</script>
+</body>
+</html>

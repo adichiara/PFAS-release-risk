@@ -99,7 +99,22 @@ def eea_drinking_water(spec: dict, dest: Path) -> None:
     pd.DataFrame(rows).drop_duplicates("Id").to_csv(dest, index=False)
 
 
-FETCHERS = {"arcgis": arcgis, "tri": tri, "eea_drinking_water": eea_drinking_water}
+def envirofacts(spec: dict, dest: Path) -> None:
+    """All rows of an EPA Envirofacts query, paged 5,000 at a time."""
+    rows, start = [], 0
+    while True:
+        page = json.loads(_get(f"{spec['url']}/ROWS/{start}:{start + 4999}/JSON"))
+        rows += page
+        if len(page) < 5000:
+            break
+        start += 5000
+    if not rows:
+        raise RuntimeError(f"Envirofacts returned no rows for {spec['url']}")
+    pd.DataFrame(rows).to_csv(dest, index=False)
+
+
+FETCHERS = {"arcgis": arcgis, "tri": tri, "eea_drinking_water": eea_drinking_water,
+            "envirofacts": envirofacts}
 
 
 def fetch(spec: dict, dest: Path) -> str:

@@ -1,21 +1,54 @@
-# PFAS release risk (Massachusetts)
+# PFAS in Massachusetts drinking water
 
-Ranks Massachusetts by the relative risk of a reported PFAS release, on a grid of equal-area
-1 km² hexagons (with 2 km² and 4 km² hexagons and 2020 census block groups as comparisons),
-using only publicly available data. It is a rebuild of the release risk model from
-the 2021 WPI Data Science / MassDEP graduate capstone
-([GQP-TeamMassDEP/Mass_PFAS-Analysis](https://github.com/GQP-TeamMassDEP/Mass_PFAS-Analysis)),
-fixing what limited that version:
+Who in Massachusetts drinks water with PFAS, built only from public data:
 
-| 2021 model | This rebuild |
-|---|---|
-| Aggregated to 64 groups built from tract-number prefixes (`GEOID[:7]`), which are not towns or Census places; group size alone predicted the label (AUC 0.76) | Predicts on 21,774 equal-area 1 km² hexagons, where size no longer predicts the label (AUC 0.50), and on larger cells and 5,109 block groups for comparison |
-| Random train/test split | Whole towns held out in cross-validation |
-| Compared against chance | Compared against size and density baselines, a size- and density-matched permutation null, and a forward-in-time test on releases reported later |
-| Industry features from a non-public business list | Public sources only (see `config/sources.yaml`) |
-| Addresses geocoded with a web service (one landed ~1,900 km away) | Offline matching against MassGIS address points, with a precision flag per site |
+- **Public water (6.0 million residents), measured.** Every community water system's treated-water
+  PFAS6 results (MassDEP), with towns that buy their water (the MWRA communities, for example)
+  given their supplier's results through EPA's purchase links, cross-checked against EPA's UCMR 5.
+- **Private wells (1.0 million residents), estimated.** A groundwater model trained on raw-water
+  PFAS6 at about 1,030 public wells, applied where homes are outside public water service.
+- **Who is affected,** by the state's 2020 Environmental Justice block groups.
 
-## Current status
+**Site:** https://adichiara.github.io/PFAS-release-risk/ (findings, method, the drinking-water
+map and downloads).
+
+It grew out of a rebuild of the release risk model from the 2021 WPI Data Science / MassDEP
+graduate capstone ([GQP-TeamMassDEP/Mass_PFAS-Analysis](https://github.com/GQP-TeamMassDEP/Mass_PFAS-Analysis)),
+which ranks where MassDEP is likely to receive a PFAS release report. That model is kept as
+supporting context (see [Reported-release risk](#reported-release-risk)): reports follow where
+testing happens as much as where PFAS is, so it is not a measure of exposure.
+
+## Drinking-water findings
+
+| Public-water residents by PFAS6 in their tap water | Now | Highest year |
+|---|---|---|
+| Not detected (<2 ng/L) | 3.2 million | 2.7 million |
+| 2 to <10 ng/L | 2.3 million | 1.8 million |
+| 10 to <20 ng/L | 497,000 | 1.1 million |
+| 20 ng/L or more (state standard) | 45,000 | 434,000 |
+
+"Now" is each system's average over its last 12 months of results; "highest year" its worst
+calendar-year average, often before treatment was installed. State and EPA UCMR 5 levels
+correlate at 0.67 across 257 systems (UCMR 5 reports compounds only above 3 to 4 ng/L).
+
+**Private wells.** The groundwater model ranks public wells by PFAS6 >= 20 ng/L with ROC AUC 0.67
+(0.78 for any detection), against 0.62 (0.76) for development alone, holding out whole towns.
+The signal is measured PFAS at nearby public wells (groundwater PFAS clusters within a few
+kilometres) plus development. Distance to mapped industries, airports, military sites, landfills
+and other likely sources added nothing, whether counted around the well or inside its Zone II
+recharge area. The model estimates about 175,000 private-well residents live where groundwater
+is likely at or above 20 ng/L, but it cannot identify which wells: treat it as area-level odds.
+Private wells are also shallower than public wells, so public-well rates may not carry over.
+
+**Environmental Justice areas.** Residents of EJ block groups on public water are less likely
+than others to have PFAS in their tap water (0.2% at 20+ ng/L now vs 1.4%; 42% vs 54% detected),
+because many EJ neighbourhoods are in cities served by MWRA reservoir water.
+
+Run it with `pfas-risk exposure` (writes `outputs/water/`), then `pfas-risk site`.
+
+## Reported-release risk
+
+### Current status
 
 **Preliminary.** The release list (`data/releases/massdep_pfas_releases.csv`) has 214 PFAS
 releases (RTNs): 194 from MassDEP's May 2026 bulk download of all waste site notifications
@@ -60,6 +93,17 @@ recognizing those. For releases reported since 2023 the overlap is smaller (8 of
 the drinking-water features, 1 km² cells still reach 41% in cross-validation and 43% in the
 forward test, so the finer grid's gain doesn't depend on them.
 
+**Who lives in higher-risk areas.** Each 2020 census block takes the score of the 1 km² cell
+it sits in (area-weighted when it straddles cells); blocks are then linked to the state's 2020
+Environmental Justice block groups and to community water service areas (`pfas-risk
+population`). About 17% of residents live in the top-risk 10% of land, since risk concentrates
+where people and industry are. Residents of EJ block groups are there at the same rate (17%;
+15% for the income criterion), with no difference beyond what population density predicts.
+About 1.0 million residents live outside community water service, presumably on private
+wells; 12% of them (about 127,000 people) are in the top-risk 10% of land, the group for whom
+a nearby release matters most. Per-block-group results, with EJ fields, are in the site's
+downloads (`block_group_risk.csv`).
+
 Scores are relative risk of a *reported* release, which also reflects where investigations
 happen.
 
@@ -67,8 +111,10 @@ happen.
 
 ```bash
 pip install -e ".[dev]"
-pfas-risk download        # public MassGIS layers (~1 GB, mostly address points and roads)
-pfas-risk run             # geocode releases, build features, cross-validate, write outputs/ and docs/
+pfas-risk download        # public layers (~1 GB, mostly address points and roads; ~20 min of
+                          # drinking-water API queries the first time)
+pfas-risk exposure        # drinking water: public systems and private wells -> outputs/water/
+pfas-risk run             # release model: geocode, features, cross-validate, outputs/ and docs/
 pytest
 ```
 
@@ -103,7 +149,7 @@ To do the same by hand:
 3. `pfas-risk run`, then check the `geocode_precision` log line. Unplaced sites can be
    placed by hand in `data/seed/geocode_overrides.csv` (x/y in EPSG:26986, with a note).
 
-## Method
+### Method (reported-release model)
 
 **Units.** Evaluated separately:
 
@@ -199,14 +245,22 @@ src/pfas_risk/
   units.py                block groups and the equal-area hexagon grid
   features.py             feature table for a unit
   pfas_sources.py         drinking-water, airport, military, TRI and sewer layers
+  population.py           release scores carried to census blocks; EJ summaries
+  drinking_water.py       public-water PFAS6 per system, purchased water, UCMR 5 check
+  groundwater.py          private-well groundwater model
+  exposure.py             drinking-water exposure by census block
+  water_map.py            drinking-water map
+  water_site.py           front page (docs/index.html)
   api_sources.py          fetchers for sources served by web APIs
   model.py                models, town-grouped CV, permutation null
   mapping.py              interactive Leaflet map
   site.py                 GitHub Pages landing page
   cli.py                  `pfas-risk` command
 tests/
-outputs/<unit>/           evaluation.md / .json per unit (other outputs are regenerated, not committed)
-docs/                     published site: index.html, map.html (hexagons), map_bg.html, data/
+outputs/<unit>/           evaluation.md / .json per unit, population.json for the primary unit
+                          (other outputs are regenerated, not committed)
+docs/                     published site: index.html (drinking water), water_map.html,
+                          releases.html, map.html (release-risk hexagons), map_bg.html, data/
 ```
 
 ## Publishing
