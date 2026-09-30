@@ -1,4 +1,10 @@
 {
+  "latest_result": "2026-09-21",
+  "mwra": {
+    "systems": 38,
+    "population": 1973158,
+    "pfas6_current_ng_l": 0.0
+  },
   "headline": {
     "residents": 7029917,
     "public_water": 6009298,

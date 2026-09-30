@@ -88,11 +88,16 @@
   .legend i.base { border-top: 2px dashed var(--series-neutral); }
   .legend i.random { border-top: 2px dotted var(--text-muted); }
   .downloads li { margin: 4px 0; }
+  nav.site { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; margin: 0 0 28px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  nav.site a { color: var(--text-secondary); text-decoration: none; }
+  nav.site a:hover { color: var(--accent); text-decoration: underline; }
+  nav.site a[aria-current="page"] { color: var(--text-primary); font-weight: 600; }
 </style>
 </head>
 <body>
 <main>
-  <p class="note"><a href="index.html">PFAS in Massachusetts drinking water</a> · Reported-release risk</p>
+  __NAV__
   <h1>Reported PFAS release risk in Massachusetts</h1>
   <p class="lede">Relative risk of a reported PFAS release across the state, on a grid of __UNIT_COUNT__
      __UNITS__, built only from public data.</p>

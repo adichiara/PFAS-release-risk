@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PFAS Drinking Water</title>
+<meta name="description" content="Who in Massachusetts drinks water with PFAS: measured public water results and a groundwater model for private wells, built on public data.">
+<style>
+  :root {
+    color-scheme: light;
+    --surface: #fcfcfb; --panel: #ffffff; --border: #dddcd7; --row: #f4f3f0;
+    --text-primary: #0b0b0b; --text-secondary: #52514e; --text-muted: #7a7974;
+    --accent: #1c5cab; --accent-ink: #ffffff; --warn-bg: #fdf1e7; --highlight: #eaf2fd;
+    --series-1: #2a78d6; --series-neutral: #8a8984;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --surface: #1a1a19; --panel: #242423; --border: #3a3a37; --row: #2c2c2a;
+      --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #94938b;
+      --accent: #6da7ec; --accent-ink: #0b0b0b; --warn-bg: #3a2a1f; --highlight: #1d2c40;
+      --series-1: #3987e5; --series-neutral: #7a7974;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface: #1a1a19; --panel: #242423; --border: #3a3a37; --row: #2c2c2a;
+    --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #94938b;
+    --accent: #6da7ec; --accent-ink: #0b0b0b; --warn-bg: #3a2a1f; --highlight: #1d2c40;
+      --series-1: #3987e5; --series-neutral: #7a7974;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--surface); color: var(--text-primary);
+    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 880px; margin: 0 auto; padding: 40px 16px 64px; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 0 0 8px; letter-spacing: -0.01em; }
+  h2 { font-size: 20px; margin: 40px 0 12px; }
+  h3 { font-size: 17px; margin: 28px 0 8px; }
+  p, li { color: var(--text-secondary); }
+  a { color: var(--accent); }
+  .lede { font-size: 18px; margin: 0 0 20px; }
+  .warn { background: var(--warn-bg); color: var(--text-primary); padding: 12px 14px; border-radius: 8px; }
+  .cta { display: inline-block; margin: 8px 12px 0 0; padding: 10px 18px; border-radius: 8px; font-weight: 600;
+    text-decoration: none; background: var(--accent); color: var(--accent-ink); }
+  .cta.secondary { background: transparent; color: var(--accent); border: 1px solid var(--border); }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 24px 0 0; }
+  .kpi { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .kpi .v { font-size: 28px; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .kpi .l { color: var(--text-secondary); font-size: 14px; }
+  .scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; background: var(--panel); }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+  th, td { padding: 8px 12px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--border); }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--text-secondary); font-weight: 600; background: var(--row); white-space: normal; vertical-align: bottom; }
+  tr:last-child td { border-bottom: 0; }
+  tr.selected td { background: var(--highlight); font-weight: 600; }
+  td.wrap, th.wrap { white-space: normal; text-align: left; }
+  .note { font-size: 14px; color: var(--text-muted); }
+  .status { font-size: 12px; padding: 2px 8px; border-radius: 99px; border: 1px solid var(--border); color: var(--text-secondary); }
+  footer { margin-top: 48px; font-size: 14px; color: var(--text-muted); }
+  .figure { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 12px 8px 4px;
+    overflow-x: auto; }
+  /* Keep chart text legible on phones: scroll the panel sideways instead of shrinking the chart. */
+  .figure .chart { min-width: 560px; }
+  .figure .legend { min-width: 0; }
+  table.watch { min-width: 780px; }
+  .chart { display: block; width: 100%; height: auto; font: 12px system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .chart .grid { stroke: var(--border); stroke-width: 1; }
+  .chart .guide { stroke: var(--text-muted); stroke-width: 1; stroke-dasharray: 3 3; }
+  .chart .random { stroke: var(--text-muted); stroke-width: 1.5; stroke-dasharray: 2 4; }
+  .chart .line { fill: none; stroke-width: 2; stroke-linejoin: round; }
+  .chart .line.model { stroke: var(--series-1); }
+  .chart .line.base { stroke: var(--series-neutral); stroke-dasharray: 6 4; }
+  .chart .dot { stroke: var(--panel); stroke-width: 2; cursor: default; }
+  .chart .dot.model { fill: var(--series-1); }
+  .chart .dot.base { fill: var(--series-neutral); }
+  .chart .dot:hover { r: 6; }
+  .chart .bar { fill: var(--series-1); }
+  .chart .bar:hover { opacity: .8; }
+  .chart .tick { fill: var(--text-secondary); }
+  .chart .axis { fill: var(--text-muted); }
+  .chart .value { fill: var(--text-primary); font-variant-numeric: tabular-nums; }
+  .chart .label { fill: var(--text-primary); font-weight: 600; font-size: 13px; }
+  .chart .label.muted { fill: var(--text-muted); font-weight: 400; }
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--text-secondary); margin: 8px 4px 0; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { display: inline-block; width: 18px; height: 0; border-top: 2px solid var(--series-1); }
+  .legend i.base { border-top: 2px dashed var(--series-neutral); }
+  .legend i.random { border-top: 2px dotted var(--text-muted); }
+  .downloads li { margin: 4px 0; }
+  nav.site { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; margin: 0 0 28px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  nav.site a { color: var(--text-secondary); text-decoration: none; }
+  nav.site a:hover { color: var(--accent); text-decoration: underline; }
+  nav.site a[aria-current="page"] { color: var(--text-primary); font-weight: 600; }
+</style>
+<style>
+  :root { --pub-0: #e7e5df; --pub-1: #f5c58a; --pub-2: #e07b39; --pub-3: #a8251b; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --pub-0: #3a3935; --pub-1: #b8864a; --pub-2: #e07b39; --pub-3: #f0584a; }
+  }
+  :root[data-theme="dark"] { --pub-0: #3a3935; --pub-1: #b8864a; --pub-2: #e07b39; --pub-3: #f0584a; }
+  .stack .seg-0 { fill: var(--pub-0); } .stack .seg-1 { fill: var(--pub-1); }
+  .stack .seg-2 { fill: var(--pub-2); } .stack .seg-3 { fill: var(--pub-3); }
+  .stack rect { stroke: var(--panel); stroke-width: 1; }
+  .legend i.sw { width: 12px; height: 12px; border: 0; border-radius: 2px; }
+  .legend i.seg-0 { background: var(--pub-0); } .legend i.seg-1 { background: var(--pub-1); }
+  .legend i.seg-2 { background: var(--pub-2); } .legend i.seg-3 { background: var(--pub-3); }
+</style>
+</head>
+<body>
+<main>
+  <nav class="site" aria-label="Site"><a href="index.html">Home</a><a href="analysis.html" aria-current="page">Detailed findings</a><a href="water_map.html">Map</a><a href="releases.html">Reported releases</a><a href="https://github.com/adichiara/PFAS-release-risk">Code and data</a></nav>
+  <h1>PFAS in Massachusetts drinking water: detailed findings</h1>
+  <p class="lede">Who drinks water with PFAS: measured results for every community water system,
+     and a groundwater model for the homes on private wells. Built only from public data.</p>
+  <a class="cta" href="water_map.html">Open the drinking-water map</a>
+  <a class="cta secondary" href="releases.html">Reported-release risk</a>
+  <a class="cta secondary" href="https://github.com/adichiara/PFAS-release-risk">Code and data on GitHub</a>
+
+  <div class="kpis"><div class="kpi"><div class="v">45,000</div><div class="l">on public water now at or above the 20 ng/L state standard</div></div><div class="kpi"><div class="v">434,000</div><div class="l">on systems that reached it in their worst year</div></div><div class="kpi"><div class="v">2.8 million</div><div class="l">with PFAS6 detected in their tap water now</div></div><div class="kpi"><div class="v">175,000</div><div class="l">estimated among 1.0 million private-well residents (rough)</div></div></div>
+
+  <h2>Public water: measured</h2>
+  <p>Every community water system had to test its treated water for PFAS6 (six PFAS compounds)
+     under the 2020 state standard of 20 ng/L, so these are measurements, not estimates. Towns
+     that buy their water, such as the MWRA communities around Boston, take their supplier's
+     results. "Now" is each system's average over its last 12 months of results (for small systems that
+     tested less often after low early results, that can be 2021 or 2022); "highest year" is its worst
+     calendar-year average, often before treatment was installed.</p>
+  <div class="figure"><svg class="chart stack" viewBox="0 0 720 114" role="img" aria-label="Public-water residents by PFAS6 level in their tap water, now and in each system's highest year"><text class="tick" x="100" y="31.0" text-anchor="end">Now</text><rect class="seg-0" x="110.0" y="10" width="313.7" height="34"><title>Not detected (&lt;2): 3,173,203 people (53%)</title></rect><text class="value" x="266.8" y="31.0" text-anchor="middle" style="fill:#0b0b0b">53%</text><rect class="seg-1" x="423.7" y="10" width="226.8" height="34"><title>2 to &lt;10: 2,294,190 people (38%)</title></rect><text class="value" x="537.0" y="31.0" text-anchor="middle" style="fill:#0b0b0b">38%</text><rect class="seg-2" x="650.4" y="10" width="49.1" height="34"><title>10 to &lt;20: 496,714 people (8%)</title></rect><text class="value" x="675.0" y="31.0" text-anchor="middle" style="fill:#ffffff">8%</text><rect class="seg-3" x="699.5" y="10" width="4.5" height="34"><title>20 or more (state standard): 45,191 people (1%)</title></rect><text class="tick" x="100" y="83.0" text-anchor="end">Highest year</text><rect class="seg-0" x="110.0" y="62" width="262.9" height="34"><title>Not detected (&lt;2): 2,659,733 people (44%)</title></rect><text class="value" x="241.5" y="83.0" text-anchor="middle" style="fill:#0b0b0b">44%</text><rect class="seg-1" x="372.9" y="62" width="174.5" height="34"><title>2 to &lt;10: 1,765,785 people (29%)</title></rect><text class="value" x="460.2" y="83.0" text-anchor="middle" style="fill:#0b0b0b">29%</text><rect class="seg-2" x="547.4" y="62" width="113.7" height="34"><title>10 to &lt;20: 1,149,966 people (19%)</title></rect><text class="value" x="604.3" y="83.0" text-anchor="middle" style="fill:#ffffff">19%</text><rect class="seg-3" x="661.1" y="62" width="42.9" height="34"><title>20 or more (state standard): 433,814 people (7%)</title></rect></svg>
+    <div class="legend"><span><i class="sw seg-0"></i>Not detected</span><span><i class="sw seg-1"></i>2 to &lt;10 ng/L</span><span><i class="sw seg-2"></i>10 to &lt;20 ng/L</span><span><i class="sw seg-3"></i>20+ ng/L (state standard)</span></div>
+  </div>
+  <p class="note">Cross-check: for the 257 systems also tested under EPA's UCMR 5 (2023 to 2025), the state and federal PFAS6 levels correlate at 0.67. UCMR 5 reports each compound only above 3 to 4 ng/L, so its sums run lower.</p>
+
+  <h3>Systems at 10 ng/L or more now</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>Water system</th><th>People served</th><th>PFAS6 now (ng/L)</th>
+      <th>Highest year (ng/L)</th><th>EPA UCMR 5, 2023–25 (ng/L)</th></tr></thead>
+    <tbody><tr><td class="wrap">Peabody Water Dept.</td><td>54,481</td><td>11.5</td><td>11.4</td><td>4.1</td></tr>
+<tr><td class="wrap">Dedham Westwood Water Dist.</td><td>41,630</td><td>11.0</td><td>14.6</td><td>4.7</td></tr>
+<tr><td class="wrap">Woburn Water Dept.</td><td>40,876</td><td>10.6</td><td>21.2</td><td>4.5</td></tr>
+<tr><td class="wrap">Braintree Water And Sewer Dept.</td><td>39,143</td><td>15.3</td><td>24.9</td><td>12.4</td></tr>
+<tr><td class="wrap">Shrewsbury Water Department</td><td>38,325</td><td>11.0</td><td>14.4</td><td>5.5</td></tr>
+<tr><td class="wrap">Randolph Water Department <span class=note>(buys its water)</span></td><td>34,362</td><td>17.3</td><td>23.9</td><td>18.6</td></tr>
+<tr><td class="wrap">Stoughton Water Department</td><td>29,281</td><td>14.8</td><td>16.9</td><td>5.6</td></tr>
+<tr><td class="wrap">Chelmsford Water District</td><td>28,750</td><td>19.4</td><td>20.2</td><td>10.1</td></tr>
+<tr><td class="wrap">Bridgewater Water Department</td><td>28,633</td><td>20.5</td><td>21.9</td><td>12.0</td></tr>
+<tr><td class="wrap">Wakefield Water Dept</td><td>27,090</td><td>10.6</td><td>24.9</td><td>2.1</td></tr>
+<tr><td class="wrap">Walpole Water Dept</td><td>24,070</td><td>12.5</td><td>13.6</td><td>5.5</td></tr>
+<tr><td class="wrap">Norton Water Department</td><td>19,161</td><td>17.0</td><td>17.1</td><td>7.1</td></tr>
+<tr><td class="wrap">Westford Water Department</td><td>18,680</td><td>13.0</td><td>16.4</td><td>6.2</td></tr>
+<tr><td class="wrap">Foxboro Water Department</td><td>18,639</td><td>10.3</td><td>17.1</td><td>9.5</td></tr>
+<tr><td class="wrap">Duxbury Water Department</td><td>15,636</td><td>14.0</td><td>19.3</td><td>10.4</td></tr>
+<tr><td class="wrap">Seekonk Water District</td><td>14,704</td><td>10.8</td><td>11.6</td><td>4.6</td></tr>
+<tr><td class="wrap">Bedford Water Dept.</td><td>14,394</td><td>23.7</td><td>23.7</td><td>ND</td></tr>
+<tr><td class="wrap">Hanscom Afb <span class=note>(buys its water)</span></td><td>11,789</td><td>11.8</td><td>11.8</td><td>ND</td></tr>
+<tr><td class="wrap">Uxbridge Dpw,  Water Division</td><td>11,525</td><td>13.7</td><td>14.9</td><td>2.6</td></tr>
+<tr><td class="wrap">Norwell Water Department</td><td>11,495</td><td>13.9</td><td>19.3</td><td>15.3</td></tr>
+<tr><td class="wrap">Holbrook Public Works Dept <span class=note>(buys its water)</span></td><td>11,405</td><td>17.3</td><td>23.9</td><td>16.2</td></tr>
+<tr><td class="wrap">Grafton Water District</td><td>10,925</td><td>10.7</td><td>10.5</td><td>7.0</td></tr>
+<tr><td class="wrap">Maynard Dpw, Water Division</td><td>10,401</td><td>11.7</td><td>13.1</td><td>2.7</td></tr>
+<tr><td class="wrap">Pepperell Dpw Water Division</td><td>9,217</td><td>10.0</td><td>15.4</td><td>9.6</td></tr>
+<tr><td class="wrap">Norfolk Water Division</td><td>7,602</td><td>10.1</td><td>12.4</td><td>2.1</td></tr></tbody>
+  </table></div>
+
+  <h2>Private wells: estimated</h2>
+  <p>About 1.0 million people live outside every community water service area and are presumed to
+     drink from private wells, which no public program tests. Their risk is estimated from public wells,
+     which were tested systematically: a model trained on the highest raw (untreated) PFAS6 result at
+     1,030 public groundwater wells, using measured PFAS at other public wells within 5 km and how
+     developed the area is (population, sewer service, aquifer).</p>
+  <div class="scroll"><table>
+    <thead><tr><th>How well it predicts, holding out whole towns</th><th>PFAS6 20 ng/L or more</th>
+      <th>PFAS detected</th></tr></thead>
+    <tbody><tr><td class="wrap">Model</td><td>0.67</td><td>0.78</td></tr>
+<tr><td class="wrap">Development alone (population within 1 km)</td><td>0.62</td><td>0.76</td></tr>
+<tr><td class="wrap">Share of wells in the category</td><td>18%</td><td>66%</td></tr></tbody>
+  </table></div>
+  <p>ROC AUC is 0.5 for a coin flip and 1.0 for perfect ranking. The model beats development alone, but
+     it cannot say which well is contaminated: groundwater PFAS here is widespread and depends on things
+     public data does not capture (past spills, well depth, local geology). Distance to mapped industries,
+     airports, landfills and other likely sources added nothing once nearby well results and development
+     were included. Private wells also tend to be shallower than public wells, so the public-well rates
+     may not carry over. Read these as area-level odds; only testing a well answers the question for a home.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Estimated chance that water at the location has PFAS6 of 20 ng/L or more</th>
+      <th>Private-well residents</th></tr></thead>
+    <tbody><tr><td>30% or more</td><td>104,731</td></tr>
+<tr><td>20 to 30%</td><td>267,280</td></tr>
+<tr><td>10 to 20%</td><td>341,287</td></tr>
+<tr><td>Under 10%</td><td>307,321</td></tr></tbody>
+  </table></div>
+
+  <h2>Who is affected</h2>
+  <p>By the state's 2020 Environmental Justice block groups (minority, income and English-isolation
+     criteria). Shares for public water are of that group's residents on public water; private-well
+     figures are model estimates.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Group</th><th>Residents</th><th>Public water: 20+ now</th><th>10 to &lt;20 now</th>
+      <th>Detected now</th><th>20+ in highest year</th><th>On private wells</th>
+      <th>Private wells: est. share 20+</th></tr></thead>
+    <tbody><tr class="selected"><td class="wrap">All residents</td><td>7,029,917</td><td>0.8%</td><td>8.3%</td><td>47%</td><td>7.2%</td><td>1,020,619</td><td>17%</td></tr>
+<tr><td class="wrap">In EJ block groups</td><td>3,482,860</td><td>0.2%</td><td>5.6%</td><td>42%</td><td>4.5%</td><td>142,342</td><td>22%</td></tr>
+<tr><td class="wrap">EJ: minority criterion</td><td>3,232,896</td><td>0.2%</td><td>5.9%</td><td>42%</td><td>4.4%</td><td>103,587</td><td>25%</td></tr>
+<tr><td class="wrap">EJ: income criterion</td><td>1,301,284</td><td>0.3%</td><td>1.4%</td><td>43%</td><td>2.0%</td><td>56,241</td><td>18%</td></tr>
+<tr><td class="wrap">EJ: English isolation</td><td>408,157</td><td>0.0%</td><td>0.4%</td><td>42%</td><td>0.5%</td><td>3,363</td><td>32%</td></tr>
+<tr><td class="wrap">Not in EJ block groups</td><td>3,547,057</td><td>1.4%</td><td>12%</td><td>54%</td><td>11%</td><td>878,277</td><td>16%</td></tr></tbody>
+  </table></div>
+  <p class="note">Many EJ neighborhoods are in cities served by MWRA reservoir water, where PFAS6 is not
+     detected; their residents are less likely than others to have PFAS in their tap water.</p>
+
+  <h2>Method</h2>
+  <ul>
+    <li><b>Public water:</b> finished-water PFAS6 results per system (MassDEP drinking-water data on the
+        EEA Data Portal; non-detects count as zero). Purchased water follows EPA SDWIS buyer-seller links.
+        Census blocks take the community system whose service area holds them.</li>
+    <li><b>Private wells:</b> census blocks outside every community service area. Estimates come from a
+        logistic model trained on public groundwater wells and applied at each block.</li>
+    <li><b>Checks:</b> state PFAS6 levels against EPA's UCMR 5 results; the groundwater model with
+        town-grouped cross-validation.</li>
+    <li><b>Limits:</b> the drinking-water API returns at most 100 results per system and water type, so
+        about 40 large systems are represented by a sample of their results; small non-community
+        systems (schools, workplaces) and bottled water are not modeled.</li>
+  </ul>
+
+  <h2>Reported releases</h2>
+  <p>The companion analysis ranks where MassDEP is most likely to receive a PFAS release report. It
+     reflects where testing and investigations happen as much as where PFAS is (metro Boston, on
+     reservoir water with few wells to test, has almost no reported PFAS releases), so it is kept as
+     supporting context: <a href="releases.html">reported-release risk</a>.</p>
+
+  <h2>Data sources</h2>
+  <div class="scroll"><table>
+    <thead><tr><th class="wrap">Dataset</th><th class="wrap">Publisher</th><th>Status</th></tr></thead>
+    <tbody><tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/census2020/CENSUS2020_BLK_BG_TRCT.zip">2020 Census block groups (with 2020 population and housing counts)</a></td><td class="wrap">MassGIS / U.S. Census Bureau</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/census2020/CENSUS2020_BLK_BG_TRCT.zip">2020 Census blocks (population, housing and land area for the hexagon grid)</a></td><td class="wrap">MassGIS / U.S. Census Bureau</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/towns.zip">Municipal boundaries (used for spatially grouped cross-validation)</a></td><td class="wrap">MassGIS</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://www.mass.gov/doc/downloadable-data-waste-site-cleanup-notifications-status/download">MassDEP Waste Site Cleanup notifications and chemicals (bulk download)</a></td><td class="wrap">MassDEP Bureau of Waste Site Cleanup</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://eeaonline.eea.state.ma.us/portal#!/search/wastesite">MassDEP data portal site details (official site coordinates)</a></td><td class="wrap">MassDEP / EEA Data Portal</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/gdbs/MassGIS_AddressPoints.zip">MassGIS statewide address points (offline geocoding of release addresses)</a></td><td class="wrap">MassGIS</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/firestations_pt.zip">Fire stations (MEMA)</a></td><td class="wrap">MassGIS</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/bwpmajor_pt.zip">MassDEP major permitted facilities (air, hazardous waste generators, TSDFs)</a></td><td class="wrap">MassGIS / MassDEP</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/ust.zip">MassDEP underground storage tank facilities</a></td><td class="wrap">MassGIS / MassDEP</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/solidwaste.zip">MassDEP solid waste land disposal sites (landfill footprints)</a></td><td class="wrap">MassGIS / MassDEP</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/census2020/CENSUS2020TIGERROADS_SHP.zip">2020 TIGER primary and secondary roads</a></td><td class="wrap">MassGIS / U.S. Census Bureau</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/aquifers.zip">High- and medium-yield aquifers</a></td><td class="wrap">MassGIS / USGS</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://adds-faa.opendata.arcgis.com/datasets/faa::airports-1">Airports (FAA NASR), public-use aerodromes and military airfields (AFFF use)</a><br><span class="note">ROC AUC 0.714 -&gt; 0.713, top-10%-land capture 35% -&gt; 34% (4 km² hexagons, smoothed logistic); also no gain in the groundwater model; not used</span></td><td class="wrap">FAA Aeronautical Data Delivery Service</td><td><span class="status">tested, not used</span></td></tr>
+<tr><td class="wrap"><a href="https://catalog.data.gov/dataset/military-installations-ranges-and-training-areas">Military installations, ranges and training areas (MIRTA)</a><br><span class="note">ROC AUC 0.714 -&gt; 0.707, capture 35% -&gt; 32% (4 km² hexagons, smoothed logistic); also no gain in the groundwater model; not used</span></td><td class="wrap">U.S. Department of Defense</td><td><span class="status">tested, not used</span></td></tr>
+<tr><td class="wrap"><a href="https://www.epa.gov/toxics-release-inventory-tri-program/tri-basic-data-files-calendar-years-1987-present">EPA Toxics Release Inventory reporters, Massachusetts, 2014-2024</a><br><span class="note">ROC AUC 0.714 -&gt; 0.706, capture 35% -&gt; 32% (4 km² hexagons, smoothed logistic); also no gain in the groundwater model; not used</span></td><td class="wrap">U.S. EPA</td><td><span class="status">tested, not used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/pwsdep_pt.zip">Public water supply sources (wells and intakes)</a></td><td class="wrap">MassGIS / MassDEP</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://eeaonline.eea.state.ma.us/portal#!/search/drinking-water">PFAS6 results for public water systems (MassDEP drinking-water data)</a></td><td class="wrap">MassDEP / EEA Data Portal</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/DEP_Sewer_Service_Areas.zip">Sewer service areas of municipal wastewater treatment plants</a></td><td class="wrap">MassGIS / MassDEP</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://www.epa.gov/frs/epa-state-combined-csv-download-files">EPA Facility Registry Service, Massachusetts facilities and NAICS codes</a></td><td class="wrap">U.S. EPA</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/census2020/ej2020.zip">2020 Environmental Justice populations (block groups; minority, income, limited-English criteria)</a></td><td class="wrap">MassGIS / Executive Office of Energy and Environmental Affairs</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://www.epa.gov/enviro/sdwis-overview">Purchased-water links between public water systems (who buys from whom)</a></td><td class="wrap">U.S. EPA Safe Drinking Water Information System (Envirofacts)</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://www.epa.gov/dwucmr/occurrence-data-unregulated-contaminant-monitoring-rule">EPA UCMR 5 PFAS results for public water systems, 2023-2025 (29 PFAS)</a></td><td class="wrap">U.S. EPA</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/DEP_PWS_Water_Service_Areas.zip">Community public water system service areas (outside them, homes are presumed on private wells)</a></td><td class="wrap">MassGIS / MassDEP</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/lclu2016/">2016 land cover / land use (industrial, commercial, impervious fractions)</a></td><td class="wrap">MassGIS</td><td><span class="status">planned</span></td></tr></tbody>
+  </table></div>
+
+  <h2>Downloads</h2>
+  <ul class="downloads"><li><a href="data/block_group_drinking_water.csv">Drinking water by 2020 block group: public-water PFAS6 now and at peak, private-well share and estimate, EJ fields</a></li><li><a href="data/water_systems_pfas6.csv">PFAS6 levels for every community water system, with the UCMR 5 cross-check</a></li></ul>
+
+  <footer>Run 2026-09-30. Code, data catalog and method: <a href="https://github.com/adichiara/PFAS-release-risk">GitHub</a>.</footer>
+</main>
+</body>
+</html>

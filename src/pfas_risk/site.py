@@ -27,7 +27,7 @@ from .site_sections import (
     watchlist_rows,
     write_downloads,
 )
-from .water_site import build_water_page
+from .water_site import build_water_page, nav
 
 SITE_DIR = ROOT / "docs"
 TEMPLATE = Path(__file__).with_name("site_template.html")
@@ -282,7 +282,7 @@ def build_site(primary: UnitResult, others: list[UnitResult], releases: gpd.GeoD
             .replace("__POPULATION__", population)
             .replace("__DOWNLOADS__", "".join(f'<li><a href="{h}">{html.escape(t)}</a></li>'
                                               for h, t in downloads)))
-    (SITE_DIR / "releases.html").write_text(page)
+    (SITE_DIR / "releases.html").write_text(page.replace("__NAV__", nav("releases.html", REPO_URL)))
     for u in [primary, *others]:
         if u.map_path.exists():
             shutil.copyfile(u.map_path, SITE_DIR / u.map_file)

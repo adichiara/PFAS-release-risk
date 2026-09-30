@@ -15,12 +15,22 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 
-from .drinking_water import MCL_NG_L, band, block_water, service_areas, system_levels, ucmr5_levels
+from .drinking_water import (
+    MCL_NG_L,
+    band,
+    block_water,
+    finished_results,
+    service_areas,
+    system_levels,
+    ucmr5_levels,
+)
 from .groundwater import THRESHOLDS, evaluate, private_well_estimates, training_table
 from .population import attach_context
 from .sources import read
 
 log = logging.getLogger(__name__)
+
+MWRA_PWS = "6000000"   # Massachusetts Water Resources Authority (wholesale supplier)
 
 
 def block_exposure() -> gpd.GeoDataFrame:
@@ -147,7 +157,12 @@ def groundwater_validation(repeats: int = 5) -> dict:
 def exposure_report(blocks: pd.DataFrame, systems: pd.DataFrame) -> dict:
     from .water_map import private_band_counts
     both = systems.dropna(subset=["pfas6_current_ng_l", "ucmr5_pfas6_ng_l"])
+    mwra = systems["results_systems"].fillna("").str.contains(MWRA_PWS)
     return {
+        "latest_result": str(finished_results()["date"].max().date()),
+        "mwra": {"systems": int(mwra.sum()), "population": int(systems.loc[mwra, "population_served"].sum()),
+                 "pfas6_current_ng_l": float(systems.loc[systems["pws_id"] == MWRA_PWS, "pfas6_current_ng_l"].max())
+                 if (systems["pws_id"] == MWRA_PWS).any() else 0.0},
         "headline": headline(blocks),
         "groups": summarize(blocks),
         "private_bands": private_band_counts(blocks),

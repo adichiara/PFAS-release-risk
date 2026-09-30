@@ -9,8 +9,11 @@ Who in Massachusetts drinks water with PFAS, built only from public data:
   PFAS6 at about 1,030 public wells, applied where homes are outside public water service.
 - **Who is affected,** by the state's 2020 Environmental Justice block groups.
 
-**Site:** https://adichiara.github.io/PFAS-release-risk/ (findings, method, the drinking-water
-map and downloads).
+**Site:** https://adichiara.github.io/PFAS-release-risk/ is written for the public: what PFAS
+are, what the state data shows, how to check your area and what to do (following MassDEP and
+EPA guidance). [Detailed findings](https://adichiara.github.io/PFAS-release-risk/analysis.html)
+has the method, validation and every table; there are also the drinking-water map, the
+reported-release analysis and downloads.
 
 It grew out of a rebuild of the release risk model from the 2021 WPI Data Science / MassDEP
 graduate capstone ([GQP-TeamMassDEP/Mass_PFAS-Analysis](https://github.com/GQP-TeamMassDEP/Mass_PFAS-Analysis)),
@@ -250,7 +253,7 @@ src/pfas_risk/
   groundwater.py          private-well groundwater model
   exposure.py             drinking-water exposure by census block
   water_map.py            drinking-water map
-  water_site.py           front page (docs/index.html)
+  water_site.py           public front page (index.html) and detailed findings (analysis.html)
   api_sources.py          fetchers for sources served by web APIs
   model.py                models, town-grouped CV, permutation null
   mapping.py              interactive Leaflet map
@@ -259,7 +262,7 @@ src/pfas_risk/
 tests/
 outputs/<unit>/           evaluation.md / .json per unit, population.json for the primary unit
                           (other outputs are regenerated, not committed)
-docs/                     published site: index.html (drinking water), water_map.html,
+docs/                     published site: index.html (public), analysis.html, water_map.html,
                           releases.html, map.html (release-risk hexagons), map_bg.html, data/
 ```
 
