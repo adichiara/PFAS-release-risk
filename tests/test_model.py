@@ -5,7 +5,7 @@ import pytest
 from shapely.geometry import Point, box
 
 from pfas_risk.features import point_measures
-from pfas_risk.model import ExposurePoisson, capture, evaluate, town_folds
+from pfas_risk.model import ExposurePoisson, capture, evaluate, forward_test, town_folds
 
 
 def test_town_folds_never_split_a_town():
@@ -51,15 +51,33 @@ def test_point_measures_counts_and_distance():
 def test_evaluate_runs_on_synthetic_data():
     rng = np.random.default_rng(1)
     n = 600
-    df = pd.DataFrame({
+    xy = rng.uniform(0, 50_000, (n, 2))
+    df = gpd.GeoDataFrame({
         "land_km2": rng.uniform(0.2, 10, n),
         "pop_density": rng.uniform(10, 5000, n),
         "housing_density": rng.uniform(5, 2000, n),
         "n_fire_station": rng.poisson(0.3, n),
         "town": rng.choice([f"t{i}" for i in range(40)], n),
-    })
+    }, geometry=gpd.points_from_xy(xy[:, 0], xy[:, 1]), crs="EPSG:26986")
     df["releases"] = rng.poisson(0.02 * df["land_km2"] * (1 + 3 * df["n_fire_station"]))
     metrics, oof = evaluate(df, repeats=2)
-    assert set(metrics["model"]) == {"baseline_area", "baseline_area_population", "logistic",
-                                     "poisson_rate", "gradient_boosting"}
-    assert oof.shape == (n, 5) and oof.notna().all().all()
+    models = {"logistic", "poisson_rate", "gradient_boosting"}
+    assert set(metrics["model"]) == {"baseline_area", "baseline_area_population"} | models | {
+        m + "+smooth" for m in models}
+    assert oof.shape == (n, 8) and oof.notna().all().all()
+
+
+def test_forward_test_scores_only_units_without_earlier_releases():
+    rng = np.random.default_rng(2)
+    n = 400
+    xy = rng.uniform(0, 30_000, (n, 2))
+    df = gpd.GeoDataFrame({
+        "land_km2": np.full(n, 4.0), "pop_density": rng.uniform(10, 5000, n),
+        "housing_density": rng.uniform(5, 2000, n), "n_signal": rng.poisson(0.5, n),
+        "town": rng.choice([f"t{i}" for i in range(20)], n), "releases": 0,
+    }, geometry=gpd.points_from_xy(xy[:, 0], xy[:, 1]), crs="EPSG:26986")
+    before = rng.poisson(0.02 + 0.3 * df["n_signal"].to_numpy())
+    new_after = (rng.random(n) < 0.02 + 0.2 * (df["n_signal"].to_numpy() > 0)) & (before == 0)
+    out = forward_test(df, before, new_after, ["logistic", "logistic+smooth", "baseline_area_population"])
+    assert set(out) == {"logistic", "logistic+smooth", "baseline_area_population"}
+    assert out["logistic"]["roc_auc"] > out["baseline_area_population"]["roc_auc"]

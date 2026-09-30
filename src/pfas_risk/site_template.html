@@ -93,8 +93,8 @@
 <body>
 <main>
   <h1>PFAS release risk in Massachusetts</h1>
-  <p class="lede">Relative risk of a reported PFAS release for each of the state's 5,109 census block
-     groups, built only from public data.</p>
+  <p class="lede">Relative risk of a reported PFAS release across the state, on a grid of __UNIT_COUNT__
+     __UNITS__, built only from public data.</p>
   <p class="warn"><b>Preliminary.</b> Trained on __N_RELEASES__ located PFAS releases from __SOURCE__.
      Scores rank areas relative to each other. They are not probabilities of contamination.</p>
   <a class="cta" href="map.html">Open the risk map</a>
@@ -104,21 +104,30 @@
 
   <h2>Finding releases with a limited budget</h2>
   <p>If field work covered the highest-risk land first, how many reported releases would it reach?
-     The model's curve rises well above land area alone, which is the main size effect it has to beat.
-     Scores are out-of-fold (each town scored by a model that never saw it). Hover the points for values.</p>
+     Every cell has the same area, so the baseline to beat is population and housing density. Scores are
+     out-of-fold (each town scored by a model that never saw it). Hover the points for values.</p>
   <div class="figure">__CAPTURE_CHART__
-    <div class="legend"><span><i></i>Model</span><span><i class="base"></i>Land area alone</span>
+    <div class="legend"><span><i></i>Model</span><span><i class="base"></i>__BASE_LABEL__</span>
       <span><i class="random"></i>Random targeting</span></div>
   </div>
 
+  <h2>Does it predict new reports?</h2>
+  <p>The closest test of real use: models trained only on the __FWD_TRAIN__ releases reported before
+     __FWD_CUTOFF_YEAR__, then scored on where releases were reported from __FWD_CUTOFF_YEAR__ on. Only cells
+     with no earlier release are scored; __FWD_NEW__ of them had a first release after the cutoff.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Model</th><th>ROC AUC</th><th>Avg precision</th>
+      <th>New releases in top 10% of __UNITS__</th><th>New releases in top-risk 10% of land</th></tr></thead>
+    <tbody>__FORWARD_ROWS__</tbody>
+  </table></div>
+
   <h2>Highest-risk areas without a reported release</h2>
-  <p>Block groups the model ranks highest per km² where MassDEP has no PFAS release on record. These are
-     candidates for a closer look, not findings: a high score means the area resembles places where
-     releases have been reported. The last column counts EPA-registered facilities in PFAS-related
-     industries within 2 km, with the three largest sectors. Ranking is per km², so small, dense urban
-     block groups with many industrial sites nearby rise to the top.</p>
+  <p>__UNITS__ the model ranks highest where MassDEP has no PFAS release on record. These are candidates for
+     a closer look, not findings: a high score means the area resembles places where releases have been
+     reported. The last column counts EPA-registered facilities in PFAS-related industries within 2 km,
+     with the three largest sectors.</p>
   <div class="scroll"><table class="watch">
-    <thead><tr><th>Town</th><th>Block group</th><th>Risk percentile</th><th>Land km²</th><th>Population</th>
+    <thead><tr><th>Town</th><th>__UNIT_TITLE__</th><th>Risk percentile</th><th>Land km²</th><th>Population</th>
       <th>Nearest reported release (km)</th><th class="wrap">PFAS-related industries within 2 km</th></tr></thead>
     <tbody>__WATCH_ROWS__</tbody>
   </table></div>
@@ -130,26 +139,25 @@
      sector leaves others carrying similar information. This shows association with reported releases, not cause.</p>
   <div class="figure">__IMPORTANCE_CHART__</div>
 
-__OTHER_UNITS__
-
   <h2>How well it validates</h2>
-  <p>Five-fold cross-validation that holds out whole towns, repeated __REPEATS__ times. Larger block
-     groups see more reported releases, so each model is compared with baselines that use size alone.
-     The highlighted row is the model shown on the map.</p>
+  <p>Five-fold cross-validation that holds out whole towns, repeated __REPEATS__ times. "Smoothed" models
+     blend each cell's score with its neighbors' within 3 km, computed inside each fold so no score
+     depends on a model that saw that cell. The highlighted row is the model shown on the map.</p>
   <div class="scroll"><table>
     <thead><tr><th>Model</th><th>ROC AUC</th><th>Avg precision</th>
-      <th>Releases in top 10% of block groups</th><th>Releases in top-risk 10% of land</th></tr></thead>
+      <th>Releases in top 10% of __UNITS__</th><th>Releases in top-risk 10% of land</th></tr></thead>
     <tbody>__MODEL_ROWS__</tbody>
   </table></div>
 
   <h2>Does it beat size and density alone?</h2>
-  <p>Release labels were shuffled __N_NULL__ times among block groups of similar land area and population
-     density, then the same cross-validation was run. The shuffle keeps size effects and removes
+  <p>Release labels were shuffled __N_NULL__ times among __UNITS__ of similar land area and population
+     density, then the same cross-validation was run. The shuffle keeps size and density effects and removes
      everything else. <i>p</i> is the share of shuffles that did at least as well as the real model.</p>
   <div class="scroll"><table>
     <thead><tr><th>Metric</th><th>Observed</th><th>Null mean</th><th>Null 95th pct</th><th><i>p</i></th></tr></thead>
     <tbody>__NULL_ROWS__</tbody>
   </table></div>
+__OTHER_UNITS__
 
   <h2>Reported PFAS releases by year</h2>
   <p>All __N_ALL_RELEASES__ release sites on the list, by the year MassDEP was notified. PFAS reporting
@@ -159,7 +167,9 @@ __OTHER_UNITS__
 
   <h2>Method</h2>
   <ul>
-    <li><b>Unit:</b> 2020 census block groups, in Massachusetts State Plane meters.</li>
+    <li><b>Unit:</b> equal-area 4 km² hexagons clipped to the state (Massachusetts State Plane meters).
+        Population, housing and land area come from 2020 census blocks, weighted by the share of each block
+        in a cell; each cell belongs to the town holding most of its land.</li>
     <li><b>Response:</b> MassDEP reportable releases (RTNs) with PFAS as a chemical, located by matching
         addresses to MassGIS address points.</li>
     <li><b>Features:</b> counts inside, counts within 2 km and distance to the nearest fire station,
@@ -168,8 +178,10 @@ __OTHER_UNITS__
         paper, chemicals and plastics, metal finishing, electronics, petroleum, aviation and
         military, waste and wastewater); landfills; aquifers; major-road density; population and
         housing density.</li>
-    <li><b>Map scores</b> are out-of-fold: each block group is colored by a model trained without its
-        town, so known release sites are not simply echoed back.</li>
+    <li><b>Validation:</b> five-fold cross-validation holding out whole towns, a size- and density-matched
+        permutation test, and a forward-in-time test on releases reported after a cutoff.</li>
+    <li><b>Map scores</b> are out-of-fold: each cell is colored by a model trained without its town, so
+        known release sites are not simply echoed back.</li>
   </ul>
 
   <h2>Data sources</h2>

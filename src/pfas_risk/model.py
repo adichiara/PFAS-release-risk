@@ -16,12 +16,14 @@ from sklearn.base import BaseEstimator, ClassifierMixin, clone
 from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression, PoissonRegressor
 from sklearn.metrics import average_precision_score, roc_auc_score
+from sklearn.neighbors import BallTree
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import FunctionTransformer, StandardScaler
 
 from .features import model_columns
 
 AREA_COL = "land_km2"
+BASELINES = ("baseline_area", "baseline_area_population")
 
 
 def _scaled(estimator) -> object:
@@ -101,28 +103,92 @@ def score(y_count: np.ndarray, p: np.ndarray, area: np.ndarray) -> dict[str, flo
     }
 
 
-def out_of_fold(df: pd.DataFrame, cols: list[str], estimator, folds) -> np.ndarray:
-    X, y = df[cols], df["releases"].to_numpy()
-    target = y if isinstance(estimator, ExposurePoisson) else (y > 0).astype(int)
-    p = np.zeros(len(df))
+SMOOTH = "+smooth"
+SMOOTH_RADIUS_M = 3_000
+
+
+def neighbor_index(df: pd.DataFrame, radius_m: float = SMOOTH_RADIUS_M) -> list[np.ndarray]:
+    """For each unit, the units whose interior points lie within ``radius_m`` (itself included)."""
+    pts = df.geometry.representative_point()
+    xy = np.column_stack([pts.x, pts.y])
+    return list(BallTree(xy).query_radius(xy, r=radius_m))
+
+
+def smooth(p: np.ndarray, neighbors: list[np.ndarray], rows: np.ndarray) -> np.ndarray:
+    """Half the unit's own score plus half the mean score of its neighbors, for ``rows``."""
+    return 0.5 * p[rows] + 0.5 * np.array([p[neighbors[i]].mean() for i in rows])
+
+
+def split_model(name: str) -> tuple[str, bool]:
+    """'gradient_boosting+smooth' -> ('gradient_boosting', True)."""
+    return (name.removesuffix(SMOOTH), name.endswith(SMOOTH))
+
+
+def _target(estimator, y: np.ndarray) -> np.ndarray:
+    return y if isinstance(estimator, ExposurePoisson) else (y > 0).astype(int)
+
+
+def out_of_fold(df: pd.DataFrame, cols: list[str], estimator, folds,
+                neighbors: list[np.ndarray] | None = None) -> tuple[np.ndarray, np.ndarray | None]:
+    """Out-of-fold scores, and (with ``neighbors``) the same scores smoothed over nearby units.
+
+    Smoothing happens inside each fold: held-out units are blended with that fold's own
+    predictions for their neighbors, so no score depends on a model that saw the unit's label.
+    """
+    X, target = df[cols], _target(estimator, df["releases"].to_numpy())
+    raw = np.zeros(len(df))
+    smoothed = np.zeros(len(df)) if neighbors is not None else None
     for tr, te in folds:
         m = clone(estimator).fit(X.iloc[tr], target[tr])
-        p[te] = m.predict_proba(X.iloc[te])[:, 1]
-    return p
+        if neighbors is None:
+            raw[te] = m.predict_proba(X.iloc[te])[:, 1]
+            continue
+        p_all = m.predict_proba(X)[:, 1]
+        raw[te] = p_all[te]
+        smoothed[te] = smooth(p_all, neighbors, te)
+    return raw, smoothed
 
 
 def evaluate(df: pd.DataFrame, repeats: int = 10, n_folds: int = 5) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Repeated town-grouped CV. Returns (per-repeat metrics, mean out-of-fold scores)."""
+    """Repeated town-grouped CV. Returns (per-repeat metrics, mean out-of-fold scores).
+
+    Each non-baseline model is also scored with neighbor smoothing, as '<model>+smooth'.
+    """
     specs = model_specs(model_columns(df))
+    neighbors = neighbor_index(df)
     y, area = df["releases"].to_numpy(), df[AREA_COL].to_numpy()
-    rows, oof = [], {name: np.zeros(len(df)) for name in specs}
+    rows, oof = [], {}
     for r in range(repeats):
         folds = town_folds(df["town"], n_folds, seed=r)
         for name, (cols, est) in specs.items():
-            p = out_of_fold(df, cols, est, folds)
-            oof[name] += p / repeats
-            rows.append({"model": name, "repeat": r, **score(y, p, area)})
+            raw, smoothed = out_of_fold(df, cols, est, folds, None if name in BASELINES else neighbors)
+            for label, p in [(name, raw), (name + SMOOTH, smoothed)]:
+                if p is None:
+                    continue
+                oof[label] = oof.get(label, 0) + p / repeats
+                rows.append({"model": label, "repeat": r, **score(y, p, area)})
     return pd.DataFrame(rows), pd.DataFrame(oof, index=df.index)
+
+
+def forward_test(df: pd.DataFrame, y_before: np.ndarray, new_after: np.ndarray, models: list[str]) -> dict:
+    """Train on releases reported before a cutoff; score units whose first release came after.
+
+    ``y_before`` is each unit's release count before the cutoff; ``new_after`` flags units with
+    no earlier release that have one after it. Only units without an earlier release are scored.
+    """
+    specs = model_specs(model_columns(df))
+    neighbors = neighbor_index(df)
+    area = df[AREA_COL].to_numpy()
+    rows = np.where(y_before == 0)[0]
+    out = {}
+    for name in models:
+        base, smoothed = split_model(name)
+        cols, est = specs[base]
+        m = clone(est).fit(df[cols], _target(est, y_before))
+        p_all = m.predict_proba(df[cols])[:, 1]
+        p = smooth(p_all, neighbors, rows) if smoothed else p_all[rows]
+        out[name] = {k: round(float(v), 4) for k, v in score(new_after[rows].astype(int), p, area[rows]).items()}
+    return out
 
 
 def size_strata(df: pd.DataFrame, bins: int = 5) -> pd.Series:
@@ -140,7 +206,9 @@ def permutation_null(df: pd.DataFrame, model: str, permutations: int = 20, n_fol
     over block-group sizes. Shuffling within size x density strata keeps those relationships,
     so the null shows what a model reaches *without* information from the other features.
     """
-    cols, est = model_specs(model_columns(df))[model]
+    base, smoothed = split_model(model)
+    cols, est = model_specs(model_columns(df))[base]
+    neighbors = neighbor_index(df) if smoothed else None
     area = df[AREA_COL].to_numpy()
     strata = size_strata(df).to_numpy()
     rows = []
@@ -152,16 +220,10 @@ def permutation_null(df: pd.DataFrame, model: str, permutations: int = 20, n_fol
             y[idx] = rng.permutation(y[idx])
         shuffled = df.copy()
         shuffled["releases"] = y
-        p = out_of_fold(shuffled, cols, est, town_folds(df["town"], n_folds, seed=s))
+        raw, sm = out_of_fold(shuffled, cols, est, town_folds(df["town"], n_folds, seed=s), neighbors)
+        p = sm if smoothed else raw
         rows.append({"model": model, "permutation": s, **score(shuffled["releases"].to_numpy(), p, area)})
     return pd.DataFrame(rows)
-
-
-def fit_final(df: pd.DataFrame, model: str):
-    cols, est = model_specs(model_columns(df))[model]
-    y = df["releases"].to_numpy()
-    target = y if isinstance(est, ExposurePoisson) else (y > 0).astype(int)
-    return cols, clone(est).fit(df[cols], target)
 
 
 def feature_group(column: str) -> str:
@@ -179,12 +241,12 @@ def grouped_importance(df: pd.DataFrame, model: str, repeats: int = 3, n_folds: 
     with one group's columns shuffled together, and AUC is computed on the pooled out-of-fold
     predictions. Larger drops mean the model leans more on that group.
     """
-    cols, est = model_specs(model_columns(df))[model]
+    cols, est = model_specs(model_columns(df))[split_model(model)[0]]
     groups: dict[str, list[str]] = {}
     for c in cols:
         groups.setdefault(feature_group(c), []).append(c)
     X, y = df[cols], df["releases"].to_numpy()
-    target = y if isinstance(est, ExposurePoisson) else (y > 0).astype(int)
+    target = _target(est, y)
     rows = []
     for r in range(repeats):
         rng = np.random.default_rng(2000 + r)
