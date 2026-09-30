@@ -99,6 +99,16 @@ def eea_drinking_water(spec: dict, dest: Path) -> None:
     pd.DataFrame(rows).drop_duplicates("Id").to_csv(dest, index=False)
 
 
+def arcgis_table(spec: dict, dest: Path) -> None:
+    """Attributes of an ArcGIS layer (no geometry) as CSV."""
+    q = urllib.parse.urlencode({"where": spec["where"], "outFields": spec.get("fields", "*"),
+                                "returnGeometry": "false", "f": "json", "resultRecordCount": 2000})
+    page = json.loads(_get(f"{spec['service']}/query?{q}"))
+    if "error" in page or not page.get("features"):
+        raise RuntimeError(f"{spec['service']}: {page.get('error', 'no features')}")
+    pd.DataFrame([f["attributes"] for f in page["features"]]).to_csv(dest, index=False)
+
+
 def envirofacts(spec: dict, dest: Path) -> None:
     """All rows of an EPA Envirofacts query, paged 5,000 at a time."""
     rows, start = [], 0
@@ -114,7 +124,7 @@ def envirofacts(spec: dict, dest: Path) -> None:
 
 
 FETCHERS = {"arcgis": arcgis, "tri": tri, "eea_drinking_water": eea_drinking_water,
-            "envirofacts": envirofacts}
+            "envirofacts": envirofacts, "arcgis_table": arcgis_table}
 
 
 def fetch(spec: dict, dest: Path) -> str:

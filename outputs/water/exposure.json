@@ -22,7 +22,7 @@
     },
     "public_purchased": 2179454,
     "private_wells": 1020619,
-    "private_expected_over20": 175097,
+    "private_expected_over20": 70176,
     "private_expected_detected": 642582,
     "private_with_nearby_public_wells": 792731
   },
@@ -36,7 +36,7 @@
       "current_detected": 0.472,
       "peak_over20": 0.0722,
       "private_wells": 1020619,
-      "private_expected_over20": 0.1716,
+      "private_expected_over20": 0.0688,
       "private_expected_detected": 0.6296
     },
     {
@@ -48,7 +48,7 @@
       "current_detected": 0.4159,
       "peak_over20": 0.0455,
       "private_wells": 142342,
-      "private_expected_over20": 0.221,
+      "private_expected_over20": 0.0947,
       "private_expected_detected": 0.754
     },
     {
@@ -60,7 +60,7 @@
       "current_detected": 0.4154,
       "peak_over20": 0.0441,
       "private_wells": 103587,
-      "private_expected_over20": 0.2474,
+      "private_expected_over20": 0.1082,
       "private_expected_detected": 0.7992
     },
     {
@@ -72,7 +72,7 @@
       "current_detected": 0.4326,
       "peak_over20": 0.0202,
       "private_wells": 56241,
-      "private_expected_over20": 0.1845,
+      "private_expected_over20": 0.077,
       "private_expected_detected": 0.6933
     },
     {
@@ -84,7 +84,7 @@
       "current_detected": 0.4195,
       "peak_over20": 0.0047,
       "private_wells": 3363,
-      "private_expected_over20": 0.3188,
+      "private_expected_over20": 0.1434,
       "private_expected_detected": 0.8689
     },
     {
@@ -96,15 +96,15 @@
       "current_detected": 0.5421,
       "peak_over20": 0.1055,
       "private_wells": 878277,
-      "private_expected_over20": 0.1636,
+      "private_expected_over20": 0.0646,
       "private_expected_detected": 0.6094
     }
   ],
   "private_bands": {
-    "Under 10%": 307321,
-    "10 to 20%": 341287,
-    "20 to 30%": 267280,
-    "30% or more": 104731
+    "Under 5%": 449213,
+    "5 to 10%": 338830,
+    "10 to 20%": 215147,
+    "20% or more": 17429
   },
   "groundwater_validation": {
     "wells": 1030,
@@ -138,6 +138,23 @@
         "avg_precision": 0.87
       }
     }
+  },
+  "private_well_validation": {
+    "towns": 83,
+    "wells": 1649,
+    "wells_over20": 82,
+    "observed_share": 0.05,
+    "targeted_share_of_invitations": 0.77,
+    "model_share_before_calibration": 0.127,
+    "spearman_towns": 0.55,
+    "auc_towns_any_over20": 0.82,
+    "loto_log_loss": {
+      "calibrated_model": 305.8,
+      "uncalibrated_model": 362.3,
+      "flat_rate": 326.0
+    },
+    "offset": -1.07,
+    "prior_weight_wells": 24.3
   },
   "ucmr5_check": {
     "systems": 257,

@@ -39,9 +39,18 @@ correlate at 0.67 across 257 systems (UCMR 5 reports compounds only above 3 to 4
 The signal is measured PFAS at nearby public wells (groundwater PFAS clusters within a few
 kilometres) plus development. Distance to mapped industries, airports, military sites, landfills
 and other likely sources added nothing, whether counted around the well or inside its Zone II
-recharge area. The model estimates about 175,000 private-well residents live where groundwater
-is likely at or above 20 ng/L, but it cannot identify which wells: treat it as area-level odds.
-Private wells are also shallower than public wells, so public-well rates may not carry over.
+recharge area.
+
+**Checked against private-well tests.** MassDEP's 2020-2022 Private Wells PFAS Sampling Program
+tested 1,649 private wells in 83 towns and published each town's results (82 wells, 5.0%, at or
+above 20 ng/L). The model never saw them. It ranks those towns well (Spearman 0.55; AUC 0.82 for
+towns with any well at 20+), but it predicted 12.7% for them: public wells are more contaminated
+than private wells. So the private-well estimates are calibrated to the program (one log-odds
+shift, -1.07, fit to the towns' counts; leave-one-town-out log loss 306 vs 362 uncalibrated and
+326 for one statewide rate) and, in tested towns, blended with the town's own results
+(beta-binomial weight equal to 24 wells). Result: about 70,000 of 1.0 million private-well
+residents (7%) live where groundwater is likely at or above 20 ng/L. Three quarters of the
+program's invitations targeted wells near suspected sources, so this may still run high.
 
 **Environmental Justice areas.** Residents of EJ block groups on public water are less likely
 than others to have PFAS in their tap water (0.2% at 20+ ng/L now vs 1.4%; 42% vs 54% detected),
@@ -251,6 +260,7 @@ src/pfas_risk/
   population.py           release scores carried to census blocks; EJ summaries
   drinking_water.py       public-water PFAS6 per system, purchased water, UCMR 5 check
   groundwater.py          private-well groundwater model
+  private_wells.py        check and calibration against MassDEP private-well testing
   exposure.py             drinking-water exposure by census block
   water_map.py            drinking-water map
   water_site.py           public front page (index.html) and detailed findings (analysis.html)

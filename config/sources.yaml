@@ -221,6 +221,22 @@ sources:
     role: context
     status: available
 
+  massdep_private_wells:
+    title: MassDEP Private Wells PFAS Sampling Program, results by town (2020-2022)
+    publisher: MassDEP / UMass Amherst
+    url: https://mass-eoeea.maps.arcgis.com/apps/dashboards/f15b2464024645ec8215be1685fe88f1
+    file: massdep_private_wells_by_town.csv
+    fetch:
+      kind: arcgis_table
+      service: https://services1.arcgis.com/7iJyYTjCtKsZS1LR/arcgis/rest/services/DATA_PW/FeatureServer/0
+      where: "1=1"
+      fields: TOWN,TOWN_SAMPLED,wells_sampl,Wells_over_20,PFAS6_RES,RAND_INVI,TARG_INV,NUM_INT_AREAS
+    role: validation
+    status: available
+    notes: >
+      Wells sampled and wells at or above 20 ng/L PFAS6 in 83 towns where most residents use
+      private wells. Used to check and calibrate the private-well estimates (private_wells.py).
+
   sdwis_sellers:
     title: Purchased-water links between public water systems (who buys from whom)
     publisher: U.S. EPA Safe Drinking Water Information System (Envirofacts)

@@ -70,7 +70,8 @@
   <h1>PFAS in Massachusetts drinking water</h1>
   <p>Public water systems are colored by their measured PFAS6 in treated water. Areas outside
      public water service, where homes use private wells, show the estimated chance that
-     groundwater there has PFAS6 at or above the 20 ng/L state standard.</p>
+     groundwater there has PFAS6 at or above the 20 ng/L state standard, calibrated to MassDEP's
+     testing of 1,649 private wells.</p>
   <p class="warn">Private-well estimates are rough (see the method page); only a test of the
      well itself tells a household what is in its water.</p>
   <fieldset>
@@ -89,10 +90,10 @@
   <div class="row"><span class="sw" style="background:var(--pub-1)"></span>2 to &lt;10</div>
   <div class="row"><span class="sw" style="background:var(--pub-0)"></span>Not detected</div>
   <div class="title">Private wells: chance of 20+</div>
-  <div class="row"><span class="sw" style="background:var(--prv-3)"></span>30% or more</div>
-  <div class="row"><span class="sw" style="background:var(--prv-2)"></span>20–30%</div>
-  <div class="row"><span class="sw" style="background:var(--prv-1)"></span>10–20%</div>
-  <div class="row"><span class="sw" style="background:var(--prv-0)"></span>Under 10%</div>
+  <div class="row"><span class="sw" style="background:var(--prv-3)"></span>20% or more</div>
+  <div class="row"><span class="sw" style="background:var(--prv-2)"></span>10–20%</div>
+  <div class="row"><span class="sw" style="background:var(--prv-1)"></span>5–10%</div>
+  <div class="row"><span class="sw" style="background:var(--prv-0)"></span>Under 5%</div>
   <div class="row" id="release-key" hidden><span class="dot"></span>Reported PFAS release</div>
 </div>
 
@@ -104,7 +105,7 @@ const RELEASES = __RELEASES__;
 const css = getComputedStyle(document.documentElement);
 const v = name => css.getPropertyValue(name).trim();
 const pubColor = x => x == null ? v('--pub-na') : x >= 20 ? v('--pub-3') : x >= 10 ? v('--pub-2') : x >= 2 ? v('--pub-1') : v('--pub-0');
-const prvColor = p => p >= 0.3 ? v('--prv-3') : p >= 0.2 ? v('--prv-2') : p >= 0.1 ? v('--prv-1') : v('--prv-0');
+const prvColor = p => p >= 0.2 ? v('--prv-3') : p >= 0.1 ? v('--prv-2') : p >= 0.05 ? v('--prv-1') : v('--prv-0');
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const ng = x => x == null ? 'no results' : (x < 2 ? 'not detected' : x.toFixed(1) + ' ng/L');
 
@@ -142,7 +143,6 @@ const privateLayer = L.geoJSON({
     layer.bindTooltip(
       `<div class="tt"><b>Private wells</b> <span>(about ${p.pop.toLocaleString()} residents in this 1 km² cell)</span><br>` +
       `Estimated chance PFAS6 is 20 ng/L or more: <b>${Math.round(p.p20 * 100)}%</b><br>` +
-      `Chance PFAS is detected: <b>${Math.round(p.pdet * 100)}%</b><br>` +
       `<span>${p.neigh ? p.neigh + ' tested public wells within 5 km' : 'No tested public wells within 5 km: estimate is weak'}</span></div>`,
       { sticky: true });
   },
