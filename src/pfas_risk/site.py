@@ -129,8 +129,8 @@ def _kpis(u: UnitResult) -> str:
     fwd = r.get("forward")
     if fwd:
         tiles.append((_fmt("capture_top10pct_area", fwd["results"][r["best_model"]]["capture_top10pct_area"]),
-                      f"of new {fwd['cutoff'][:4]}+ release cells found in the top-risk 10% of land "
-                      f"by a model trained only on earlier reports"))
+                      (f"of new {fwd['cutoff'][:4]}+ release cells found in the top-risk 10% of land "
+                       f"by a model trained only on earlier reports")))
     return "".join(f'<div class="kpi"><div class="v">{v}</div><div class="l">{html.escape(label)}</div></div>'
                    for v, label in tiles)
 
