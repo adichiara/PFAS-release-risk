@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 
 from .config import CRS, INTERIM_DIR
+from .industry import industry_points
 from .sources import read
 
 log = logging.getLogger(__name__)
@@ -45,7 +46,7 @@ def _town_of(bg: gpd.GeoDataFrame) -> pd.Series:
 
 def point_sources() -> dict[str, gpd.GeoDataFrame]:
     bwp = read("bwp_major")
-    return {
+    return industry_points() | {
         "fire_station": read("fire_stations"),
         "bwp_major": bwp,
         "haz_waste_lqg": bwp[(bwp["LQG_RCRA"] == "Y") | (bwp["LQG_MA"] == "Y")],

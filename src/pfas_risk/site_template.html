@@ -11,6 +11,7 @@
     --surface: #fcfcfb; --panel: #ffffff; --border: #dddcd7; --row: #f4f3f0;
     --text-primary: #0b0b0b; --text-secondary: #52514e; --text-muted: #7a7974;
     --accent: #1c5cab; --accent-ink: #ffffff; --warn-bg: #fdf1e7; --highlight: #eaf2fd;
+    --series-1: #2a78d6; --series-neutral: #8a8984;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -18,6 +19,7 @@
       --surface: #1a1a19; --panel: #242423; --border: #3a3a37; --row: #2c2c2a;
       --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #94938b;
       --accent: #6da7ec; --accent-ink: #0b0b0b; --warn-bg: #3a2a1f; --highlight: #1d2c40;
+      --series-1: #3987e5; --series-neutral: #7a7974;
     }
   }
   :root[data-theme="dark"] {
@@ -25,6 +27,7 @@
     --surface: #1a1a19; --panel: #242423; --border: #3a3a37; --row: #2c2c2a;
     --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #94938b;
     --accent: #6da7ec; --accent-ink: #0b0b0b; --warn-bg: #3a2a1f; --highlight: #1d2c40;
+      --series-1: #3987e5; --series-neutral: #7a7974;
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--surface); color: var(--text-primary);
@@ -54,6 +57,36 @@
   .note { font-size: 14px; color: var(--text-muted); }
   .status { font-size: 12px; padding: 2px 8px; border-radius: 99px; border: 1px solid var(--border); color: var(--text-secondary); }
   footer { margin-top: 48px; font-size: 14px; color: var(--text-muted); }
+  .figure { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 12px 8px 4px;
+    overflow-x: auto; }
+  /* Keep chart text legible on phones: scroll the panel sideways instead of shrinking the chart. */
+  .figure .chart { min-width: 560px; }
+  .figure .legend { min-width: 0; }
+  table.watch { min-width: 780px; }
+  .chart { display: block; width: 100%; height: auto; font: 12px system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .chart .grid { stroke: var(--border); stroke-width: 1; }
+  .chart .guide { stroke: var(--text-muted); stroke-width: 1; stroke-dasharray: 3 3; }
+  .chart .random { stroke: var(--text-muted); stroke-width: 1.5; stroke-dasharray: 2 4; }
+  .chart .line { fill: none; stroke-width: 2; stroke-linejoin: round; }
+  .chart .line.model { stroke: var(--series-1); }
+  .chart .line.base { stroke: var(--series-neutral); stroke-dasharray: 6 4; }
+  .chart .dot { stroke: var(--panel); stroke-width: 2; cursor: default; }
+  .chart .dot.model { fill: var(--series-1); }
+  .chart .dot.base { fill: var(--series-neutral); }
+  .chart .dot:hover { r: 6; }
+  .chart .bar { fill: var(--series-1); }
+  .chart .bar:hover { opacity: .8; }
+  .chart .tick { fill: var(--text-secondary); }
+  .chart .axis { fill: var(--text-muted); }
+  .chart .value { fill: var(--text-primary); font-variant-numeric: tabular-nums; }
+  .chart .label { fill: var(--text-primary); font-weight: 600; font-size: 13px; }
+  .chart .label.muted { fill: var(--text-muted); font-weight: 400; }
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--text-secondary); margin: 8px 4px 0; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { display: inline-block; width: 18px; height: 0; border-top: 2px solid var(--series-1); }
+  .legend i.base { border-top: 2px dashed var(--series-neutral); }
+  .legend i.random { border-top: 2px dotted var(--text-muted); }
+  .downloads li { margin: 4px 0; }
 </style>
 </head>
 <body>
@@ -67,6 +100,34 @@
   <a class="cta secondary" href="__REPO__">Code and data on GitHub</a>
 
   <div class="kpis">__KPIS__</div>
+
+  <h2>Finding releases with a limited budget</h2>
+  <p>If field work covered the highest-risk land first, how many reported releases would it reach?
+     The model's curve rises well above land area alone, which is the main size effect it has to beat.
+     Scores are out-of-fold (each town scored by a model that never saw it). Hover the points for values.</p>
+  <div class="figure">__CAPTURE_CHART__
+    <div class="legend"><span><i></i>Model</span><span><i class="base"></i>Land area alone</span>
+      <span><i class="random"></i>Random targeting</span></div>
+  </div>
+
+  <h2>Highest-risk areas without a reported release</h2>
+  <p>Block groups the model ranks highest per km² where MassDEP has no PFAS release on record. These are
+     candidates for a closer look, not findings: a high score means the area resembles places where
+     releases have been reported. The last column counts EPA-registered facilities in PFAS-related
+     industries within 2 km, with the three largest sectors. Ranking is per km², so small, dense urban
+     block groups with many industrial sites nearby rise to the top.</p>
+  <div class="scroll"><table class="watch">
+    <thead><tr><th>Town</th><th>Block group</th><th>Risk percentile</th><th>Land km²</th><th>Population</th>
+      <th>Nearest reported release (km)</th><th class="wrap">PFAS-related industries within 2 km</th></tr></thead>
+    <tbody>__WATCH_ROWS__</tbody>
+  </table></div>
+
+  <h2>What drives the scores</h2>
+  <p>How much the model's held-out ROC AUC drops when one group of features is shuffled (count inside,
+     count within 2 km and distance to the nearest site together). Larger drops mean the model leans
+     on that group more. Correlated groups share credit: industrial sites cluster together, so shuffling one
+     sector leaves others carrying similar information. This shows association with reported releases, not cause.</p>
+  <div class="figure">__IMPORTANCE_CHART__</div>
 
   <h2>How well it validates</h2>
   <p>Five-fold cross-validation that holds out whole towns, repeated __REPEATS__ times. Larger block
@@ -87,6 +148,12 @@
     <tbody>__NULL_ROWS__</tbody>
   </table></div>
 
+  <h2>Reported PFAS releases by year</h2>
+  <p>All __N_ALL_RELEASES__ release sites on the list, by the year MassDEP was notified. PFAS reporting
+     grew after Massachusetts set its PFAS6 drinking water standard and cleanup rules in 2019-2020, so the
+     record is short and still filling in.</p>
+  <div class="figure">__YEAR_CHART__</div>
+
   <h2>Method</h2>
   <ul>
     <li><b>Unit:</b> 2020 census block groups, in Massachusetts State Plane meters.</li>
@@ -94,7 +161,10 @@
         addresses to MassGIS address points.</li>
     <li><b>Features:</b> counts inside, counts within 2 km and distance to the nearest fire station,
         MassDEP major facility, hazardous-waste generator, air-permitted facility and underground
-        storage tank; landfills; aquifers; major-road density; population and housing density.</li>
+        storage tank, and to EPA-registered facilities in eight PFAS-related industries (textiles,
+        paper, chemicals and plastics, metal finishing, electronics, petroleum, aviation and
+        military, waste and wastewater); landfills; aquifers; major-road density; population and
+        housing density.</li>
     <li><b>Map scores</b> are out-of-fold: each block group is colored by a model trained without its
         town, so known release sites are not simply echoed back.</li>
   </ul>
@@ -104,6 +174,9 @@
     <thead><tr><th class="wrap">Dataset</th><th class="wrap">Publisher</th><th>Status</th></tr></thead>
     <tbody>__SOURCE_ROWS__</tbody>
   </table></div>
+
+  <h2>Downloads</h2>
+  <ul class="downloads">__DOWNLOADS__</ul>
 
   <footer>
     Rebuilt from the 2021 WPI Data Science / MassDEP graduate capstone

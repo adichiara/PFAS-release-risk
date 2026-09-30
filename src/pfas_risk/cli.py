@@ -13,7 +13,7 @@ from .config import OUTPUT_DIR
 from .features import attach_releases, build_features
 from .fetch import fetch_release_zip, recorded_sha256, sha256
 from .mapping import risk_map
-from .model import evaluate, permutation_null
+from .model import evaluate, grouped_importance, permutation_null
 from .releases import build_release_list, locate_releases
 from .site import build_site
 from .sources import download_all
@@ -61,11 +61,13 @@ def cmd_evaluate(args) -> None:
     candidates = summary.drop(index=list(BASELINES))
     best = candidates[(SELECTION_METRIC, "mean")].idxmax()
     null = permutation_null(df, best, permutations=args.null)
+    importance = grouped_importance(df, best)
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     metrics.to_csv(OUTPUT_DIR / "cv_metrics.csv", index=False)
     null.to_csv(OUTPUT_DIR / "null_metrics.csv", index=False)
     oof.to_parquet(OUTPUT_DIR / "oof_scores.parquet")
+    importance.to_csv(OUTPUT_DIR / "importance.csv", index=False)
     report = {
         "run_date": datetime.now(timezone.utc).date().isoformat(),
         "release_source": releases.attrs.get("source"),
@@ -79,6 +81,7 @@ def cmd_evaluate(args) -> None:
         "best_model": best,
         "mean": metrics.drop(columns="repeat").groupby("model").mean().round(4).to_dict("index"),
         "null": _null_summary(metrics[metrics["model"] == best], null),
+        "importance": importance.round(4).to_dict("records"),
     }
     (OUTPUT_DIR / "evaluation.json").write_text(json.dumps(report, indent=2))
     (OUTPUT_DIR / "evaluation.md").write_text(_markdown(report, summary, null))
@@ -151,7 +154,9 @@ def cmd_map(args) -> None:
 
 
 def cmd_site(args) -> None:
-    print(build_site())
+    df, releases = _dataset()
+    oof = pd.read_parquet(OUTPUT_DIR / "oof_scores.parquet")
+    print(build_site(df, oof, releases))
 
 
 def cmd_run(args) -> None:

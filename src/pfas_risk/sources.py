@@ -31,7 +31,7 @@ def download(name: str, force: bool = False) -> Path:
     dest = local_path(name)
     if dest.exists() and not force:
         return dest
-    url = f"{catalog()['massgis_base']}/{meta['path']}"
+    url = meta.get("download_url") or f"{catalog()['massgis_base']}/{meta['path']}"
     dest.parent.mkdir(parents=True, exist_ok=True)
     tmp = dest.with_suffix(dest.suffix + ".part")
     log.info("downloading %s", url)
@@ -43,7 +43,8 @@ def download(name: str, force: bool = False) -> Path:
 
 
 def download_all(force: bool = False) -> list[Path]:
-    names = [n for n, m in catalog()["sources"].items() if m["status"] == "available" and "path" in m]
+    names = [n for n, m in catalog()["sources"].items()
+             if m["status"] == "available" and ("path" in m or "download_url" in m)]
     return [download(n, force=force) for n in names]
 
 

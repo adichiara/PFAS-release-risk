@@ -10,8 +10,19 @@ import json
 import shutil
 from pathlib import Path
 
+import geopandas as gpd
+import pandas as pd
+
 from .config import OUTPUT_DIR, ROOT, catalog
 from .fetch import SOURCE_RECORD
+from .site_sections import (
+    capture_chart,
+    importance_chart,
+    releases_by_year_chart,
+    watchlist,
+    watchlist_rows,
+    write_downloads,
+)
 
 SITE_DIR = ROOT / "docs"
 TEMPLATE = Path(__file__).with_name("site_template.html")
@@ -84,8 +95,12 @@ def _data_date() -> str:
     return ""
 
 
-def build_site() -> Path:
+def build_site(df: gpd.GeoDataFrame, oof: pd.DataFrame, releases: gpd.GeoDataFrame) -> Path:
     report = json.loads((OUTPUT_DIR / "evaluation.json").read_text())
+    model = report["best_model"]
+    SITE_DIR.mkdir(exist_ok=True)
+    downloads = write_downloads(SITE_DIR, df, oof, model, releases)
+    importance = report.get("importance") or []
     source = ("MassDEP's release database plus the 2021 project list"
               if report["release_source"] == "massdep_pfas_releases.csv"
               else "the 2021 list of MassDEP PFAS release sites")
@@ -100,8 +115,15 @@ def build_site() -> Path:
             .replace("__NULL_ROWS__", _null_rows(report))
             .replace("__SOURCE_ROWS__", _source_rows())
             .replace("__RUN_DATE__", report["run_date"])
-            .replace("__DATA_DATE__", _data_date()))
-    SITE_DIR.mkdir(exist_ok=True)
+            .replace("__DATA_DATE__", _data_date())
+            .replace("__CAPTURE_CHART__", capture_chart(df, oof, model))
+            .replace("__IMPORTANCE_CHART__", importance_chart(importance) if importance else
+                     "<p class='note'>Run <code>pfas-risk evaluate</code> to compute importance.</p>")
+            .replace("__WATCH_ROWS__", watchlist_rows(watchlist(df, oof, model, releases)))
+            .replace("__YEAR_CHART__", releases_by_year_chart(releases))
+            .replace("__N_ALL_RELEASES__", str(len(releases)))
+            .replace("__DOWNLOADS__", "".join(f'<li><a href="{h}">{html.escape(t)}</a></li>'
+                                              for h, t in downloads)))
     (SITE_DIR / "index.html").write_text(page)
     shutil.copyfile(OUTPUT_DIR / "risk_map.html", SITE_DIR / "map.html")
     return SITE_DIR / "index.html"

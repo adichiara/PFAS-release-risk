@@ -110,13 +110,17 @@ sources:
     status: available
 
   # ---- Identified, not yet wired in -----------------------------------------
-  epa_echo_facilities:
-    title: EPA ECHO / FRS facilities by NAICS code (PFAS-handling industries)
+  epa_frs:
+    title: EPA Facility Registry Service, Massachusetts facilities and NAICS codes
     publisher: U.S. EPA
-    url: https://echo.epa.gov/tools/data-downloads
+    download_url: https://ordsext.epa.gov/FLA/www3/state_files/state_combined_ma.zip
+    url: https://www.epa.gov/frs/epa-state-combined-csv-download-files
+    file: frs_state_combined_ma.zip
     role: feature
-    status: planned
-    notes: Public replacement for the non-public BAW industry list used in 2021.
+    status: available
+    notes: >
+      Facilities in the PFAS-related sectors of config/pfas_sectors.yaml (by NAICS prefix)
+      become point features. Public replacement for the non-public BAW industry list used in 2021.
 
   airports:
     title: Public-use airports (AFFF use)
