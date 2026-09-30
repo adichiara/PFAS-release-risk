@@ -15,7 +15,7 @@
     --pub-0: #e7e5df; --pub-1: #f5c58a; --pub-2: #e07b39; --pub-3: #a8251b; --pub-na: #f7f6f2;
     /* Private wells: estimated chance of PFAS6 >= 20 ng/L (ordinal, violet). */
     --prv-0: #e6e0f3; --prv-1: #bba9e2; --prv-2: #8a6cc9; --prv-3: #553592;
-    --release: #0b0b0b; --warn-bg: #fdf1e7; --link: #1c5cab;
+    --release: #0b0b0b; --warn-bg: #fdf1e7; --link: #1c5cab; --edge: #ffffff; --hover: #0b0b0b;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -24,7 +24,7 @@
       --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #94938b;
       --pub-0: #3a3935; --pub-1: #b8864a; --pub-2: #e07b39; --pub-3: #f0584a; --pub-na: #2a2a28;
       --prv-0: #3b3450; --prv-1: #6b58a3; --prv-2: #9a7fe0; --prv-3: #cbb8ff;
-      --release: #ffffff; --warn-bg: #3a2a1f; --link: #86b6ef;
+      --release: #ffffff; --warn-bg: #3a2a1f; --link: #86b6ef; --edge: #1a1a19; --hover: #ffffff;
     }
   }
   :root[data-theme="dark"] {
@@ -33,68 +33,107 @@
     --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #94938b;
     --pub-0: #3a3935; --pub-1: #b8864a; --pub-2: #e07b39; --pub-3: #f0584a; --pub-na: #2a2a28;
     --prv-0: #3b3450; --prv-1: #6b58a3; --prv-2: #9a7fe0; --prv-3: #cbb8ff;
-    --release: #ffffff; --warn-bg: #3a2a1f; --link: #86b6ef;
+    --release: #ffffff; --warn-bg: #3a2a1f; --link: #86b6ef; --edge: #1a1a19; --hover: #ffffff;
   }
   html, body { margin: 0; height: 100%; background: var(--surface); color: var(--text-primary);
     font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
   #map { position: absolute; inset: 0; background: var(--surface); }
-  .panel { position: absolute; z-index: 1000; background: var(--panel); border: 1px solid var(--border);
-    border-radius: 8px; box-shadow: 0 2px 10px rgb(0 0 0 / .12); }
-  #info { top: 12px; left: 12px; width: 330px; max-width: calc(100vw - 48px); padding: 14px 16px; }
-  #info h1 { font-size: 17px; margin: 0 0 4px; }
-  #info p { margin: 6px 0; color: var(--text-secondary); }
-  #info a { color: var(--link); }
-  #info .warn { background: var(--warn-bg); padding: 8px 10px; border-radius: 6px; color: var(--text-primary); }
-  #info fieldset { border: 0; padding: 0; margin: 8px 0 0; }
-  #info label { display: block; color: var(--text-primary); margin: 3px 0; cursor: pointer; }
-  #legend { bottom: 24px; left: 12px; padding: 10px 12px; }
-  #legend .row { display: flex; align-items: center; gap: 8px; margin: 3px 0; color: var(--text-secondary); }
-  #legend .sw { width: 18px; height: 12px; border-radius: 2px; border: 1px solid var(--border); }
-  #legend .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--release); margin: 0 5px; }
-  #legend .row[hidden] { display: none; }
-  #legend .title { font-weight: 600; color: var(--text-primary); margin: 6px 0 2px; }
-  #legend .title:first-child { margin-top: 0; }
+  #panel { position: absolute; z-index: 1000; top: 12px; left: 12px; width: 300px; max-width: calc(100vw - 24px);
+    background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+    box-shadow: 0 2px 12px rgb(0 0 0 / .14); padding: 12px 14px; box-sizing: border-box; }
+  #panel header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  #panel h1 { font-size: 15px; margin: 0; line-height: 1.3; }
+  #collapse { display: none; border: 1px solid var(--border); background: var(--surface); color: var(--text-secondary);
+    border-radius: 6px; font: inherit; font-size: 12px; padding: 3px 8px; cursor: pointer; }
+  .ctl { margin-top: 10px; }
+  .ctl .name { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase;
+    letter-spacing: .04em; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+  .seg { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .seg button { flex: 1; border: 0; background: var(--surface); color: var(--text-secondary); font: inherit;
+    font-size: 13px; padding: 5px 4px; cursor: pointer; }
+  .seg button + button { border-left: 1px solid var(--border); }
+  .seg button[aria-pressed="true"] { background: var(--link); color: var(--panel); font-weight: 600; }
+  .switch { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: 12px; font-weight: 600;
+    color: var(--text-secondary); text-transform: uppercase; letter-spacing: .04em; }
+  .switch input { margin: 0; accent-color: var(--link); }
+  .ramp { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 4px; }
+  .ramp i { height: 8px; border-radius: 2px; display: block; }
+  .ramp span { font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.2; margin-top: 2px; }
+  .name .unit { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--text-muted); font-size: 12px; }
+  .ctl.off .ramp { opacity: .35; }
+  .releases-key { font-size: 12px; color: var(--text-secondary); margin-top: 8px; display: flex; align-items: center; gap: 6px; }
+  .releases-key .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--release); display: inline-block; }
+  h1 .short { display: none; }
+  .about-links { display: none; }
+  details.about { margin-top: 10px; border-top: 1px solid var(--border); padding-top: 8px; }
+  details.about summary { cursor: pointer; font-size: 13px; color: var(--text-secondary); }
+  details.about p { margin: 6px 0; color: var(--text-secondary); font-size: 13px; }
+  .warn { background: var(--warn-bg); padding: 6px 8px; border-radius: 6px; color: var(--text-primary) !important; }
+  nav.links { margin-top: 8px; font-size: 13px; }
+  nav.links a { color: var(--link); }
   .leaflet-tooltip, .leaflet-popup-content-wrapper, .leaflet-popup-tip {
     background: var(--panel); color: var(--text-primary); border-color: var(--border); }
   .tt b { color: var(--text-primary); } .tt span { color: var(--text-secondary); }
+  /* Phones: a bottom sheet that collapses to its title bar. */
   @media (max-width: 600px) {
-    #info { top: auto; bottom: 12px; left: 12px; right: 12px; width: auto; max-height: 38vh; overflow: auto; }
-    #legend { bottom: auto; top: 12px; left: auto; right: 12px; font-size: 12px; }
+    #panel { top: auto; bottom: 0; left: 0; right: 0; width: auto; max-width: none; border-radius: 12px 12px 0 0;
+      max-height: 55vh; overflow: auto; padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); }
+    #collapse { display: inline-block; }
+    h1 .long { display: none; } h1 .short { display: inline; }
+    .ctl { margin-top: 8px; }
+    nav.links { display: none; }
+    .about-links { display: block; }
+    #panel.collapsed .body { display: none; }
+    .leaflet-bottom.leaflet-right { bottom: var(--sheet, 0px); }
   }
 </style>
 </head>
 <body>
 <div id="map"></div>
 
-<div id="info" class="panel">
-  <h1>PFAS in Massachusetts drinking water</h1>
-  <p>Public water systems are colored by their measured PFAS6 in treated water. Areas outside
-     public water service, where homes use private wells, show the estimated chance that
-     groundwater there has PFAS6 at or above the 20 ng/L state standard, calibrated to MassDEP's
-     testing of 1,649 private wells.</p>
-  <p class="warn">Private-well estimates are rough (see the method page); only a test of the
-     well itself tells a household what is in its water.</p>
-  <fieldset>
-    <label><input type="radio" name="level" value="current" checked> Public water: current level</label>
-    <label><input type="radio" name="level" value="peak"> Public water: highest year (before treatment)</label>
-    <label><input type="checkbox" id="show-private" checked> Private-well areas</label>
-    <label><input type="checkbox" id="show-releases"> Reported PFAS release sites</label>
-  </fieldset>
-  <p><a href="index.html">Home</a> · <a href="analysis.html">Detailed findings and method</a></p>
-</div>
-
-<div id="legend" class="panel">
-  <div class="title">Public water PFAS6 (ng/L)</div>
-  <div class="row"><span class="sw" style="background:var(--pub-3)"></span>20 or more</div>
-  <div class="row"><span class="sw" style="background:var(--pub-2)"></span>10 to &lt;20</div>
-  <div class="row"><span class="sw" style="background:var(--pub-1)"></span>2 to &lt;10</div>
-  <div class="row"><span class="sw" style="background:var(--pub-0)"></span>Not detected</div>
-  <div class="title">Private wells: chance of 20+</div>
-  <div class="row"><span class="sw" style="background:var(--prv-3)"></span>20% or more</div>
-  <div class="row"><span class="sw" style="background:var(--prv-2)"></span>10–20%</div>
-  <div class="row"><span class="sw" style="background:var(--prv-1)"></span>5–10%</div>
-  <div class="row"><span class="sw" style="background:var(--prv-0)"></span>Under 5%</div>
-  <div class="row" id="release-key" hidden><span class="dot"></span>Reported PFAS release</div>
+<div id="panel" role="region" aria-label="Map controls">
+  <header>
+    <h1><span class="long">PFAS in Massachusetts drinking water</span><span class="short">PFAS in MA drinking water</span></h1>
+    <button id="collapse" aria-expanded="true" aria-controls="panel-body">Hide</button>
+  </header>
+  <div class="body" id="panel-body">
+    <div class="ctl" id="ctl-public">
+      <div class="name">Public water <span class="unit">PFAS6, ng/L</span></div>
+      <div class="seg" role="group" aria-label="Public water layer">
+        <button data-level="current" aria-pressed="true">Now</button>
+        <button data-level="peak" aria-pressed="false">Worst year</button>
+        <button data-level="off" aria-pressed="false">Off</button>
+      </div>
+      <div class="ramp" aria-hidden="true">
+        <i style="background:var(--pub-0)"></i><i style="background:var(--pub-1)"></i>
+        <i style="background:var(--pub-2)"></i><i style="background:var(--pub-3)"></i>
+        <span>None</span><span>2–10</span><span>10–20</span><span>20+</span>
+      </div>
+    </div>
+    <div class="ctl" id="ctl-private">
+      <div class="name"><label class="switch"><input type="checkbox" id="show-private" checked> Private wells</label>
+        <span class="unit">chance of 20+ ng/L</span></div>
+      <div class="ramp" aria-hidden="true" title="Estimated chance groundwater is at or above 20 ng/L">
+        <i style="background:var(--prv-0)"></i><i style="background:var(--prv-1)"></i>
+        <i style="background:var(--prv-2)"></i><i style="background:var(--prv-3)"></i>
+        <span>&lt;5%</span><span>5–10%</span><span>10–20%</span><span>20%+</span>
+      </div>
+    </div>
+    <div class="ctl">
+      <label class="switch"><input type="checkbox" id="show-releases"> Reported release sites</label>
+    </div>
+    <details class="about">
+      <summary>About this map</summary>
+      <p>Public water systems are colored by their measured PFAS6 in treated water, now or in their worst
+         year (often before treatment was added). Areas outside public water service, where homes use private
+         wells, show the estimated chance that groundwater there is at or above the 20 ng/L state standard,
+         calibrated to MassDEP's testing of 1,649 private wells.</p>
+      <p class="warn">Private-well estimates are for areas, not individual wells. Only a test tells a household
+         what is in its water.</p>
+      <p class="about-links"><a href="index.html">Home</a> · <a href="analysis.html">Detailed findings and method</a></p>
+    </details>
+    <nav class="links"><a href="index.html">Home</a> · <a href="analysis.html">Detailed findings and method</a></nav>
+  </div>
 </div>
 
 <script>
@@ -155,7 +194,7 @@ const systemLayer = L.geoJSON({
     type: 'Feature', properties: { name, pws, pop, current, peak, source, via }, geometry: shape,
   })),
 }, {
-  style: f => ({ fillColor: pubColor(f.properties[level]), fillOpacity: 0.78, color: '#ffffff', weight: 0.6 }),
+  style: f => ({ fillColor: pubColor(f.properties[level]), fillOpacity: 0.78, color: v('--edge'), weight: 0.6 }),
   onEachFeature: (f, layer) => {
     const p = f.properties;
     layer.bindTooltip(
@@ -164,13 +203,13 @@ const systemLayer = L.geoJSON({
       (p.source === 'purchased' ? `<br><span>Buys its water; levels are its supplier's (${esc(p.via)})</span>` : '') +
       '</div>', { sticky: true });
     layer.on({
-      mouseover: e => e.target.setStyle({ weight: 2, color: '#0b0b0b' }),
+      mouseover: e => e.target.setStyle({ weight: 2, color: v('--hover') }),
       mouseout: e => systemLayer.resetStyle(e.target),
     });
   },
-}).addTo(map);
-privateLayer.addTo(map);
-systemLayer.bringToFront();
+});
+
+
 
 const releaseLayer = L.geoJSON(RELEASES, {
   pointToLayer: (f, latlng) => L.circleMarker(latlng, {
@@ -179,20 +218,44 @@ const releaseLayer = L.geoJSON(RELEASES, {
     `<div class="tt"><b>${esc(f.properties.site_name || 'PFAS release')}</b><br><span>RTN ${esc(f.properties.rtn)} · ${esc(f.properties.town)}</span></div>`),
 });
 
-document.querySelectorAll('input[name="level"]').forEach(r => r.addEventListener('change', e => {
-  level = e.target.value; systemLayer.setStyle(systemLayer.options.style);
-}));
-document.getElementById('show-private').addEventListener('change', e => {
-  if (e.target.checked) { privateLayer.addTo(map); systemLayer.bringToFront(); } else map.removeLayer(privateLayer);
-});
-document.getElementById('show-releases').addEventListener('change', e => {
-  document.getElementById('release-key').hidden = !e.target.checked;
-  if (e.target.checked) releaseLayer.addTo(map); else map.removeLayer(releaseLayer);
-});
+// Layer state. A link ending in #wells opens with public water hidden; #public hides private wells.
+const view = location.hash.replace('#', '');
+const state = { level: view === 'wells' ? 'off' : 'current', private: view !== 'public', releases: false };
 
-const wide = window.innerWidth > 600;
+function render() {
+  const showPublic = state.level !== 'off';
+  if (showPublic) { level = state.level; systemLayer.setStyle(systemLayer.options.style); }
+  [[privateLayer, state.private], [systemLayer, showPublic], [releaseLayer, state.releases]].forEach(([layer, on]) => {
+    if (on && !map.hasLayer(layer)) layer.addTo(map);
+    if (!on && map.hasLayer(layer)) map.removeLayer(layer);
+  });
+  if (showPublic) systemLayer.bringToFront();
+  if (state.releases) releaseLayer.bringToFront();
+  document.querySelectorAll('.seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.level === state.level)));
+  document.getElementById('ctl-public').classList.toggle('off', !showPublic);
+  document.getElementById('ctl-private').classList.toggle('off', !state.private);
+  document.getElementById('show-private').checked = state.private;
+}
+document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => { state.level = b.dataset.level; render(); }));
+document.getElementById('show-private').addEventListener('change', e => { state.private = e.target.checked; render(); });
+document.getElementById('show-releases').addEventListener('change', e => { state.releases = e.target.checked; render(); });
+
+// Phones: the panel is a bottom sheet; keep the zoom buttons above it and let it collapse.
+const panel = document.getElementById('panel');
+const collapse = document.getElementById('collapse');
+const small = matchMedia('(max-width: 600px)');
+function sheetHeight() { document.documentElement.style.setProperty('--sheet', small.matches ? panel.offsetHeight + 'px' : '0px'); }
+collapse.addEventListener('click', () => {
+  const collapsed = panel.classList.toggle('collapsed');
+  collapse.textContent = collapsed ? 'Show' : 'Hide';
+  collapse.setAttribute('aria-expanded', String(!collapsed));
+  sheetHeight();
+});
+render();
+sheetHeight();
 map.fitBounds(systemLayer.getBounds().extend(privateLayer.getBounds()),
-  wide ? { paddingTopLeft: [360, 10], paddingBottomRight: [10, 10] } : { padding: [10, 10] });
+  small.matches ? { paddingTopLeft: [10, 10], paddingBottomRight: [10, panel.offsetHeight + 10] }
+                : { paddingTopLeft: [330, 10], paddingBottomRight: [10, 10] });
 </script>
 </body>
 </html>
