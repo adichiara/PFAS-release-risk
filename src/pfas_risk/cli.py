@@ -9,10 +9,10 @@ from datetime import datetime, timezone
 
 import pandas as pd
 
-from .config import OUTPUT_DIR
+from .config import FORWARD_CUTOFF, OUTPUT_DIR
 from .features import attach_releases, build_features, unit_key
 from .fetch import fetch_release_zip, recorded_sha256, sha256
-from .mapping import risk_map
+from .mapping import BASELINE_TEXT, risk_map
 from .model import BASELINES, evaluate, forward_test, grouped_importance, permutation_null
 from .releases import build_release_list, locate_releases
 from .site import PRIMARY_UNIT, UnitResult, build_site
@@ -21,7 +21,6 @@ from .sources import download_all
 log = logging.getLogger("pfas_risk")
 
 SELECTION_METRIC = "capture_top10pct_area"
-FORWARD_CUTOFF = "2023-01-01"
 
 
 UNIT_LABELS = {"bg": ("block group", "block groups")}
@@ -208,8 +207,10 @@ def cmd_map(args) -> None:
     oof = pd.read_parquet(out_dir / "oof_scores.parquet")
     note = ("MassDEP PFAS release list" if report["release_source"] == "massdep_pfas_releases.csv"
             else "2021 seed list of MassDEP PFAS RTNs")
-    path = risk_map(df, oof[model], releases, model, report["mean"][model], report["mean"]["baseline_area"],
-                    out_dir / "risk_map.html", note, unit_labels(_key(args)))
+    kind = "hex" if args.unit == "hex" else "bg"
+    base = report["mean"]["baseline_area_population" if kind == "hex" else "baseline_area"]
+    path = risk_map(df, oof[model], releases, model, report["mean"][model], base,
+                    out_dir / "risk_map.html", note, unit_labels(_key(args)), BASELINE_TEXT[kind])
     print(path)
 
 

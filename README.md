@@ -1,16 +1,17 @@
 # PFAS release risk (Massachusetts)
 
-Ranks Massachusetts 2020 census block groups by their relative risk of a reported PFAS
-release, using only publicly available data. It is a rebuild of the release risk model from
+Ranks Massachusetts by the relative risk of a reported PFAS release, on a grid of equal-area
+4 km² hexagons (with 2020 census block groups as a comparison), using only publicly available
+data. It is a rebuild of the release risk model from
 the 2021 WPI Data Science / MassDEP graduate capstone
 ([GQP-TeamMassDEP/Mass_PFAS-Analysis](https://github.com/GQP-TeamMassDEP/Mass_PFAS-Analysis)),
 fixing what limited that version:
 
 | 2021 model | This rebuild |
 |---|---|
-| Aggregated to 64 groups built from tract-number prefixes (`GEOID[:7]`), which are not towns or Census places; group size alone predicted the label (AUC 0.76) | Predicts on 5,109 block groups; land area is modeled as exposure or compared against explicitly |
+| Aggregated to 64 groups built from tract-number prefixes (`GEOID[:7]`), which are not towns or Census places; group size alone predicted the label (AUC 0.76) | Predicts on 5,587 equal-area hexagons, where size no longer predicts the label (AUC 0.51), and on 5,109 block groups for comparison |
 | Random train/test split | Whole towns held out in cross-validation |
-| Compared against chance | Compared against size-only baselines and a size- and density-matched permutation null |
+| Compared against chance | Compared against size and density baselines, a size- and density-matched permutation null, and a forward-in-time test on releases reported later |
 | Industry features from a non-public business list | Public sources only (see `config/sources.yaml`) |
 | Addresses geocoded with a web service (one landed ~1,900 km away) | Offline matching against MassGIS address points, with a precision flag per site |
 
@@ -24,21 +25,25 @@ notified since 2019 have no chemical recorded at all, so some PFAS releases are
 necessarily missing from the labels.
 
 **Site:** https://adichiara.github.io/PFAS-release-risk/ (results, method and data sources,
-with a link to the interactive map). Latest evaluation:
-[`outputs/evaluation.md`](outputs/evaluation.md).
+with links to the interactive maps). Latest evaluations:
+[`outputs/hex4/evaluation.md`](outputs/hex4/evaluation.md) (primary) and
+[`outputs/bg/evaluation.md`](outputs/bg/evaluation.md).
 
-In short, with 194 located releases in 140 block groups the model clearly adds information
-beyond size. Gradient boosting finds about 31% of releases in the highest-risk 10% of land,
-against 13% for land area alone and 16% for area plus density (ROC AUC 0.84 vs 0.83). It beat
-all 20 permutations of a null that keeps size and density effects, on every metric (p < 0.05,
-the smallest p 20 permutations can show). Adding EPA facilities in PFAS-related industries
-raised average precision from 0.111 to 0.125.
+On **4 km² hexagons** land area alone predicts nothing (ROC AUC 0.51), so the features have to
+carry the signal. The selected model (logistic regression, smoothed over neighbors within 3 km)
+finds about 34% of releases in the top-risk 10% of land, against 10% for population and housing
+density (ROC AUC 0.71 vs 0.68). It beat all 20 permutations of a null that keeps size and
+density effects, on every metric (p < 0.05, the smallest p 20 permutations can show). MassDEP
+major facilities, electronics and chemical/plastics plants, and aviation/military sites rank as
+the most useful features after population density.
 
-On **equal-area 4 km² hexagons** the size effect disappears (land area alone: ROC AUC 0.51) and
-the features carry the signal: the model finds about 32% of releases in the top-risk 10% of
-land against 10% for area plus density (ROC AUC 0.71 vs 0.68), again beating every permutation.
-With size fixed, MassDEP major facilities, electronics and chemical/plastics plants, and
-aviation/military sites rank as the most useful features after population density.
+**Forward in time:** trained only on the 104 releases reported before 2023, it put 22% of the
+67 cells with a first release reported since then in its top-risk 10% of land, against 10% for
+density (ROC AUC 0.68 vs 0.67). The gain holds, though smaller than in cross-validation.
+
+On **block groups** the model also adds information beyond size: gradient boosting finds 31%
+of releases in the top-risk 10% of land, against 13% for land area alone (ROC AUC 0.84 vs 0.82),
+but land area explains much of the ranking there.
 
 Scores are relative risk of a *reported* release, which also reflects where investigations
 happen.
@@ -53,9 +58,10 @@ pytest
 ```
 
 Steps can also be run one at a time: `pfas-risk features`, `pfas-risk evaluate`, `pfas-risk map`,
-`pfas-risk site`. Add `--unit hex` (and optionally `--cell-km2 1`) before the command to use
-equal-area hexagons; their results go to `outputs/hex4/` and appear on the site next to the
-block-group results.
+`pfas-risk site`. The unit is 4 km² hexagons by default; put `--unit bg` before the command for
+block groups, or `--cell-km2 1` for another cell size. Results go to `outputs/<unit>/` (for
+example `outputs/hex4/`, `outputs/bg/`); `pfas-risk site` leads with `hex4` and compares every
+other evaluated unit below it.
 Add `-v` for progress logging. A full run takes about 15 minutes.
 
 ### Updating the release list
@@ -85,25 +91,24 @@ To do the same by hand:
 
 **Units.** Two, evaluated separately:
 
-- *2020 census block groups* (MassGIS), the default and the main map. They range from under
-  0.1 km² to over 200 km², and land area alone explains much of which ones contain a
-  reported release.
-- *Equal-area hexagons* (`--unit hex`, 4 km² by default, `--cell-km2` to change), clipped to the
-  state. Every full cell has the same exposure, so the size effect largely drops out.
+- *Equal-area hexagons* (the default and the main map; 4 km², `--cell-km2` to change), clipped
+  to the state. Every full cell has the same exposure, so the size effect drops out.
   Population, housing, land and water area come from 2020 census blocks weighted by the
   share of each block inside a cell, and each cell is assigned the town holding most of its
   land for town-grouped validation.
+- *2020 census block groups* (MassGIS, `--unit bg`). They range from under 0.1 km² to over
+  200 km², and land area alone explains much of which ones contain a reported release.
 
 All work is in Massachusetts State Plane meters.
 
-**Response.** Number of PFAS release sites (RTNs) located in each block group. Sites are
+**Response.** Number of PFAS release sites (RTNs) located in each cell. Sites are
 placed with MassDEP's published coordinates (`massdep`) unless those fall more than 1 km
 outside the site's stated town. Otherwise the address is matched to MassGIS address points:
 `address` (exact), `street` (nearest house number on the street, after dropping qualifiers
 like "Near" or "Off"), `override` (placed by hand) or `unmatched` (excluded; mostly RTNs
 listed as "MULTIPLE LOCATIONS").
 
-**Features.** For each point source, the count inside the block group, the count within 2 km,
+**Features.** For each point source, the count inside the cell, the count within 2 km,
 and the distance to the nearest one. Point sources are fire stations, MassDEP major
 facilities, hazardous-waste large-quantity generators, air-permitted facilities, underground
 storage tanks, and facilities in eight PFAS-related industry sectors from EPA's Facility
@@ -115,22 +120,30 @@ or medium-yield aquifers, major-road density, population and housing density, la
 water share.
 
 **Models.** Two baselines (land area; area + population and housing density), L2 logistic
-regression, a Poisson rate model with land area as exposure, and gradient boosting.
+regression, a Poisson rate model with land area as exposure, and gradient boosting. Each model
+also has a smoothed variant that averages a cell's score with the mean score of cells within
+3 km (half and half). Smoothing happens inside each fold: the fold's model scores every cell,
+then the held-out cells are smoothed, so no score depends on a model that saw that cell.
 
 **Evaluation.** Five-fold cross-validation that holds out whole towns, repeated 10 times with
 different town-to-fold assignments. Metrics:
 
 - ROC AUC and average precision
-- share of releases in the top 10% of block groups
-- share of releases in the highest risk-per-km² block groups covering 10% of land
+- share of releases in the top 10% of cells
+- share of releases in the highest risk-per-km² cells covering 10% of land
 
 The model is selected on the last metric. Its significance comes from 20 permutations that
-shuffle release labels only among block groups in the same area x population-density
+shuffle release labels only among cells in the same area x population-density
 quintile, so the null keeps the size effects and tests whether anything else adds signal.
 
-**Map.** The map shows out-of-fold scores, so each block group is colored by a model trained
+The **forward test** trains on releases notified before 2023-01-01 (`--cutoff`) and scores
+only cells with no earlier release, asking whether it ranks the cells that get their first
+release later ahead of the others.
+
+**Map.** The map shows out-of-fold scores, so each cell is colored by a model trained
 without its town and known release sites are not simply echoed back. Colors show the
-percentile of risk per km².
+percentile of risk per km². Hexagons with only a sliver of land (coast, state line) count as
+at least half a cell there, so dividing by a tiny land area doesn't push them to the top.
 
 ## Data
 
@@ -151,14 +164,15 @@ src/pfas_risk/
   sources.py              download + read public layers
   geocode.py              offline address matching
   releases.py             load and filter PFAS releases
-  features.py             block-group feature table
+  units.py                block groups and the equal-area hexagon grid
+  features.py             feature table for a unit
   model.py                models, town-grouped CV, permutation null
   mapping.py              interactive Leaflet map
   site.py                 GitHub Pages landing page
   cli.py                  `pfas-risk` command
 tests/
-outputs/                  evaluation.md / .json (other outputs are regenerated, not committed)
-docs/                     published site: index.html, map.html
+outputs/<unit>/           evaluation.md / .json per unit (other outputs are regenerated, not committed)
+docs/                     published site: index.html, map.html (hexagons), map_bg.html, data/
 ```
 
 ## Publishing

@@ -87,6 +87,18 @@ def capture(scores: np.ndarray, releases: np.ndarray, budget: np.ndarray, frac: 
     return float(releases[chosen].sum() / releases.sum())
 
 
+def risk_density(scores, df: pd.DataFrame):
+    """Risk per km² of land, for ranking units on the map, watch list and downloads.
+
+    Hexagon cells mostly over water or outside the state keep only a sliver of land, and
+    dividing their score by it would put them first. Their land counts as at least half a
+    full cell. Block groups are divided by their own land area.
+    """
+    first = str(df.index[0])
+    floor = 0.5 * float(first[3:first.index("_")]) if first.startswith("hex") else 0.0
+    return scores / np.maximum(df[AREA_COL], floor)
+
+
 def score(y_count: np.ndarray, p: np.ndarray, area: np.ndarray) -> dict[str, float]:
     """Discrimination plus two targeting budgets (random targeting captures 10% under each).
 

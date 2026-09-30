@@ -11,6 +11,7 @@ from pathlib import Path
 
 import geopandas as gpd
 
+from .api_sources import fetch
 from .config import CRS, RAW_DIR, catalog, source
 
 log = logging.getLogger(__name__)
@@ -31,12 +32,16 @@ def download(name: str, force: bool = False) -> Path:
     dest = local_path(name)
     if dest.exists() and not force:
         return dest
-    url = meta.get("download_url") or f"{catalog()['massgis_base']}/{meta['path']}"
     dest.parent.mkdir(parents=True, exist_ok=True)
     tmp = dest.with_suffix(dest.suffix + ".part")
-    log.info("downloading %s", url)
-    with urllib.request.urlopen(url) as r, open(tmp, "wb") as f:
-        shutil.copyfileobj(r, f)
+    if "fetch" in meta:  # served by an API; see api_sources.py
+        log.info("fetching %s", name)
+        url = fetch(meta["fetch"], tmp)
+    else:
+        url = meta.get("download_url") or f"{catalog()['massgis_base']}/{meta['path']}"
+        log.info("downloading %s", url)
+        with urllib.request.urlopen(url) as r, open(tmp, "wb") as f:
+            shutil.copyfileobj(r, f)
     tmp.rename(dest)
     _record(name, url, dest)
     return dest
@@ -44,7 +49,7 @@ def download(name: str, force: bool = False) -> Path:
 
 def download_all(force: bool = False) -> list[Path]:
     names = [n for n, m in catalog()["sources"].items()
-             if m["status"] == "available" and ("path" in m or "download_url" in m)]
+             if m["status"] == "available" and ({"path", "download_url", "fetch"} & m.keys())]
     return [download(n, force=force) for n in names]
 
 
@@ -62,7 +67,9 @@ def read(name: str, **kwargs) -> gpd.GeoDataFrame:
     """Read a vector source (downloading it if needed), in the project CRS."""
     meta = source(name)
     path = download(name)
-    if "gdb" in meta:  # file geodatabase: open the .gdb, then pick the layer
+    if path.suffix == ".geojson":
+        uri = path
+    elif "gdb" in meta:  # file geodatabase: open the .gdb, then pick the layer
         uri = f"zip://{path}!{meta['gdb']}"
         kwargs.setdefault("layer", meta["layer"])
     else:
