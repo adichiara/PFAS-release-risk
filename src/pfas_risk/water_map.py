@@ -17,6 +17,8 @@ from .features import build_features
 
 TEMPLATE = Path(__file__).with_name("water_map_template.html")
 CELL_KM2 = 1.0
+# Estimated chance of PFAS6 >= 20 ng/L at private wells (after calibration to MassDEP testing).
+PRIVATE_BANDS = ["Under 5%", "5 to 10%", "10 to 20%", "20% or more"]
 
 
 def _shape(geom, decimals: int = 4) -> dict:
@@ -89,6 +91,6 @@ def water_map(blocks: gpd.GeoDataFrame, releases: gpd.GeoDataFrame, out_path: Pa
 def private_band_counts(blocks: pd.DataFrame) -> dict[str, int]:
     """Private-well residents by estimated chance of PFAS6 >= 20 ng/L (the map's bands)."""
     prv = blocks[blocks["private_well"]]
-    bands = pd.cut(prv["p_over20"], [-np.inf, 0.1, 0.2, 0.3, np.inf],
-                   labels=["Under 10%", "10 to 20%", "20 to 30%", "30% or more"], right=False)
+    bands = pd.cut(prv["p_over20"], [-np.inf, 0.05, 0.1, 0.2, np.inf],
+                   labels=PRIVATE_BANDS, right=False)
     return {str(k): round(float(v)) for k, v in prv["POP20"].groupby(bands, observed=False).sum().items()}

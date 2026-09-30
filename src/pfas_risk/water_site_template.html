@@ -66,8 +66,23 @@ __STYLE__
      it cannot say which well is contaminated: groundwater PFAS here is widespread and depends on things
      public data does not capture (past spills, well depth, local geology). Distance to mapped industries,
      airports, landfills and other likely sources added nothing once nearby well results and development
-     were included. Private wells also tend to be shallower than public wells, so the public-well rates
-     may not carry over. Read these as area-level odds; only testing a well answers the question for a home.</p>
+     were included.</p>
+
+  <h3>Checked against private-well tests</h3>
+  <p>From 2020 to 2022 MassDEP tested __PW_WELLS__ private wells in __PW_TOWNS__ towns where most residents use
+     private wells, and published each town's results: __PW_OVER__ wells (__PW_SHARE__) had PFAS6 at or above
+     20 ng/L. The model never saw these wells, so they are an independent check.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Check across the __PW_TOWNS__ tested towns</th><th>Result</th></tr></thead>
+    <tbody>__PW_ROWS__</tbody>
+  </table></div>
+  <p>The model ranks towns well, but public wells are more contaminated than private wells: it predicted
+     __PW_MODEL_SHARE__ of tested private wells would reach 20 ng/L, against __PW_SHARE__ measured. So the private-well
+     estimates are <b>calibrated</b> to the program (one shift in the model's log-odds, fit to the towns'
+     counts), and in tested towns they are <b>blended</b> with the town's own results, weighted as if the model
+     were __PW_PRIOR__ wells. The program's invitations were mostly (__PW_TARGETED__) targeted near suspected
+     sources, so its rate, and these calibrated estimates, may still run high for private wells in general.
+     Read the results as area-level odds; only testing a well answers the question for a home.</p>
   <div class="scroll"><table>
     <thead><tr><th>Estimated chance that water at the location has PFAS6 of 20 ng/L or more</th>
       <th>Private-well residents</th></tr></thead>

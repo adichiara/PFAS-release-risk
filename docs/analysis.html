@@ -118,7 +118,7 @@
   <a class="cta secondary" href="releases.html">Reported-release risk</a>
   <a class="cta secondary" href="https://github.com/adichiara/PFAS-release-risk">Code and data on GitHub</a>
 
-  <div class="kpis"><div class="kpi"><div class="v">45,000</div><div class="l">on public water now at or above the 20 ng/L state standard</div></div><div class="kpi"><div class="v">434,000</div><div class="l">on systems that reached it in their worst year</div></div><div class="kpi"><div class="v">2.8 million</div><div class="l">with PFAS6 detected in their tap water now</div></div><div class="kpi"><div class="v">175,000</div><div class="l">estimated among 1.0 million private-well residents (rough)</div></div></div>
+  <div class="kpis"><div class="kpi"><div class="v">45,000</div><div class="l">on public water now at or above the 20 ng/L state standard</div></div><div class="kpi"><div class="v">434,000</div><div class="l">on systems that reached it in their worst year</div></div><div class="kpi"><div class="v">2.8 million</div><div class="l">with PFAS6 detected in their tap water now</div></div><div class="kpi"><div class="v">70,000</div><div class="l">estimated among 1.0 million private-well residents (rough)</div></div></div>
 
   <h2>Public water: measured</h2>
   <p>Every community water system had to test its treated water for PFAS6 (six PFAS compounds)
@@ -180,15 +180,32 @@
      it cannot say which well is contaminated: groundwater PFAS here is widespread and depends on things
      public data does not capture (past spills, well depth, local geology). Distance to mapped industries,
      airports, landfills and other likely sources added nothing once nearby well results and development
-     were included. Private wells also tend to be shallower than public wells, so the public-well rates
-     may not carry over. Read these as area-level odds; only testing a well answers the question for a home.</p>
+     were included.</p>
+
+  <h3>Checked against private-well tests</h3>
+  <p>From 2020 to 2022 MassDEP tested 1,649 private wells in 83 towns where most residents use
+     private wells, and published each town's results: 82 wells (5%) had PFAS6 at or above
+     20 ng/L. The model never saw these wells, so they are an independent check.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Check across the 83 tested towns</th><th>Result</th></tr></thead>
+    <tbody><tr><td class="wrap">Rank agreement between the model&#x27;s town estimates and measured town rates (Spearman)</td><td>0.55</td></tr>
+<tr><td class="wrap">Picking out towns with at least one well at 20 ng/L or more (ROC AUC)</td><td>0.82</td></tr>
+<tr><td class="wrap">Predicting each town&#x27;s results with the calibration fit on the other towns (log loss; lower is better)</td><td>306, against 362 uncalibrated and 326 for one statewide rate</td></tr></tbody>
+  </table></div>
+  <p>The model ranks towns well, but public wells are more contaminated than private wells: it predicted
+     13% of tested private wells would reach 20 ng/L, against 5% measured. So the private-well
+     estimates are <b>calibrated</b> to the program (one shift in the model's log-odds, fit to the towns'
+     counts), and in tested towns they are <b>blended</b> with the town's own results, weighted as if the model
+     were 24 wells. The program's invitations were mostly (77%) targeted near suspected
+     sources, so its rate, and these calibrated estimates, may still run high for private wells in general.
+     Read the results as area-level odds; only testing a well answers the question for a home.</p>
   <div class="scroll"><table>
     <thead><tr><th>Estimated chance that water at the location has PFAS6 of 20 ng/L or more</th>
       <th>Private-well residents</th></tr></thead>
-    <tbody><tr><td>30% or more</td><td>104,731</td></tr>
-<tr><td>20 to 30%</td><td>267,280</td></tr>
-<tr><td>10 to 20%</td><td>341,287</td></tr>
-<tr><td>Under 10%</td><td>307,321</td></tr></tbody>
+    <tbody><tr><td>20% or more</td><td>17,429</td></tr>
+<tr><td>10 to 20%</td><td>215,147</td></tr>
+<tr><td>5 to 10%</td><td>338,830</td></tr>
+<tr><td>Under 5%</td><td>449,213</td></tr></tbody>
   </table></div>
 
   <h2>Who is affected</h2>
@@ -199,12 +216,12 @@
     <thead><tr><th>Group</th><th>Residents</th><th>Public water: 20+ now</th><th>10 to &lt;20 now</th>
       <th>Detected now</th><th>20+ in highest year</th><th>On private wells</th>
       <th>Private wells: est. share 20+</th></tr></thead>
-    <tbody><tr class="selected"><td class="wrap">All residents</td><td>7,029,917</td><td>0.8%</td><td>8.3%</td><td>47%</td><td>7.2%</td><td>1,020,619</td><td>17%</td></tr>
-<tr><td class="wrap">In EJ block groups</td><td>3,482,860</td><td>0.2%</td><td>5.6%</td><td>42%</td><td>4.5%</td><td>142,342</td><td>22%</td></tr>
-<tr><td class="wrap">EJ: minority criterion</td><td>3,232,896</td><td>0.2%</td><td>5.9%</td><td>42%</td><td>4.4%</td><td>103,587</td><td>25%</td></tr>
-<tr><td class="wrap">EJ: income criterion</td><td>1,301,284</td><td>0.3%</td><td>1.4%</td><td>43%</td><td>2.0%</td><td>56,241</td><td>18%</td></tr>
-<tr><td class="wrap">EJ: English isolation</td><td>408,157</td><td>0.0%</td><td>0.4%</td><td>42%</td><td>0.5%</td><td>3,363</td><td>32%</td></tr>
-<tr><td class="wrap">Not in EJ block groups</td><td>3,547,057</td><td>1.4%</td><td>12%</td><td>54%</td><td>11%</td><td>878,277</td><td>16%</td></tr></tbody>
+    <tbody><tr class="selected"><td class="wrap">All residents</td><td>7,029,917</td><td>0.8%</td><td>8.3%</td><td>47%</td><td>7.2%</td><td>1,020,619</td><td>6.9%</td></tr>
+<tr><td class="wrap">In EJ block groups</td><td>3,482,860</td><td>0.2%</td><td>5.6%</td><td>42%</td><td>4.5%</td><td>142,342</td><td>9.5%</td></tr>
+<tr><td class="wrap">EJ: minority criterion</td><td>3,232,896</td><td>0.2%</td><td>5.9%</td><td>42%</td><td>4.4%</td><td>103,587</td><td>11%</td></tr>
+<tr><td class="wrap">EJ: income criterion</td><td>1,301,284</td><td>0.3%</td><td>1.4%</td><td>43%</td><td>2.0%</td><td>56,241</td><td>7.7%</td></tr>
+<tr><td class="wrap">EJ: English isolation</td><td>408,157</td><td>0.0%</td><td>0.4%</td><td>42%</td><td>0.5%</td><td>3,363</td><td>14%</td></tr>
+<tr><td class="wrap">Not in EJ block groups</td><td>3,547,057</td><td>1.4%</td><td>12%</td><td>54%</td><td>11%</td><td>878,277</td><td>6.5%</td></tr></tbody>
   </table></div>
   <p class="note">Many EJ neighborhoods are in cities served by MWRA reservoir water, where PFAS6 is not
      detected; their residents are less likely than others to have PFAS in their tap water.</p>
@@ -252,6 +269,7 @@
 <tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/DEP_Sewer_Service_Areas.zip">Sewer service areas of municipal wastewater treatment plants</a></td><td class="wrap">MassGIS / MassDEP</td><td><span class="status">used</span></td></tr>
 <tr><td class="wrap"><a href="https://www.epa.gov/frs/epa-state-combined-csv-download-files">EPA Facility Registry Service, Massachusetts facilities and NAICS codes</a></td><td class="wrap">U.S. EPA</td><td><span class="status">used</span></td></tr>
 <tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/census2020/ej2020.zip">2020 Environmental Justice populations (block groups; minority, income, limited-English criteria)</a></td><td class="wrap">MassGIS / Executive Office of Energy and Environmental Affairs</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://mass-eoeea.maps.arcgis.com/apps/dashboards/f15b2464024645ec8215be1685fe88f1">MassDEP Private Wells PFAS Sampling Program, results by town (2020-2022)</a></td><td class="wrap">MassDEP / UMass Amherst</td><td><span class="status">used</span></td></tr>
 <tr><td class="wrap"><a href="https://www.epa.gov/enviro/sdwis-overview">Purchased-water links between public water systems (who buys from whom)</a></td><td class="wrap">U.S. EPA Safe Drinking Water Information System (Envirofacts)</td><td><span class="status">used</span></td></tr>
 <tr><td class="wrap"><a href="https://www.epa.gov/dwucmr/occurrence-data-unregulated-contaminant-monitoring-rule">EPA UCMR 5 PFAS results for public water systems, 2023-2025 (29 PFAS)</a></td><td class="wrap">U.S. EPA</td><td><span class="status">used</span></td></tr>
 <tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/DEP_PWS_Water_Service_Areas.zip">Community public water system service areas (outside them, homes are presumed on private wells)</a></td><td class="wrap">MassGIS / MassDEP</td><td><span class="status">used</span></td></tr>

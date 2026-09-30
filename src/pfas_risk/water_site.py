@@ -151,6 +151,17 @@ def build_water_page(site_dir: Path, repo_url: str, source_rows: str) -> Path | 
     for name, _ in downloads:
         shutil.copyfile(WATER_DIR / name, data / name)
     chart, legend = stack_chart(h)
+    pv = r["private_well_validation"]
+    loss = pv["loto_log_loss"]
+    pw_rows = "\n".join(f"<tr><td class=\"wrap\">{html.escape(a)}</td><td>{b}</td></tr>" for a, b in [
+        ("Rank agreement between the model's town estimates and measured town rates (Spearman)",
+         f"{pv['spearman_towns']:.2f}"),
+        *([("Picking out towns with at least one well at 20 ng/L or more (ROC AUC)",
+            f"{pv['auc_towns_any_over20']:.2f}")] if pv.get("auc_towns_any_over20") is not None else []),
+        ("Predicting each town's results with the calibration fit on the other towns (log loss; lower is better)",
+         (f"{loss['calibrated_model']:.0f}, against {loss['uncalibrated_model']:.0f} uncalibrated and "
+          f"{loss['flat_rate']:.0f} for one statewide rate")),
+    ])
     u = r["ucmr5_check"]
     bands = r["private_bands"]
     page = (TEMPLATE.read_text()
@@ -169,6 +180,14 @@ def build_water_page(site_dir: Path, repo_url: str, source_rows: str) -> Path | 
             .replace("__PRIVATE_ROWS__", "\n".join(f"<tr><td>{html.escape(k)}</td><td>{v:,}</td></tr>"
                                                    for k, v in reversed(list(bands.items()))))
             .replace("__GROUP_ROWS__", _group_rows(r["groups"]))
+            .replace("__PW_ROWS__", pw_rows)
+            .replace("__PW_WELLS__", f"{pv['wells']:,}")
+            .replace("__PW_TOWNS__", str(pv["towns"]))
+            .replace("__PW_OVER__", str(pv["wells_over20"]))
+            .replace("__PW_SHARE__", f"{pv['observed_share']:.0%}")
+            .replace("__PW_MODEL_SHARE__", f"{pv['model_share_before_calibration']:.0%}")
+            .replace("__PW_PRIOR__", f"{pv['prior_weight_wells']:.0f}")
+            .replace("__PW_TARGETED__", f"{pv['targeted_share_of_invitations']:.0%}")
             .replace("__SOURCE_ROWS__", source_rows)
             .replace("__DOWNLOADS__", "".join(f'<li><a href="data/{f}">{html.escape(t)}</a></li>' for f, t in downloads))
             .replace("__RUN_DATE__", r["run_date"])
@@ -223,7 +242,11 @@ def build_public_page(site_dir: Path, repo_url: str, r: dict) -> Path:
             .replace("__DETECTED_NOW__", _people(h["public_water"] - cur.get(BAND_LABELS[0], 0)))
             .replace("__PRIVATE_RATIO__", f"1 in {round(1 / p20)}")
             .replace("__PRIVATE_20__", _people(h["private_expected_over20"]))
-            .replace("__PRIVATE_HIGH__", _people(r["private_bands"].get("30% or more", 0)))
+            .replace("__PRIVATE_HIGH__", _people(list(r["private_bands"].values())[-1]))
+            .replace("__PRIVATE_HIGH_BAND__", list(r["private_bands"])[-1])
+            .replace("__PW_WELLS__", f"{r['private_well_validation']['wells']:,}")
+            .replace("__PW_TOWNS__", str(r["private_well_validation"]["towns"]))
+            .replace("__PW_SHARE__", f"{r['private_well_validation']['observed_share']:.0%}")
             .replace("__EJ_DET__", f"{ej['current_detected']:.0%}")
             .replace("__NONEJ_DET__", f"{non_ej['current_detected']:.0%}")
             .replace("__N_WELLS__", f"{r['groundwater_validation']['wells']:,}")

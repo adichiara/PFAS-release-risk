@@ -26,6 +26,7 @@ from .drinking_water import (
 )
 from .groundwater import THRESHOLDS, evaluate, private_well_estimates, training_table
 from .population import attach_context
+from .private_wells import calibrate
 from .sources import read
 
 log = logging.getLogger(__name__)
@@ -42,7 +43,12 @@ def block_exposure() -> gpd.GeoDataFrame:
     private = b["private_well"]
     log.info("exposure: groundwater estimates for %d private-well blocks", int(private.sum()))
     est = private_well_estimates(b[private])
-    return b.join(est)
+    b = b.join(est.rename(columns={"p_over20": "p_over20_model"}))
+    # Calibrate to MassDEP's private-well sampling results (public wells run higher).
+    b.loc[private, "p_over20"], stats = calibrate(
+        b.loc[private, ["POP20", "TOWN"]].assign(p_over20=b.loc[private, "p_over20_model"]))
+    b.attrs["private_well_validation"] = stats
+    return b
 
 
 def _share(pop: pd.Series, mask: pd.Series) -> float:
@@ -167,6 +173,7 @@ def exposure_report(blocks: pd.DataFrame, systems: pd.DataFrame) -> dict:
         "groups": summarize(blocks),
         "private_bands": private_band_counts(blocks),
         "groundwater_validation": groundwater_validation(),
+        "private_well_validation": blocks.attrs.get("private_well_validation", {}),
         "ucmr5_check": {"systems": len(both), "correlation": round(float(
             both["pfas6_current_ng_l"].corr(both["ucmr5_pfas6_ng_l"])), 2)},
     }
