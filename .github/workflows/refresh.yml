@@ -59,7 +59,9 @@ jobs:
           pfas-risk -v download
           pfas-risk -v releases
           pfas-risk -v features --force
+          pfas-risk --unit hex -v features --force
           pfas-risk -v run
+          pfas-risk --unit hex -v run
 
       - name: Commit results
         id: commit

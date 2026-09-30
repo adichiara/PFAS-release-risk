@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 import pandas as pd
 
 from .config import OUTPUT_DIR
-from .features import attach_releases, build_features
+from .features import attach_releases, build_features, unit_key
 from .fetch import fetch_release_zip, recorded_sha256, sha256
 from .mapping import risk_map
 from .model import evaluate, grouped_importance, permutation_null
@@ -24,9 +24,32 @@ BASELINES = ("baseline_area", "baseline_area_population")
 SELECTION_METRIC = "capture_top10pct_area"
 
 
-def _dataset(force: bool = False):
+UNIT_LABELS = {"bg": ("block group", "block groups")}
+
+
+def unit_labels(key: str) -> tuple[str, str]:
+    """(singular, plural) for 'bg' or e.g. 'hex4'."""
+    if key in UNIT_LABELS:
+        return UNIT_LABELS[key]
+    size = key.removeprefix("hex")
+    return f"{size} km² hexagon", f"{size} km² hexagons"
+
+
+def _key(args) -> str:
+    return unit_key(args.unit, args.cell_km2)
+
+
+def _out_dir(args):
+    """outputs/ for block groups (the published default), outputs/<key>/ for other units."""
+    key = _key(args)
+    return OUTPUT_DIR if key == "bg" else OUTPUT_DIR / key
+
+
+def _dataset(args=None, force: bool = False, unit: str = "bg", cell_km2: float = 4.0):
+    if args is not None:
+        unit, cell_km2 = args.unit, args.cell_km2
     releases = locate_releases()
-    return attach_releases(build_features(force=force), releases), releases
+    return attach_releases(build_features(force=force, unit=unit, cell_km2=cell_km2), releases), releases
 
 
 def cmd_download(args) -> None:
@@ -48,14 +71,17 @@ def cmd_releases(args) -> None:
 
 
 def cmd_features(args) -> None:
-    df, _ = _dataset(force=args.force)
-    print(f"{len(df)} block groups, {int(df['releases'].sum())} located releases in "
-          f"{int((df['releases'] > 0).sum())} block groups; "
-          f"{df.attrs['unlocated_releases']} releases could not be located")
+    df, _ = _dataset(args, force=args.force)
+    _, plural = unit_labels(_key(args))
+    print(f"{len(df)} {plural}, {int(df['releases'].sum())} located releases in "
+          f"{int((df['releases'] > 0).sum())} {plural}; "
+          f"{df.attrs['unlocated_releases']} releases could not be located "
+          f"({df.attrs['releases_outside_units']} fell outside the units)")
 
 
 def cmd_evaluate(args) -> None:
-    df, releases = _dataset()
+    df, releases = _dataset(args)
+    out_dir = _out_dir(args)
     metrics, oof = evaluate(df, repeats=args.repeats)
     summary = metrics.drop(columns="repeat").groupby("model").agg(["mean", "std"])
     candidates = summary.drop(index=list(BASELINES))
@@ -63,17 +89,18 @@ def cmd_evaluate(args) -> None:
     null = permutation_null(df, best, permutations=args.null)
     importance = grouped_importance(df, best)
 
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    metrics.to_csv(OUTPUT_DIR / "cv_metrics.csv", index=False)
-    null.to_csv(OUTPUT_DIR / "null_metrics.csv", index=False)
-    oof.to_parquet(OUTPUT_DIR / "oof_scores.parquet")
-    importance.to_csv(OUTPUT_DIR / "importance.csv", index=False)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    metrics.to_csv(out_dir / "cv_metrics.csv", index=False)
+    null.to_csv(out_dir / "null_metrics.csv", index=False)
+    oof.to_parquet(out_dir / "oof_scores.parquet")
+    importance.to_csv(out_dir / "importance.csv", index=False)
     report = {
         "run_date": datetime.now(timezone.utc).date().isoformat(),
+        "unit": _key(args),
         "release_source": releases.attrs.get("source"),
-        "block_groups": len(df),
+        "units": len(df),
         "located_releases": int(df["releases"].sum()),
-        "release_block_groups": int((df["releases"] > 0).sum()),
+        "release_units": int((df["releases"] > 0).sum()),
         "unlocated_releases": df.attrs["unlocated_releases"],
         "repeats": args.repeats,
         "null_permutations": args.null,
@@ -83,9 +110,9 @@ def cmd_evaluate(args) -> None:
         "null": _null_summary(metrics[metrics["model"] == best], null),
         "importance": importance.round(4).to_dict("records"),
     }
-    (OUTPUT_DIR / "evaluation.json").write_text(json.dumps(report, indent=2))
-    (OUTPUT_DIR / "evaluation.md").write_text(_markdown(report, summary, null))
-    print((OUTPUT_DIR / "evaluation.md").read_text())
+    (out_dir / "evaluation.json").write_text(json.dumps(report, indent=2))
+    (out_dir / "evaluation.md").write_text(_markdown(report, summary, null))
+    print((out_dir / "evaluation.md").read_text())
 
 
 METRIC_COLS = ["roc_auc", "avg_precision", "capture_top10pct_units", "capture_top10pct_area"]
@@ -104,18 +131,19 @@ def _null_summary(observed: pd.DataFrame, null: pd.DataFrame) -> dict:
 
 def _markdown(report: dict, summary: pd.DataFrame, null: pd.DataFrame) -> str:
     cols = METRIC_COLS
+    _, plural = unit_labels(report["unit"])
     lines = [
-        "# Evaluation",
+        f"# Evaluation: {plural}",
         "",
         (f"Run {report['run_date']} on `{report['release_source']}`: {report['located_releases']} located "
-         f"releases in {report['release_block_groups']} of {report['block_groups']} block groups "
+         f"releases in {report['release_units']} of {report['units']} {plural} "
          f"({report['unlocated_releases']} could not be located)."),
         "",
         (f"Town-grouped 5-fold cross-validation, {report['repeats']} repeats (mean ± sd). "
          "Compare models with the two baselines, not with 10%: releases are not spread evenly "
-         "over land or over block groups, so chance capture depends on the budget."),
+         "over land or over units, so chance capture depends on the budget."),
         "",
-        ("| model | ROC AUC | avg precision | releases in top 10% of block groups "
+        (f"| model | ROC AUC | avg precision | releases in top 10% of {plural} "
          "| releases in top-risk 10% of land |"),
         "|---|---|---|---|---|",
     ]
@@ -129,7 +157,7 @@ def _markdown(report: dict, summary: pd.DataFrame, null: pd.DataFrame) -> str:
         "## Does it beat size and density alone?",
         "",
         (f"Permutation null for {report['best_model']}: release labels shuffled {len(null)} times among "
-         "block groups in the same land-area x population-density quintile, then the same "
+         f"{plural} in the same land-area x population-density quintile, then the same "
          "cross-validation. This keeps the size and density effects and removes everything else."),
         "",
         "| metric | observed | null mean | null 95th pct | p |",
@@ -142,21 +170,31 @@ def _markdown(report: dict, summary: pd.DataFrame, null: pd.DataFrame) -> str:
 
 
 def cmd_map(args) -> None:
-    report = json.loads((OUTPUT_DIR / "evaluation.json").read_text())
+    out_dir = _out_dir(args)
+    report = json.loads((out_dir / "evaluation.json").read_text())
     model = args.model or report["best_model"]
-    df, releases = _dataset()
-    oof = pd.read_parquet(OUTPUT_DIR / "oof_scores.parquet")
+    df, releases = _dataset(args)
+    oof = pd.read_parquet(out_dir / "oof_scores.parquet")
     note = ("MassDEP PFAS release list" if report["release_source"] == "massdep_pfas_releases.csv"
             else "2021 seed list of MassDEP PFAS RTNs")
     path = risk_map(df, oof[model], releases, model, report["mean"][model], report["mean"]["baseline_area"],
-                    OUTPUT_DIR / "risk_map.html", note)
+                    out_dir / "risk_map.html", note, unit_labels(_key(args)))
     print(path)
 
 
 def cmd_site(args) -> None:
+    """The site always leads with block groups; other units' results are added when present."""
     df, releases = _dataset()
     oof = pd.read_parquet(OUTPUT_DIR / "oof_scores.parquet")
-    print(build_site(df, oof, releases))
+    others = []
+    for report_path in sorted(OUTPUT_DIR.glob("*/evaluation.json")):
+        report = json.loads(report_path.read_text())
+        key = report.get("unit", report_path.parent.name)
+        unit, size = ("hex", float(key.removeprefix("hex"))) if key.startswith("hex") else ("bg", 4.0)
+        udf, _ = _dataset(unit=unit, cell_km2=size)
+        others.append((key, unit_labels(key), report, udf, pd.read_parquet(report_path.parent / "oof_scores.parquet"),
+                       report_path.parent / "risk_map.html"))
+    print(build_site(df, oof, releases, others))
 
 
 def cmd_run(args) -> None:
@@ -169,6 +207,9 @@ def cmd_run(args) -> None:
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="pfas-risk", description=__doc__)
     parser.add_argument("-v", "--verbose", action="store_true")
+    parser.add_argument("--unit", choices=["bg", "hex"], default="bg",
+                        help="spatial unit: census block groups (default) or equal-area hexagons")
+    parser.add_argument("--cell-km2", type=float, default=4.0, help="hexagon area in km² (default 4)")
     sub = parser.add_subparsers(dest="command", required=True)
 
     p = sub.add_parser("download", help="fetch all automatically available public sources")
@@ -185,7 +226,7 @@ def main(argv: list[str] | None = None) -> None:
                    help="look up coordinates for every RTN, not just ones new to the list")
     p.set_defaults(func=cmd_releases)
 
-    p = sub.add_parser("features", help="build the block-group feature table")
+    p = sub.add_parser("features", help="build the feature table for the chosen unit")
     p.add_argument("--force", action="store_true", help="rebuild even if cached")
     p.set_defaults(func=cmd_features)
 

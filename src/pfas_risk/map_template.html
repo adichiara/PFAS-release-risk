@@ -62,14 +62,14 @@
 
 <div id="info" class="panel">
   <h1>PFAS release risk, Massachusetts</h1>
-  <p>Relative risk of a reported PFAS release per km², by 2020 census block group. Built only
+  <p>Relative risk of a reported PFAS release per km², by __UNIT__. Built only
      from public data.</p>
   <p class="warn">Preliminary. Trained on __N_RELEASES__ located PFAS releases (__SOURCE__). Scores
      rank areas relative to each other; they are not probabilities of contamination.</p>
   <p><a href="index.html" style="color:var(--seq-4)">Method, validation and data sources</a></p>
   <details>
     <summary>How well it validates</summary>
-    <p>Model: <b>__MODEL__</b>. Scores shown are out-of-fold: each block group was scored by a model
+    <p>Model: <b>__MODEL__</b>. Scores shown are out-of-fold: each __UNIT__ was scored by a model
        trained without its town.</p>
     <table id="metrics"></table>
     <p>The baseline uses block-group land area only. Larger areas see more reported releases,
@@ -99,7 +99,7 @@ const colorFor = p => p >= 97.5 ? seq[4] : p >= 90 ? seq[3] : p >= 75 ? seq[2] :
 
 const labels = {
   roc_auc: 'ROC AUC', avg_precision: 'Average precision',
-  capture_top10pct_units: 'Releases in top 10% of block groups',
+  capture_top10pct_units: 'Releases in top 10% of __UNITS__',
   capture_top10pct_area: 'Releases in top-risk 10% of land area',
 };
 const fmt = (k, v) => k.startsWith('capture') ? Math.round(v * 100) + '%' : v.toFixed(2);
@@ -121,7 +121,7 @@ const bg = L.geoJSON(POLYGONS, {
   onEachFeature: (f, layer) => {
     const p = f.properties;
     layer.bindTooltip(
-      `<div class="tt"><b>${esc(p.town)}</b> <span>block group ${esc(p.geoid)}</span><br>` +
+      `<div class="tt"><b>${esc(p.town)}</b> <span>__UNIT__ ${esc(p.geoid)}</span><br>` +
       `Risk percentile: <b>${p.pct}</b><br>` +
       `<span>Population ${Number(p.POP20).toLocaleString()} · ${p.land_km2} km² land</span>` +
       (p.releases ? `<br>Reported PFAS releases: <b>${p.releases}</b>` : '') + '</div>',

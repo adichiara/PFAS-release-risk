@@ -19,6 +19,7 @@ from .site_sections import (
     capture_chart,
     importance_chart,
     releases_by_year_chart,
+    unit_comparison_rows,
     watchlist,
     watchlist_rows,
     write_downloads,
@@ -95,7 +96,46 @@ def _data_date() -> str:
     return ""
 
 
-def build_site(df: gpd.GeoDataFrame, oof: pd.DataFrame, releases: gpd.GeoDataFrame) -> Path:
+def _other_units_section(report: dict, others: list) -> str:
+    """Comparison with equal-area hexagons (or any other unit evaluated into outputs/<key>/)."""
+    if not others:
+        return ""
+    table = unit_comparison_rows([("Census block groups", report)]
+                                 + [(labels[1].capitalize(), r) for _, labels, r, *_ in others])
+    parts = [f"""
+  <h2>A different lens: equal-area hexagons</h2>
+  <p>Block groups range from under 0.1 km² to over 200 km², and land area alone explains much of which
+     ones contain a reported release. Here the state is instead cut into equal-area hexagons, so every
+     full cell has the same exposure and any remaining signal has to come from what is in and around it.
+     Population and land area come from 2020 census blocks, weighted by the share of each block in a cell.
+     The features, town-held-out validation and size-matched permutation test are the same.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Unit</th><th>Cells</th><th>Cells with a release</th>
+      <th>ROC AUC, model</th><th>ROC AUC, area + density</th>
+      <th>Avg precision, model</th><th>Avg precision, area + density</th>
+      <th>Top-risk 10% of land, model</th><th>…land area alone</th><th>…area + density</th>
+      <th><i>p</i> vs size-matched null</th></tr></thead>
+    <tbody>{table}</tbody>
+  </table></div>"""]
+    for key, labels, r, udf, uoof, _ in others:
+        imp = r.get("importance") or []
+        parts.append(f"""
+  <h3>{html.escape(labels[1].capitalize())}</h3>
+  <p>Capture curve against area plus population density, the stronger baseline once cells are equal in
+     size. <a href="map_{key}.html">Open the {html.escape(labels[1])} map</a>.</p>
+  <div class="figure">{capture_chart(udf, uoof, r["best_model"], "baseline_area_population",
+                                     "Area + density")}
+    <div class="legend"><span><i></i>Model</span><span><i class="base"></i>Area + density</span>
+      <span><i class="random"></i>Random targeting</span></div>
+  </div>
+  <p>What drives the scores for {html.escape(labels[1])}:</p>
+  <div class="figure">{importance_chart(imp, top=10) if imp else ""}</div>""")
+    return "".join(parts)
+
+
+def build_site(df: gpd.GeoDataFrame, oof: pd.DataFrame, releases: gpd.GeoDataFrame,
+               others: list | None = None) -> Path:
+    others = others or []
     report = json.loads((OUTPUT_DIR / "evaluation.json").read_text())
     model = report["best_model"]
     SITE_DIR.mkdir(exist_ok=True)
@@ -122,8 +162,12 @@ def build_site(df: gpd.GeoDataFrame, oof: pd.DataFrame, releases: gpd.GeoDataFra
             .replace("__WATCH_ROWS__", watchlist_rows(watchlist(df, oof, model, releases)))
             .replace("__YEAR_CHART__", releases_by_year_chart(releases))
             .replace("__N_ALL_RELEASES__", str(len(releases)))
+            .replace("__OTHER_UNITS__", _other_units_section(report, others))
             .replace("__DOWNLOADS__", "".join(f'<li><a href="{h}">{html.escape(t)}</a></li>'
                                               for h, t in downloads)))
     (SITE_DIR / "index.html").write_text(page)
     shutil.copyfile(OUTPUT_DIR / "risk_map.html", SITE_DIR / "map.html")
+    for key, *_, map_path in others:
+        if Path(map_path).exists():
+            shutil.copyfile(map_path, SITE_DIR / f"map_{key}.html")
     return SITE_DIR / "index.html"

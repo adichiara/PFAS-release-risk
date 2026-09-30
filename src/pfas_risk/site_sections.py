@@ -62,12 +62,13 @@ def capture_curve(scores: np.ndarray, releases: np.ndarray, area: np.ndarray,
     return np.interp(grid, np.concatenate([[0], land]), np.concatenate([[0], found]))
 
 
-def capture_chart(df: pd.DataFrame, oof: pd.DataFrame, model: str) -> str:
+def capture_chart(df: pd.DataFrame, oof: pd.DataFrame, model: str, base_col: str = "baseline_area",
+                  base_label: str = "Land area alone") -> str:
     grid = np.linspace(0, 1, 101)
     area, y = df["land_km2"].to_numpy(), df["releases"].to_numpy()
     curves = {
         "model": capture_curve(oof[model].to_numpy(), y, area, grid),
-        "base": capture_curve(oof["baseline_area"].to_numpy(), y, area, grid),
+        "base": capture_curve(oof[base_col].to_numpy(), y, area, grid),
     }
     W, H, L, R, T, B = 640, 360, 52, 120, 16, 44
     sx = lambda v: L + v * (W - L - R)  # noqa: E731
@@ -88,17 +89,17 @@ def capture_chart(df: pd.DataFrame, oof: pd.DataFrame, model: str) -> str:
     for x in [0.05, 0.1, 0.2, 0.3, 0.5, 0.75]:
         i = round(x * 100)
         m, b = curves["model"][i], curves["base"][i]
-        tip = f"Top-risk {_pct(x)} of land: model finds {_pct(m)} of releases, land area alone {_pct(b)}"
+        tip = f"Top-risk {_pct(x)} of land: model finds {_pct(m)} of releases, {base_label.lower()} {_pct(b)}"
         for v, cls in [(m, "dot model"), (b, "dot base")]:
             hover.append(f'<circle class="{cls}" cx="{sx(x):.1f}" cy="{sy(v):.1f}" r="4">'
                          f'<title>{tip}</title></circle>')
     # Direct labels in open space: above-left of the model curve, below-right of the baseline.
     m20, b35 = curves["model"][20], curves["base"][35]
     labels = (f'<text class="label" x="{sx(0.2) - 8:.1f}" y="{sy(m20) - 10:.1f}" text-anchor="end">Model</text>'
-              f'<text class="label" x="{sx(0.35) + 10:.1f}" y="{sy(b35) + 16:.1f}">Land area alone</text>'
+              f'<text class="label" x="{sx(0.35) + 10:.1f}" y="{sy(b35) + 16:.1f}">{base_label}</text>'
               f'<text class="label muted" x="{sx(0.8):.1f}" y="{sy(0.8) + 18:.1f}">Random</text>')
     return (f'<svg class="chart" viewBox="0 0 {W} {H}" role="img" aria-label="Capture curve: share of '
-            f'releases found versus share of land targeted, model versus land area alone">'
+            f'releases found versus share of land targeted, model versus {base_label.lower()}">'
             f'{grid_lines}{guide}'
             f'<line class="random" x1="{sx(0)}" y1="{sy(0)}" x2="{sx(1)}" y2="{sy(1)}"/>'
             f'<path class="line base" d="{path(curves["base"])}"/>'
@@ -218,3 +219,21 @@ def write_downloads(site_dir: Path, df: pd.DataFrame, oof: pd.DataFrame, model: 
     releases[cols].to_csv(out / "pfas_releases.csv", index=False)
     return [("data/block_group_risk.csv", f"Block-group risk scores ({len(scores):,} rows)"),
             ("data/pfas_releases.csv", f"PFAS release list with locations ({len(releases)} rows)")]
+
+
+# ---- Other spatial units ----------------------------------------------------------------
+
+def unit_comparison_rows(units: list[tuple[str, dict]]) -> str:
+    """One row per unit: its best model against its two size baselines."""
+    rows = []
+    for label, r in units:
+        best = r["mean"][r["best_model"]]
+        area, dens = r["mean"]["baseline_area"], r["mean"]["baseline_area_population"]
+        p = r["null"]["capture_top10pct_area"]["p_value"]
+        rows.append(
+            f"<tr><td>{html.escape(label)}</td><td>{r['units']:,}</td><td>{r['release_units']}</td>"
+            f"<td>{best['roc_auc']:.3f}</td><td>{dens['roc_auc']:.3f}</td>"
+            f"<td>{best['avg_precision']:.3f}</td><td>{dens['avg_precision']:.3f}</td>"
+            f"<td>{_pct(best['capture_top10pct_area'])}</td><td>{_pct(area['capture_top10pct_area'])}</td>"
+            f"<td>{_pct(dens['capture_top10pct_area'])}</td><td>{p:.2f}</td></tr>")
+    return "\n".join(rows)

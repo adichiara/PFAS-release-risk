@@ -20,6 +20,15 @@ sources:
     role: unit
     status: available
 
+  census_blocks:
+    title: 2020 Census blocks (population, housing and land area for the hexagon grid)
+    publisher: MassGIS / U.S. Census Bureau
+    path: shapefiles/census2020/CENSUS2020_BLK_BG_TRCT.zip
+    file: CENSUS2020_BLK_BG_TRCT.zip
+    layer: CENSUS2020BLOCKS_POLY.shp
+    role: unit
+    status: available
+
   towns:
     title: Municipal boundaries (used for spatially grouped cross-validation)
     publisher: MassGIS

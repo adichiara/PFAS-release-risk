@@ -45,7 +45,9 @@ pytest
 ```
 
 Steps can also be run one at a time: `pfas-risk features`, `pfas-risk evaluate`, `pfas-risk map`,
-`pfas-risk site`.
+`pfas-risk site`. Add `--unit hex` (and optionally `--cell-km2 1`) before the command to use
+equal-area hexagons; their results go to `outputs/hex4/` and appear on the site next to the
+block-group results.
 Add `-v` for progress logging. A full run takes about 15 minutes.
 
 ### Updating the release list
@@ -73,7 +75,18 @@ To do the same by hand:
 
 ## Method
 
-**Unit.** 2020 census block groups (MassGIS), in Massachusetts State Plane meters.
+**Units.** Two, evaluated separately:
+
+- *2020 census block groups* (MassGIS), the default and the main map. They range from under
+  0.1 km² to over 200 km², and land area alone explains much of which ones contain a
+  reported release.
+- *Equal-area hexagons* (`--unit hex`, 4 km² by default, `--cell-km2` to change), clipped to the
+  state. Every full cell has the same exposure, so the size effect largely drops out.
+  Population, housing, land and water area come from 2020 census blocks weighted by the
+  share of each block inside a cell, and each cell is assigned the town holding most of its
+  land for town-grouped validation.
+
+All work is in Massachusetts State Plane meters.
 
 **Response.** Number of PFAS release sites (RTNs) located in each block group. Sites are
 placed with MassDEP's published coordinates (`massdep`) unless those fall more than 1 km
