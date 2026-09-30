@@ -5,95 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PFAS in Massachusetts Water</title>
 <meta name="description" content="Is there PFAS in Massachusetts drinking water? A plain-language look at public water results and private wells, built on public data.">
-<style>
-  :root {
-    color-scheme: light;
-    --surface: #fcfcfb; --panel: #ffffff; --border: #dddcd7; --row: #f4f3f0;
-    --text-primary: #0b0b0b; --text-secondary: #52514e; --text-muted: #7a7974;
-    --accent: #1c5cab; --accent-ink: #ffffff; --warn-bg: #fdf1e7; --highlight: #eaf2fd;
-    --series-1: #2a78d6; --series-neutral: #8a8984;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      color-scheme: dark;
-      --surface: #1a1a19; --panel: #242423; --border: #3a3a37; --row: #2c2c2a;
-      --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #94938b;
-      --accent: #6da7ec; --accent-ink: #0b0b0b; --warn-bg: #3a2a1f; --highlight: #1d2c40;
-      --series-1: #3987e5; --series-neutral: #7a7974;
-    }
-  }
-  :root[data-theme="dark"] {
-    color-scheme: dark;
-    --surface: #1a1a19; --panel: #242423; --border: #3a3a37; --row: #2c2c2a;
-    --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #94938b;
-    --accent: #6da7ec; --accent-ink: #0b0b0b; --warn-bg: #3a2a1f; --highlight: #1d2c40;
-      --series-1: #3987e5; --series-neutral: #7a7974;
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--surface); color: var(--text-primary);
-    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
-  main { max-width: 880px; margin: 0 auto; padding: 40px 16px 64px; }
-  h1 { font-size: 30px; line-height: 1.2; margin: 0 0 8px; letter-spacing: -0.01em; }
-  h2 { font-size: 20px; margin: 40px 0 12px; }
-  h3 { font-size: 17px; margin: 28px 0 8px; }
-  p, li { color: var(--text-secondary); }
-  a { color: var(--accent); }
-  .lede { font-size: 18px; margin: 0 0 20px; }
-  .warn { background: var(--warn-bg); color: var(--text-primary); padding: 12px 14px; border-radius: 8px; }
-  .cta { display: inline-block; margin: 8px 12px 0 0; padding: 10px 18px; border-radius: 8px; font-weight: 600;
-    text-decoration: none; background: var(--accent); color: var(--accent-ink); }
-  .cta.secondary { background: transparent; color: var(--accent); border: 1px solid var(--border); }
-  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 24px 0 0; }
-  .kpi { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
-  .kpi .v { font-size: 28px; font-weight: 650; font-variant-numeric: tabular-nums; }
-  .kpi .l { color: var(--text-secondary); font-size: 14px; }
-  .scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; background: var(--panel); }
-  table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
-  th, td { padding: 8px 12px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--border); }
-  th:first-child, td:first-child { text-align: left; }
-  th { color: var(--text-secondary); font-weight: 600; background: var(--row); white-space: normal; vertical-align: bottom; }
-  tr:last-child td { border-bottom: 0; }
-  tr.selected td { background: var(--highlight); font-weight: 600; }
-  td.wrap, th.wrap { white-space: normal; text-align: left; }
-  .note { font-size: 14px; color: var(--text-muted); }
-  .status { font-size: 12px; padding: 2px 8px; border-radius: 99px; border: 1px solid var(--border); color: var(--text-secondary); }
-  footer { margin-top: 48px; font-size: 14px; color: var(--text-muted); }
-  .figure { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 12px 8px 4px;
-    overflow-x: auto; }
-  /* Keep chart text legible on phones: scroll the panel sideways instead of shrinking the chart. */
-  .figure .chart { min-width: 560px; }
-  .figure .legend { min-width: 0; }
-  table.watch { min-width: 780px; }
-  .chart { display: block; width: 100%; height: auto; font: 12px system-ui, -apple-system, "Segoe UI", sans-serif; }
-  .chart .grid { stroke: var(--border); stroke-width: 1; }
-  .chart .guide { stroke: var(--text-muted); stroke-width: 1; stroke-dasharray: 3 3; }
-  .chart .random { stroke: var(--text-muted); stroke-width: 1.5; stroke-dasharray: 2 4; }
-  .chart .line { fill: none; stroke-width: 2; stroke-linejoin: round; }
-  .chart .line.model { stroke: var(--series-1); }
-  .chart .line.base { stroke: var(--series-neutral); stroke-dasharray: 6 4; }
-  .chart .dot { stroke: var(--panel); stroke-width: 2; cursor: default; }
-  .chart .dot.model { fill: var(--series-1); }
-  .chart .dot.base { fill: var(--series-neutral); }
-  .chart .dot:hover { r: 6; }
-  .chart .bar { fill: var(--series-1); }
-  .chart .bar:hover { opacity: .8; }
-  .chart .tick { fill: var(--text-secondary); }
-  .chart .axis { fill: var(--text-muted); }
-  .chart .value { fill: var(--text-primary); font-variant-numeric: tabular-nums; }
-  .chart .label { fill: var(--text-primary); font-weight: 600; font-size: 13px; }
-  .chart .label.muted { fill: var(--text-muted); font-weight: 400; }
-  .legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--text-secondary); margin: 8px 4px 0; }
-  .legend span { display: inline-flex; align-items: center; gap: 6px; }
-  .legend i { display: inline-block; width: 18px; height: 0; border-top: 2px solid var(--series-1); }
-  .legend i.base { border-top: 2px dashed var(--series-neutral); }
-  .legend i.random { border-top: 2px dotted var(--text-muted); }
-  .downloads li { margin: 4px 0; }
-  nav.site { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; margin: 0 0 28px;
-    padding-bottom: 12px; border-bottom: 1px solid var(--border); }
-  nav.site a { color: var(--text-secondary); text-decoration: none; }
-  nav.site a:hover { color: var(--accent); text-decoration: underline; }
-  nav.site a[aria-current="page"] { color: var(--text-primary); font-weight: 600; }
-</style>
+__STYLE__
 <style>
   :root { --pub-0: #e7e5df; --pub-1: #f5c58a; --pub-2: #e07b39; --pub-3: #a8251b; --good: #2e7d4f; }
   @media (prefers-color-scheme: dark) {
@@ -128,16 +40,16 @@
 </head>
 <body>
 <main>
-  <nav class="site" aria-label="Site"><a href="index.html" aria-current="page">Home</a><a href="analysis.html">Detailed findings</a><a href="water_map.html">Map</a><a href="releases.html">Reported releases</a><a href="https://github.com/adichiara/PFAS-release-risk">Code and data</a></nav>
+  __NAV__
   <h1>Is there PFAS in Massachusetts drinking water?</h1>
   <p class="lede">PFAS, the "forever chemicals," have been found in drinking water across the state.
      Here is what public records show about the water people actually drink, and what you can do.</p>
 
   <div class="answer">
     <p><b>The short answer:</b> for most people on public water, PFAS levels are low or not detected,
-       and they have dropped sharply as water systems added treatment. About half of people on
+       and they have dropped sharply as water systems added treatment. About __PUB_ND_SHARE__ of people on
        public water have no detectable PFAS in their tap water.</p>
-    <p><b>The biggest unknown is private wells.</b> About 1.0 million people drink from private wells, which
+    <p><b>The biggest unknown is private wells.</b> About __PRIVATE_POP__ people drink from private wells, which
        nobody tests unless the owner does.</p>
   </div>
   <a class="cta" href="water_map.html">See the map</a>
@@ -166,23 +78,23 @@
 
   <h2>What we found</h2>
   <div class="cards">
-    <div class="card"><div class="big">Half</div><h3>of people on public water have no detectable PFAS</h3>
+    <div class="card"><div class="big">__PUB_ND_BIG__</div><h3>of people on public water have no detectable PFAS</h3>
       <p>Based on each water system's most recent year of test results.</p></div>
-    <div class="card"><div class="big">434,000 → 45,000</div><h3>people whose water was at or above the state standard, then and now</h3>
+    <div class="card"><div class="big">__PEAK_20__ → __NOW_20__</div><h3>people whose water was at or above the state standard, then and now</h3>
       <p>At each system's worst year, often around 2021 and 2022, compared with now. Many of those systems have
          since added treatment or changed sources.</p></div>
-    <div class="card"><div class="big">2.0 million</div><h3>people in 38 communities get MWRA water</h3>
+    <div class="card"><div class="big">__MWRA_POP__</div><h3>people in __MWRA_TOWNS__ communities get MWRA water</h3>
       <p>Boston and many nearby cities and towns drink reservoir water from the Quabbin and Wachusett
          reservoirs; PFAS6 has not been detected in the treated water.</p></div>
-    <div class="card"><div class="big">1.0 million</div><h3>people on private wells</h3>
+    <div class="card"><div class="big">__PRIVATE_POP__</div><h3>people on private wells</h3>
       <p>Mostly in smaller towns. No public program tests these wells, so their water is the least known.</p></div>
   </div>
 
   <h3>Levels have come down</h3>
   <p>People on public water with PFAS at or above the 20 ng/L state standard, in each system's worst year
      and now:</p>
-  <div class="figure"><svg class="chart bars" viewBox="0 0 720 112" role="img" aria-label="People on public water at or above the state PFAS standard: 434,000 in the worst year, 45,000 now"><text class="tick" x="120" y="31.0" text-anchor="end">Worst year</text><rect class="b-peak" x="130" y="8" width="500.0" height="36" rx="3"><title>Worst year: 433,814 people</title></rect><text class="value" x="638.0" y="31.0">434,000</text><text class="tick" x="120" y="83.0" text-anchor="end">Now</text><rect class="b-now" x="130" y="60" width="52.1" height="36" rx="3"><title>Now: 45,191 people</title></rect><text class="value" x="190.1" y="83.0">45,000</text></svg></div>
-  <p>That is real progress, but "below the standard" is not the same as "none": about 2.8 million people on
+  <div class="figure">__PROGRESS_CHART__</div>
+  <p>That is real progress, but "below the standard" is not the same as "none": about __DETECTED_NOW__ people on
      public water still have some PFAS in their tap water, and the stricter federal limits would apply to more
      systems than the state standard does.</p>
 
@@ -190,8 +102,8 @@
   <p>No public data shows what is in individual private wells. To estimate the risk, we looked at public wells,
      which were all tested, and found that PFAS in groundwater tends to cluster: wells near other contaminated
      wells are more likely to be contaminated. Applying that pattern to where private wells are suggests that
-     roughly <b>1 in 6 private-well users</b> (about 175,000 people) may live where groundwater is at or
-     above the state standard. Some areas are higher: about 105,000 people live where the estimated
+     roughly <b>__PRIVATE_RATIO__ private-well users</b> (about __PRIVATE_20__ people) may live where groundwater is at or
+     above the state standard. Some areas are higher: about __PRIVATE_HIGH__ people live where the estimated
      chance is 30% or more.</p>
   <p>This is a rough, area-level estimate. It cannot tell whether a particular well is contaminated, which is
      why state guidance is to test.</p>
@@ -199,7 +111,7 @@
   <h3>Who is affected</h3>
   <p>Residents of the state's Environmental Justice neighborhoods (areas with higher shares of minority,
      lower-income or limited-English households) are <b>less</b> likely than others to have PFAS in their tap
-     water: 42% of those on public water have detectable PFAS, compared with 54% elsewhere. Many of
+     water: __EJ_DET__ of those on public water have detectable PFAS, compared with __NONEJ_DET__ elsewhere. Many of
      these neighborhoods are in cities served by MWRA. A 2022 federal review by the U.S. Government Accountability
      Office reached the same conclusion for Massachusetts.</p>
 
@@ -250,7 +162,7 @@
       under the 2020 state standard. We took each system's results from the state's public data, and for towns that
       buy their water (like the MWRA communities), used their supplier's results. EPA's own national testing
       (2023 to 2025) broadly agrees.</li>
-    <li><b>Private wells:</b> we learned how PFAS in groundwater relates to its surroundings from about 1,030
+    <li><b>Private wells:</b> we learned how PFAS in groundwater relates to its surroundings from about __N_WELLS__
       tested public wells, then applied that to areas outside public water service.</li>
     <li><b>People:</b> we matched every census block (the smallest area the Census counts) to its water system or to
       private wells, then counted residents, including by the state's Environmental Justice designations.</li>
@@ -267,7 +179,7 @@
           individual contaminated wells. Private wells are often shallower than public wells, which could make the
           real picture better or worse.</li>
       <li>This covers drinking water only, not food, consumer products or other ways people are exposed to PFAS.</li>
-      <li>Results are based on the state's public data as of 2026-09-21.</li>
+      <li>Results are based on the state's public data as of __DATA_DATE__.</li>
     </ul>
   </details>
 
@@ -287,7 +199,7 @@
 
   <p class="disclaimer">An independent analysis built only from public data, not an official product of MassDEP or
      any government agency. It is not a substitute for testing your water. Code and data:
-     <a href="https://github.com/adichiara/PFAS-release-risk">GitHub</a>. Updated 2026-09-30.</p>
+     <a href="__REPO__">GitHub</a>. Updated __RUN_DATE__.</p>
 </main>
 </body>
 </html>

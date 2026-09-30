@@ -1,7 +1,10 @@
-"""Front page of the site: PFAS in drinking water (docs/index.html).
+"""Drinking-water pages of the site.
 
-Reads the outputs of `pfas-risk exposure` (outputs/water/) and copies the drinking-water map and
-downloads next to the page. The reported-release analysis moves to docs/releases.html.
+- docs/index.html: plain-language front page for the public (public_template.html).
+- docs/analysis.html: detailed findings, method and validation (water_site_template.html).
+
+Both read the outputs of `pfas-risk exposure` (outputs/water/); the drinking-water map and
+downloads are copied next to them. The reported-release analysis is docs/releases.html.
 """
 
 from __future__ import annotations
@@ -18,6 +21,20 @@ from .config import OUTPUT_DIR
 from .drinking_water import BANDS
 
 TEMPLATE = Path(__file__).with_name("water_site_template.html")
+PUBLIC_TEMPLATE = Path(__file__).with_name("public_template.html")
+NAV_ITEMS = [("index.html", "Home"), ("analysis.html", "Detailed findings"), ("water_map.html", "Map"),
+             ("releases.html", "Reported releases")]
+
+
+def nav(current: str, repo_url: str) -> str:
+    """Site navigation shared by every page; ``current`` is this page's file name."""
+    links = []
+    for href, label in NAV_ITEMS:
+        mark = ' aria-current="page"' if href == current else ""
+        links.append(f'<a href="{href}"{mark}>{label}</a>')
+    return f'<nav class="site" aria-label="Site">{"".join(links)}<a href="{repo_url}">Code and data</a></nav>'
+
+
 STYLE_SOURCE = Path(__file__).with_name("site_template.html")
 WATER_DIR = OUTPUT_DIR / "water"
 BAND_LABELS = [label for _, _, label in BANDS]
@@ -154,6 +171,63 @@ def build_water_page(site_dir: Path, repo_url: str, source_rows: str) -> Path | 
             .replace("__GROUP_ROWS__", _group_rows(r["groups"]))
             .replace("__SOURCE_ROWS__", source_rows)
             .replace("__DOWNLOADS__", "".join(f'<li><a href="data/{f}">{html.escape(t)}</a></li>' for f, t in downloads))
+            .replace("__RUN_DATE__", r["run_date"])
+            .replace("__NAV__", nav("analysis.html", repo_url)))
+    (site_dir / "analysis.html").write_text(page)
+    build_public_page(site_dir, repo_url, r)
+    return site_dir / "index.html"
+
+
+def progress_chart(peak: float, now: float) -> str:
+    """Two bars: public-water residents at or above 20 ng/L in the worst year and now."""
+    W, L, R, bar, gap, top = 720, 130, 90, 36, 16, 8
+    rows = [("Worst year", peak, "b-peak"), ("Now", now, "b-now")]
+    parts = []
+    for i, (label, n, cls) in enumerate(rows):
+        y = top + i * (bar + gap)
+        w = max((W - L - R) * n / peak, 2)
+        parts.append(f'<text class="tick" x="{L - 10}" y="{y + bar / 2 + 5}" text-anchor="end">{label}</text>'
+                     f'<rect class="{cls}" x="{L}" y="{y}" width="{w:.1f}" height="{bar}" rx="3">'
+                     f'<title>{label}: {n:,.0f} people</title></rect>'
+                     f'<text class="value" x="{L + w + 8:.1f}" y="{y + bar / 2 + 5}">{_people(n)}</text>')
+    H = top + 2 * (bar + gap)
+    return (f'<svg class="chart bars" viewBox="0 0 {W} {H}" role="img" aria-label="People on public water at or '
+            f'above the state PFAS standard: {_people(peak)} in the worst year, {_people(now)} now">'
+            f'{"".join(parts)}</svg>')
+
+
+def _share_words(x: float) -> str:
+    """0.53 -> 'half'; 0.38 -> '4 in 10'."""
+    return "half" if 0.45 <= x <= 0.55 else f"{round(x * 10)} in 10"
+
+
+def build_public_page(site_dir: Path, repo_url: str, r: dict) -> Path:
+    h = r["headline"]
+    cur, peak = h["public_by_current_band"], h["public_by_peak_band"]
+    nd_share = cur.get(BAND_LABELS[0], 0) / h["public_water"]
+    ej = next(g for g in r["groups"] if g["group"] == "In EJ block groups")
+    non_ej = next(g for g in r["groups"] if g["group"] == "Not in EJ block groups")
+    p20 = h["private_expected_over20"] / h["private_wells"]
+    page = (PUBLIC_TEMPLATE.read_text()
+            .replace("__STYLE__", _style())
+            .replace("__NAV__", nav("index.html", repo_url))
+            .replace("__REPO__", repo_url)
+            .replace("__PUB_ND_BIG__", _share_words(nd_share).capitalize())
+            .replace("__PUB_ND_SHARE__", _share_words(nd_share))
+            .replace("__PRIVATE_POP__", _people(h["private_wells"]))
+            .replace("__PEAK_20__", _people(peak.get(BAND_LABELS[3], 0)))
+            .replace("__NOW_20__", _people(cur.get(BAND_LABELS[3], 0)))
+            .replace("__MWRA_POP__", _people(r["mwra"]["population"]))
+            .replace("__MWRA_TOWNS__", str(r["mwra"]["systems"]))
+            .replace("__PROGRESS_CHART__", progress_chart(peak.get(BAND_LABELS[3], 0), cur.get(BAND_LABELS[3], 0)))
+            .replace("__DETECTED_NOW__", _people(h["public_water"] - cur.get(BAND_LABELS[0], 0)))
+            .replace("__PRIVATE_RATIO__", f"1 in {round(1 / p20)}")
+            .replace("__PRIVATE_20__", _people(h["private_expected_over20"]))
+            .replace("__PRIVATE_HIGH__", _people(r["private_bands"].get("30% or more", 0)))
+            .replace("__EJ_DET__", f"{ej['current_detected']:.0%}")
+            .replace("__NONEJ_DET__", f"{non_ej['current_detected']:.0%}")
+            .replace("__N_WELLS__", f"{r['groundwater_validation']['wells']:,}")
+            .replace("__DATA_DATE__", r["latest_result"])
             .replace("__RUN_DATE__", r["run_date"]))
     (site_dir / "index.html").write_text(page)
     return site_dir / "index.html"
