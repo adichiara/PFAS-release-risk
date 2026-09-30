@@ -44,17 +44,21 @@ jobs:
         if: steps.fetch.outputs.changed == 'true' || inputs.force
         uses: actions/cache@v4
         with:
+          # MassGIS layers change rarely; the MassDEP and EPA files are re-downloaded every run
+          # and the feature table is rebuilt from them.
           path: |
             data/raw
-            data/interim
             !data/raw/massdep_release_data.zip
-          key: layers-${{ hashFiles('config/sources.yaml', 'src/pfas_risk/features.py', 'src/pfas_risk/geocode.py') }}
+            !data/raw/frs_state_combined_ma.zip
+            data/interim/address_index.parquet
+          key: layers-${{ hashFiles('config/sources.yaml', 'src/pfas_risk/geocode.py') }}
 
       - name: Rebuild release list and model
         if: steps.fetch.outputs.changed == 'true' || inputs.force
         run: |
           pfas-risk -v download
           pfas-risk -v releases
+          pfas-risk -v features --force
           pfas-risk -v run
 
       - name: Commit results

@@ -81,9 +81,13 @@ outside the site's stated town. Otherwise the address is matched to MassGIS addr
 like "Near" or "Off"), `override` (placed by hand) or `unmatched` (excluded; mostly RTNs
 listed as "MULTIPLE LOCATIONS").
 
-**Features.** For each point source (fire stations, MassDEP major facilities, hazardous-waste
-large-quantity generators, air-permitted facilities, underground storage tanks): the count
-inside the block group, the count within 2 km, and the distance to the nearest one. Also:
+**Features.** For each point source, the count inside the block group, the count within 2 km,
+and the distance to the nearest one. Point sources are fire stations, MassDEP major
+facilities, hazardous-waste large-quantity generators, air-permitted facilities, underground
+storage tanks, and facilities in eight PFAS-related industry sectors from EPA's Facility
+Registry Service: textiles/leather, paper/printing, chemicals/plastics, metal finishing,
+electronics, petroleum, aviation/military and waste/wastewater. Sectors are defined by NAICS
+prefix in [`config/pfas_sectors.yaml`](config/pfas_sectors.yaml), with the reason for each. Also:
 distance to the nearest landfill and the landfill share of area, the share of area over high-
 or medium-yield aquifers, major-road density, population and housing density, land area and
 water share.
@@ -111,9 +115,9 @@ percentile of risk per km².
 Every source, its publisher, URL and status is in [`config/sources.yaml`](config/sources.yaml).
 Downloads are recorded with a sha256 in `data/raw/manifest.json`.
 
-Planned additions (public, identified, not yet wired in): EPA ECHO/FRS facilities by
-PFAS-related NAICS codes (the public replacement for the 2021 industry list), airports,
-military installations (DoD MIRTA), 2016 land cover, and EPA UCMR 5 results for context.
+Planned additions (public, identified, not yet wired in): 2016 land cover and EPA UCMR 5
+results for context. Airports and military sites are covered through their NAICS codes in the
+EPA facility data; FAA airport and DoD MIRTA layers could sharpen those.
 
 ## Layout
 

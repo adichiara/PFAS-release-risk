@@ -8,6 +8,8 @@ releases. A permutation test gives the score expected from noise.
 
 from __future__ import annotations
 
+import re
+
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, ClassifierMixin, clone
@@ -160,3 +162,45 @@ def fit_final(df: pd.DataFrame, model: str):
     y = df["releases"].to_numpy()
     target = y if isinstance(est, ExposurePoisson) else (y > 0).astype(int)
     return cols, clone(est).fit(df[cols], target)
+
+
+def feature_group(column: str) -> str:
+    """Collapse the count/near-count/distance trio of a source into one group name."""
+    base = re.sub(r"_km$", "", re.sub(r"^(n2k_|n_|d_)", "", column))
+    return {"landfill_frac": "landfill", "pop_density": "population", "housing_density": "population",
+            "land_km2": "land_area"}.get(base, base)
+
+
+def grouped_importance(df: pd.DataFrame, model: str, repeats: int = 3, n_folds: int = 5,
+                       shuffles: int = 3) -> pd.DataFrame:
+    """Drop in held-out ROC AUC when one feature group is shuffled.
+
+    Uses the same town-grouped folds as evaluation: each fold's model scores its held-out towns
+    with one group's columns shuffled together, and AUC is computed on the pooled out-of-fold
+    predictions. Larger drops mean the model leans more on that group.
+    """
+    cols, est = model_specs(model_columns(df))[model]
+    groups: dict[str, list[str]] = {}
+    for c in cols:
+        groups.setdefault(feature_group(c), []).append(c)
+    X, y = df[cols], df["releases"].to_numpy()
+    target = y if isinstance(est, ExposurePoisson) else (y > 0).astype(int)
+    rows = []
+    for r in range(repeats):
+        rng = np.random.default_rng(2000 + r)
+        base = np.zeros(len(df))
+        shuffled = {(g, k): np.zeros(len(df)) for g in groups for k in range(shuffles)}
+        for tr, te in town_folds(df["town"], n_folds, seed=r):
+            m = clone(est).fit(X.iloc[tr], target[tr])
+            held = X.iloc[te]
+            base[te] = m.predict_proba(held)[:, 1]
+            for g, gcols in groups.items():
+                for k in range(shuffles):
+                    perm = held.copy()
+                    perm[gcols] = held[gcols].to_numpy()[rng.permutation(len(held))]
+                    shuffled[(g, k)][te] = m.predict_proba(perm)[:, 1]
+        auc = roc_auc_score(y > 0, base)
+        for (g, k), p in shuffled.items():
+            rows.append({"group": g, "repeat": r, "shuffle": k, "auc_drop": auc - roc_auc_score(y > 0, p)})
+    out = pd.DataFrame(rows).groupby("group")["auc_drop"].agg(["mean", "std"])
+    return out.sort_values("mean", ascending=False).reset_index()

@@ -1,0 +1,33 @@
+# Industry sectors associated with PFAS use or release, defined by NAICS code prefix.
+#
+# A facility counts toward a sector if any NAICS code EPA's Facility Registry Service (FRS)
+# records for it, under any program, starts with one of the prefixes. Sectors follow the
+# source categories in ITRC's PFAS guidance (history and use; sources of PFAS releases) and
+# the industry sectors in EPA's PFAS Analytic Tools. They are a replacement for the
+# non-public MassDEP industry list used in 2021, so they are deliberately broad.
+
+sectors:
+  textiles_leather:
+    naics: ["313", "314", "316"]
+    why: Stain/water-repellent finishes on fabric, carpet, upholstery and leather.
+  paper_printing:
+    naics: ["322", "323"]
+    why: Grease- and water-resistant paper and packaging coatings.
+  chemicals_plastics:
+    naics: ["325", "326"]
+    why: Fluoropolymer and fluorochemical production and use; resins, coatings, plastics.
+  metal_finishing:
+    naics: ["3328", "3314", "33592"]
+    why: Chrome plating mist suppressants; wire and cable coating.
+  electronics:
+    naics: ["3344"]
+    why: Photolithography and etching chemistry in semiconductor manufacturing.
+  petroleum:
+    naics: ["324", "4247"]
+    why: Refineries and bulk fuel terminals store and use AFFF for fire suppression.
+  aviation_military:
+    naics: ["481", "4881", "928110"]
+    why: AFFF use for firefighting and training at airports and military installations.
+  waste_wastewater:
+    naics: ["5622", "221320"]
+    why: Landfill leachate and wastewater effluent and biosolids concentrate PFAS.
