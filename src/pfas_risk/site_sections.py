@@ -232,8 +232,8 @@ def unit_comparison_rows(units: list[tuple[str, dict]]) -> str:
         p = r["null"]["capture_top10pct_area"]["p_value"]
         rows.append(
             f"<tr><td>{html.escape(label)}</td><td>{r['units']:,}</td><td>{r['release_units']}</td>"
-            f"<td>{best['roc_auc']:.3f}</td><td>{dens['roc_auc']:.3f}</td>"
-            f"<td>{best['avg_precision']:.3f}</td><td>{dens['avg_precision']:.3f}</td>"
-            f"<td>{_pct(best['capture_top10pct_area'])}</td><td>{_pct(area['capture_top10pct_area'])}</td>"
-            f"<td>{_pct(dens['capture_top10pct_area'])}</td><td>{p:.2f}</td></tr>")
+            f"<td>{best['roc_auc']:.3f} / {dens['roc_auc']:.3f}</td>"
+            f"<td>{best['avg_precision']:.3f} / {dens['avg_precision']:.3f}</td>"
+            f"<td>{_pct(best['capture_top10pct_area'])} / {_pct(area['capture_top10pct_area'])} / "
+            f"{_pct(dens['capture_top10pct_area'])}</td><td>{p:.2f}</td></tr>")
     return "\n".join(rows)

@@ -110,8 +110,12 @@ document.getElementById('metrics').innerHTML =
 
 const map = L.map('map', { preferCanvas: true, zoomSnap: 0.25, zoomControl: false });
 L.control.zoom({ position: 'bottomright' }).addTo(map);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; OpenStreetMap contributors &copy; CARTO', subdomains: 'abcd', maxZoom: 18,
+// Esri gray canvas basemaps (no API key needed); dark variant follows the page's color scheme.
+const darkScheme = document.documentElement.dataset.theme === 'dark' ||
+  (document.documentElement.dataset.theme !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+const canvas = darkScheme ? 'World_Dark_Gray_Base' : 'World_Light_Gray_Base';
+L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/${canvas}/MapServer/tile/{z}/{y}/{x}`, {
+  attribution: 'Basemap &copy; Esri, HERE, Garmin, &copy; OpenStreetMap contributors', maxZoom: 16,
 }).addTo(map);
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));

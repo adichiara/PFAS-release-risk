@@ -110,10 +110,10 @@ def _other_units_section(report: dict, others: list) -> str:
      Population and land area come from 2020 census blocks, weighted by the share of each block in a cell.
      The features, town-held-out validation and size-matched permutation test are the same.</p>
   <div class="scroll"><table>
-    <thead><tr><th>Unit</th><th>Cells</th><th>Cells with a release</th>
-      <th>ROC AUC, model</th><th>ROC AUC, area + density</th>
-      <th>Avg precision, model</th><th>Avg precision, area + density</th>
-      <th>Top-risk 10% of land, model</th><th>…land area alone</th><th>…area + density</th>
+    <thead><tr><th>Unit</th><th>Cells</th><th>With a release</th>
+      <th>ROC AUC<br><span class="note">model / area + density</span></th>
+      <th>Avg precision<br><span class="note">model / area + density</span></th>
+      <th>Releases in top-risk 10% of land<br><span class="note">model / land area / area + density</span></th>
       <th><i>p</i> vs size-matched null</th></tr></thead>
     <tbody>{table}</tbody>
   </table></div>"""]

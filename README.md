@@ -32,8 +32,16 @@ beyond size. Gradient boosting finds about 31% of releases in the highest-risk 1
 against 13% for land area alone and 16% for area plus density (ROC AUC 0.84 vs 0.83). It beat
 all 20 permutations of a null that keeps size and density effects, on every metric (p < 0.05,
 the smallest p 20 permutations can show). Adding EPA facilities in PFAS-related industries
-raised average precision from 0.111 to 0.125. Scores are relative risk of a *reported*
-release, which also reflects where investigations happen.
+raised average precision from 0.111 to 0.125.
+
+On **equal-area 4 km² hexagons** the size effect disappears (land area alone: ROC AUC 0.51) and
+the features carry the signal: the model finds about 32% of releases in the top-risk 10% of
+land against 10% for area plus density (ROC AUC 0.71 vs 0.68), again beating every permutation.
+With size fixed, MassDEP major facilities, electronics and chemical/plastics plants, and
+aviation/military sites rank as the most useful features after population density.
+
+Scores are relative risk of a *reported* release, which also reflects where investigations
+happen.
 
 ## Run it
 
