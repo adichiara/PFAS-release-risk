@@ -14,6 +14,7 @@ from .features import attach_releases, build_features, unit_key
 from .fetch import fetch_release_zip, recorded_sha256, sha256
 from .mapping import BASELINE_TEXT, risk_map
 from .model import BASELINES, evaluate, forward_test, grouped_importance, permutation_null
+from .population import population_report
 from .releases import build_release_list, locate_releases
 from .site import PRIMARY_UNIT, UnitResult, build_site
 from .sources import download_all
@@ -236,10 +237,30 @@ def cmd_site(args) -> None:
     print(build_site(primary, others, releases))
 
 
+def cmd_population(args) -> None:
+    """Carry the unit's out-of-fold scores to census blocks; summarize who lives in higher-risk areas."""
+    if args.unit != "hex":
+        raise SystemExit("population summaries need an equal-area unit: use --unit hex")
+    out_dir = _out_dir(args)
+    report = json.loads((out_dir / "evaluation.json").read_text())
+    oof = pd.read_parquet(out_dir / "oof_scores.parquet")
+    df = build_features(unit="hex", cell_km2=args.cell_km2)
+    rows, block_groups = population_report(df, oof[report["best_model"]])
+    (out_dir / "population.json").write_text(json.dumps(
+        {"unit": _key(args), "model": report["best_model"], "run_date": report["run_date"], "groups": rows},
+        indent=2))
+    block_groups.to_csv(out_dir / "block_group_risk.csv")
+    for r in rows:
+        print(f"{r['group']:50s} {r['residents']:>9,}  top 10% of land: {r['top10']:.1%}"
+              f"  (x{r['top10_vs_density']} vs density alone)")
+
+
 def cmd_run(args) -> None:
     cmd_evaluate(args)
     args.model = None
     cmd_map(args)
+    if _key(args) == PRIMARY_UNIT:
+        cmd_population(args)
     cmd_site(args)
 
 
@@ -281,6 +302,9 @@ def main(argv: list[str] | None = None) -> None:
     p = sub.add_parser("map", help="write outputs/<unit>/risk_map.html")
     p.add_argument("--model", help="model to map (default: the selected model)")
     p.set_defaults(func=cmd_map)
+
+    p = sub.add_parser("population", help="who lives in higher-risk areas (census blocks, EJ, private wells)")
+    p.set_defaults(func=cmd_population)
 
     p = sub.add_parser("site", help="write the GitHub Pages site to docs/")
     p.set_defaults(func=cmd_site)

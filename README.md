@@ -60,6 +60,17 @@ recognizing those. For releases reported since 2023 the overlap is smaller (8 of
 the drinking-water features, 1 km² cells still reach 41% in cross-validation and 43% in the
 forward test, so the finer grid's gain doesn't depend on them.
 
+**Who lives in higher-risk areas.** Each 2020 census block takes the score of the 1 km² cell
+it sits in (area-weighted when it straddles cells); blocks are then linked to the state's 2020
+Environmental Justice block groups and to community water service areas (`pfas-risk
+population`). About 17% of residents live in the top-risk 10% of land, since risk concentrates
+where people and industry are. Residents of EJ block groups are there at the same rate (17%;
+15% for the income criterion), with no difference beyond what population density predicts.
+About 1.0 million residents live outside community water service, presumably on private
+wells; 12% of them (about 127,000 people) are in the top-risk 10% of land, the group for whom
+a nearby release matters most. Per-block-group results, with EJ fields, are in the site's
+downloads (`block_group_risk.csv`).
+
 Scores are relative risk of a *reported* release, which also reflects where investigations
 happen.
 
@@ -199,13 +210,15 @@ src/pfas_risk/
   units.py                block groups and the equal-area hexagon grid
   features.py             feature table for a unit
   pfas_sources.py         drinking-water, airport, military, TRI and sewer layers
+  population.py           scores carried to census blocks; EJ and private-well summaries
   api_sources.py          fetchers for sources served by web APIs
   model.py                models, town-grouped CV, permutation null
   mapping.py              interactive Leaflet map
   site.py                 GitHub Pages landing page
   cli.py                  `pfas-risk` command
 tests/
-outputs/<unit>/           evaluation.md / .json per unit (other outputs are regenerated, not committed)
+outputs/<unit>/           evaluation.md / .json per unit, population.json for the primary unit
+                          (other outputs are regenerated, not committed)
 docs/                     published site: index.html, map.html (hexagons), map_bg.html, data/
 ```
 

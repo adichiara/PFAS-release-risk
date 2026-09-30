@@ -210,6 +210,23 @@ sources:
       Facilities in the PFAS-related sectors of config/pfas_sectors.yaml (by NAICS prefix)
       become point features. Public replacement for the non-public BAW industry list used in 2021.
 
+  # ---- Who lives in higher-risk areas (context, not model features) -----------
+  ej_populations:
+    title: 2020 Environmental Justice populations (block groups; minority, income, limited-English criteria)
+    publisher: MassGIS / Executive Office of Energy and Environmental Affairs
+    path: shapefiles/census2020/ej2020.zip
+    layer: EJ_POLY.shp
+    role: context
+    status: available
+
+  water_service_areas:
+    title: Community public water system service areas (outside them, homes are presumed on private wells)
+    publisher: MassGIS / MassDEP
+    path: shapefiles/state/DEP_PWS_Water_Service_Areas.zip
+    layer: PWS_WATER_SERVICE_AREA_COMM_POLY.shp
+    role: context
+    status: available
+
   # ---- Identified, not yet wired in -----------------------------------------
   land_cover_2016:
     title: 2016 land cover / land use (industrial, commercial, impervious fractions)

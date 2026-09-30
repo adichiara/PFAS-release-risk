@@ -153,6 +153,24 @@
 <tr><td>Boxborough</td><td>hex1_11917</td><td>99.9</td><td>1.00</td><td>83</td><td>1.0</td><td class="wrap">6 (chemicals and plastics 3, aviation and military 2, electronics 1)</td></tr></tbody>
   </table></div>
 
+
+  <h2>Who lives in higher-risk areas</h2>
+  <p>Each 2020 census block takes the score of the 1 km² hexagon it sits in (area-weighted
+     when it straddles cells), so the question becomes how many people live in the areas the model ranks
+     highest. Groups come from the state's 2020 Environmental Justice block groups (minority, income and
+     English-isolation criteria) and from community water service areas: residents outside them are
+     presumed to be on private wells. "vs density" divides a group's share by the share expected from
+     where it lives on the density scale alone (1.00 means no difference beyond density; population
+     density is a model input, and many demographics follow it).</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Group</th><th>Residents</th><th>In top-risk 10% of land</th><th>vs density</th>
+      <th>In top-risk 25% of land</th><th>vs density</th></tr></thead>
+    <tbody><tr class="selected"><td class="wrap">All residents</td><td>7,029,735</td><td>17%</td><td>1.00</td><td>36%</td><td>1.00</td></tr><tr><td class="wrap">In EJ block groups</td><td>3,482,839</td><td>17%</td><td>1.01</td><td>34%</td><td>0.98</td></tr><tr><td class="wrap">In EJ block groups (minority criterion)</td><td>3,232,896</td><td>17%</td><td>1.00</td><td>34%</td><td>0.97</td></tr><tr><td class="wrap">In EJ block groups (income criterion)</td><td>1,301,263</td><td>15%</td><td>0.92</td><td>31%</td><td>0.88</td></tr><tr><td class="wrap">In EJ block groups (English isolation)</td><td>408,157</td><td>16%</td><td>0.99</td><td>31%</td><td>0.92</td></tr><tr><td class="wrap">Not in EJ block groups</td><td>3,546,896</td><td>17%</td><td>0.99</td><td>38%</td><td>1.02</td></tr><tr><td class="wrap">Outside community water service (private wells)</td><td>1,020,605</td><td>12%</td><td>0.87</td><td>32%</td><td>0.93</td></tr><tr><td class="wrap">On community public water</td><td>6,009,130</td><td>18%</td><td>1.02</td><td>37%</td><td>1.01</td></tr></tbody>
+  </table></div>
+  <p class="note">About 127,000 people on private wells live in the
+     top-risk 10% of land; a release nearby matters most for them, since their water is not tested
+     or treated by a public system. Scores describe the area, not any one home, and reflect where
+     releases have been reported, which also depends on where testing and investigations happen.</p>
   <h2>What drives the scores</h2>
   <p>How much the model's held-out ROC AUC drops when one group of features is shuffled (count inside,
      count within 2 km and distance to the nearest site together). Larger drops mean the model leans
@@ -281,12 +299,14 @@
 <tr><td class="wrap"><a href="https://eeaonline.eea.state.ma.us/portal#!/search/drinking-water">PFAS6 results for public water systems (MassDEP drinking-water data)</a></td><td class="wrap">MassDEP / EEA Data Portal</td><td><span class="status">used</span></td></tr>
 <tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/DEP_Sewer_Service_Areas.zip">Sewer service areas of municipal wastewater treatment plants</a><br><span class="note">ROC AUC 0.714 -&gt; 0.722, capture 35% -&gt; 30% (4 km² hexagons, smoothed logistic); not used</span></td><td class="wrap">MassGIS / MassDEP</td><td><span class="status">tested, not used</span></td></tr>
 <tr><td class="wrap"><a href="https://www.epa.gov/frs/epa-state-combined-csv-download-files">EPA Facility Registry Service, Massachusetts facilities and NAICS codes</a></td><td class="wrap">U.S. EPA</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/census2020/ej2020.zip">2020 Environmental Justice populations (block groups; minority, income, limited-English criteria)</a></td><td class="wrap">MassGIS / Executive Office of Energy and Environmental Affairs</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/DEP_PWS_Water_Service_Areas.zip">Community public water system service areas (outside them, homes are presumed on private wells)</a></td><td class="wrap">MassGIS / MassDEP</td><td><span class="status">used</span></td></tr>
 <tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/lclu2016/">2016 land cover / land use (industrial, commercial, impervious fractions)</a></td><td class="wrap">MassGIS</td><td><span class="status">planned</span></td></tr>
 <tr><td class="wrap"><a href="https://www.epa.gov/dwucmr/occurrence-data-unregulated-contaminant-monitoring-rule">EPA UCMR 5 PFAS occurrence data for public water systems</a></td><td class="wrap">U.S. EPA</td><td><span class="status">planned</span></td></tr></tbody>
   </table></div>
 
   <h2>Downloads</h2>
-  <ul class="downloads"><li><a href="data/hex1_risk.csv">Risk scores for 21,774 1 km² hexagons</a></li><li><a href="data/pfas_releases.csv">PFAS release list with locations (214 rows)</a></li></ul>
+  <ul class="downloads"><li><a href="data/hex1_risk.csv">Risk scores for 21,774 1 km² hexagons</a></li><li><a href="data/pfas_releases.csv">PFAS release list with locations (214 rows)</a></li><li><a href="data/block_group_risk.csv">Risk for each 2020 block group (population-weighted), with EJ fields and private-well share</a></li></ul>
 
   <footer>
     Rebuilt from the 2021 WPI Data Science / MassDEP graduate capstone

@@ -1,0 +1,79 @@
+{
+  "unit": "hex1",
+  "model": "logistic",
+  "run_date": "2026-09-30",
+  "groups": [
+    {
+      "group": "All residents",
+      "residents": 7029735,
+      "top10": 0.1713,
+      "top10_vs_density": 1.0,
+      "top25": 0.3615,
+      "top25_vs_density": 1.0,
+      "mean_pct": 55.4
+    },
+    {
+      "group": "In EJ block groups",
+      "residents": 3482839,
+      "top10": 0.1714,
+      "top10_vs_density": 1.01,
+      "top25": 0.3435,
+      "top25_vs_density": 0.978,
+      "mean_pct": 50.8
+    },
+    {
+      "group": "In EJ block groups (minority criterion)",
+      "residents": 3232896,
+      "top10": 0.1684,
+      "top10_vs_density": 0.996,
+      "top25": 0.3393,
+      "top25_vs_density": 0.97,
+      "mean_pct": 50.1
+    },
+    {
+      "group": "In EJ block groups (income criterion)",
+      "residents": 1301263,
+      "top10": 0.1541,
+      "top10_vs_density": 0.92,
+      "top25": 0.3069,
+      "top25_vs_density": 0.882,
+      "mean_pct": 46.8
+    },
+    {
+      "group": "In EJ block groups (English isolation)",
+      "residents": 408157,
+      "top10": 0.156,
+      "top10_vs_density": 0.995,
+      "top25": 0.3124,
+      "top25_vs_density": 0.924,
+      "mean_pct": 46.6
+    },
+    {
+      "group": "Not in EJ block groups",
+      "residents": 3546896,
+      "top10": 0.1711,
+      "top10_vs_density": 0.99,
+      "top25": 0.3793,
+      "top25_vs_density": 1.021,
+      "mean_pct": 60.0
+    },
+    {
+      "group": "Outside community water service (private wells)",
+      "residents": 1020605,
+      "top10": 0.1241,
+      "top10_vs_density": 0.872,
+      "top25": 0.3239,
+      "top25_vs_density": 0.933,
+      "mean_pct": 59.3
+    },
+    {
+      "group": "On community public water",
+      "residents": 6009130,
+      "top10": 0.1793,
+      "top10_vs_density": 1.018,
+      "top25": 0.3679,
+      "top25_vs_density": 1.011,
+      "mean_pct": 54.7
+    }
+  ]
+}
