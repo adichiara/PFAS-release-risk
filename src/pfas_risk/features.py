@@ -1,8 +1,8 @@
-"""Block-group feature table.
+"""Feature table for a spatial unit (block groups or equal-area hexagons; see units.py).
 
 Every point source gets three measures so no single boundary choice drives the model:
-``n_<src>`` (count inside the block group), ``n2k_<src>`` (count within 2 km of it) and
-``d_<src>_km`` (distance from the block group's interior point to the nearest one).
+``n_<src>`` (count inside the unit), ``n2k_<src>`` (count within 2 km of it) and
+``d_<src>_km`` (distance from the unit's interior point to the nearest one).
 """
 
 from __future__ import annotations
@@ -16,32 +16,23 @@ import pandas as pd
 from .config import CRS, INTERIM_DIR
 from .industry import industry_points
 from .sources import read
+from .units import block_groups, hex_grid
 
 log = logging.getLogger(__name__)
 
-FEATURES_PATH = INTERIM_DIR / "features.parquet"
+UNITS = ("bg", "hex")
+
+
+def unit_key(unit: str = "bg", cell_km2: float = 4.0) -> str:
+    """Short name for a unit, used in file names and ids: 'bg' or e.g. 'hex4'."""
+    if unit not in UNITS:
+        raise ValueError(f"unit must be one of {UNITS}, not {unit!r}")
+    return "bg" if unit == "bg" else f"hex{cell_km2:g}"
+
+
+def features_path(unit: str = "bg", cell_km2: float = 4.0):
+    return INTERIM_DIR / f"features_{unit_key(unit, cell_km2)}.parquet"
 NEIGHBORHOOD_M = 2_000
-
-
-def block_groups() -> gpd.GeoDataFrame:
-    bg = read("block_groups", columns=["GEOID20", "ALAND20", "AWATER20", "POP20", "HOUSING20"])
-    bg = bg.rename(columns={"GEOID20": "geoid"}).set_index("geoid")
-    bg["land_km2"] = bg["ALAND20"] / 1e6
-    bg["water_frac"] = bg["AWATER20"] / (bg["ALAND20"] + bg["AWATER20"])
-    bg["pop_density"] = bg["POP20"] / bg["land_km2"]
-    bg["housing_density"] = bg["HOUSING20"] / bg["land_km2"]
-    bg["town"] = _town_of(bg)
-    return bg.drop(columns=["ALAND20", "AWATER20"])
-
-
-def _town_of(bg: gpd.GeoDataFrame) -> pd.Series:
-    towns = read("towns", columns=["TOWN"])
-    pts = gpd.GeoDataFrame(geometry=bg.representative_point(), crs=CRS)
-    # Nearest rather than within: a few coastal block groups' interior points fall in
-    # water just outside the town polygons.
-    j = gpd.sjoin_nearest(pts, towns, how="left")
-    j = j[~j.index.duplicated()]
-    return j["TOWN"].str.title()
 
 
 def point_sources() -> dict[str, gpd.GeoDataFrame]:
@@ -85,10 +76,11 @@ def line_density(bg: gpd.GeoDataFrame, lines: gpd.GeoDataFrame, name: str) -> pd
     return (km.reindex(bg.index, fill_value=0) / bg["land_km2"]).rename(name)
 
 
-def build_features(force: bool = False) -> gpd.GeoDataFrame:
-    if FEATURES_PATH.exists() and not force:
-        return gpd.read_parquet(FEATURES_PATH)
-    bg = block_groups()
+def build_features(force: bool = False, unit: str = "bg", cell_km2: float = 4.0) -> gpd.GeoDataFrame:
+    path = features_path(unit, cell_km2)
+    if path.exists() and not force:
+        return gpd.read_parquet(path)
+    bg = block_groups() if unit == "bg" else hex_grid(cell_km2)
     parts = [bg]
     for name, pts in point_sources().items():
         log.info("features: %s (%d points)", name, len(pts))
@@ -105,8 +97,8 @@ def build_features(force: bool = False) -> gpd.GeoDataFrame:
     parts.append(line_density(bg, read("major_roads"), "major_road_km_per_km2").to_frame())
 
     out = gpd.GeoDataFrame(pd.concat(parts, axis=1), geometry="geometry", crs=CRS)
-    FEATURES_PATH.parent.mkdir(parents=True, exist_ok=True)
-    out.to_parquet(FEATURES_PATH)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    out.to_parquet(path)
     return out
 
 

@@ -12,3 +12,7 @@ data/interim/
 outputs/*
 !outputs/evaluation.md
 !outputs/evaluation.json
+!outputs/hex*/
+outputs/hex*/*
+!outputs/hex*/evaluation.md
+!outputs/hex*/evaluation.json

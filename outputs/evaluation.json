@@ -1,9 +1,10 @@
 {
   "run_date": "2026-09-30",
+  "unit": "bg",
   "release_source": "massdep_pfas_releases.csv",
-  "block_groups": 5109,
+  "units": 5109,
   "located_releases": 194,
-  "release_block_groups": 140,
+  "release_units": 140,
   "unlocated_releases": 20,
   "repeats": 10,
   "null_permutations": 20,
