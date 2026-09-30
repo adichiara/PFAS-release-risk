@@ -1,6 +1,6 @@
 # Evaluation
 
-Run 2026-09-29 on `massdep_pfas_releases.csv`: 194 located releases in 140 of 5109 block groups (20 could not be located).
+Run 2026-09-30 on `massdep_pfas_releases.csv`: 194 located releases in 140 of 5109 block groups (20 could not be located).
 
 Town-grouped 5-fold cross-validation, 10 repeats (mean ± sd). Compare models with the two baselines, not with 10%: releases are not spread evenly over land or over block groups, so chance capture depends on the budget.
 
