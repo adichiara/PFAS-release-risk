@@ -29,17 +29,35 @@
       "capture_top10pct_units": 0.4505,
       "capture_top10pct_area": 0.3103
     },
+    "gradient_boosting+smooth": {
+      "roc_auc": 0.8426,
+      "avg_precision": 0.1186,
+      "capture_top10pct_units": 0.4381,
+      "capture_top10pct_area": 0.2861
+    },
     "logistic": {
       "roc_auc": 0.8419,
       "avg_precision": 0.1162,
       "capture_top10pct_units": 0.4928,
       "capture_top10pct_area": 0.2897
     },
+    "logistic+smooth": {
+      "roc_auc": 0.8394,
+      "avg_precision": 0.1068,
+      "capture_top10pct_units": 0.4572,
+      "capture_top10pct_area": 0.2582
+    },
     "poisson_rate": {
       "roc_auc": 0.8301,
       "avg_precision": 0.0913,
       "capture_top10pct_units": 0.4191,
       "capture_top10pct_area": 0.2727
+    },
+    "poisson_rate+smooth": {
+      "roc_auc": 0.8239,
+      "avg_precision": 0.0896,
+      "capture_top10pct_units": 0.4031,
+      "capture_top10pct_area": 0.1526
     }
   },
   "null": {
@@ -164,5 +182,31 @@
       "mean": -0.0021,
       "std": 0.0024
     }
-  ]
+  ],
+  "forward": {
+    "cutoff": "2023-01-01",
+    "train_releases": 104,
+    "test_releases": 110,
+    "new_units": 61,
+    "results": {
+      "gradient_boosting": {
+        "roc_auc": 0.8015,
+        "avg_precision": 0.0421,
+        "capture_top10pct_units": 0.3279,
+        "capture_top10pct_area": 0.2787
+      },
+      "baseline_area": {
+        "roc_auc": 0.824,
+        "avg_precision": 0.0416,
+        "capture_top10pct_units": 0.4098,
+        "capture_top10pct_area": 0.1475
+      },
+      "baseline_area_population": {
+        "roc_auc": 0.8183,
+        "avg_precision": 0.0397,
+        "capture_top10pct_units": 0.377,
+        "capture_top10pct_area": 0.1639
+      }
+    }
+  }
 }

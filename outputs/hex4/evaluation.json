@@ -9,7 +9,7 @@
   "repeats": 10,
   "null_permutations": 20,
   "selection_metric": "capture_top10pct_area",
-  "best_model": "logistic",
+  "best_model": "logistic+smooth",
   "mean": {
     "baseline_area": {
       "roc_auc": 0.5085,
@@ -29,42 +29,60 @@
       "capture_top10pct_units": 0.3222,
       "capture_top10pct_area": 0.3103
     },
+    "gradient_boosting+smooth": {
+      "roc_auc": 0.7246,
+      "avg_precision": 0.0801,
+      "capture_top10pct_units": 0.3423,
+      "capture_top10pct_area": 0.3258
+    },
     "logistic": {
       "roc_auc": 0.713,
       "avg_precision": 0.0706,
       "capture_top10pct_units": 0.3448,
       "capture_top10pct_area": 0.3149
     },
+    "logistic+smooth": {
+      "roc_auc": 0.7107,
+      "avg_precision": 0.0766,
+      "capture_top10pct_units": 0.3557,
+      "capture_top10pct_area": 0.3356
+    },
     "poisson_rate": {
       "roc_auc": 0.6589,
       "avg_precision": 0.0541,
       "capture_top10pct_units": 0.2351,
       "capture_top10pct_area": 0.2026
+    },
+    "poisson_rate+smooth": {
+      "roc_auc": 0.6459,
+      "avg_precision": 0.0496,
+      "capture_top10pct_units": 0.2175,
+      "capture_top10pct_area": 0.1691
     }
   },
   "null": {
     "roc_auc": {
-      "observed": 0.713,
-      "null_mean": 0.6321,
-      "null_p95": 0.6567,
+      "observed": 0.7107,
+      "null_mean": 0.6389,
+      "null_p95": 0.6657,
       "p_value": 0.0476
     },
     "avg_precision": {
-      "observed": 0.0706,
-      "null_mean": 0.0412,
-      "null_p95": 0.0457,
+      "observed": 0.0766,
+      "null_mean": 0.042,
+      "null_p95": 0.0452,
       "p_value": 0.0476
     },
     "capture_top10pct_units": {
-      "observed": 0.3448,
-      "null_mean": 0.1814,
-      "null_p95": 0.2273,
+      "observed": 0.3557,
+      "null_mean": 0.1799,
+      "null_p95": 0.217,
       "p_value": 0.0476
     },
     "capture_top10pct_area": {
-      "observed": 0.3149,
-      "null_mean": 0.167,
-      "null_p95": 0.2168,
+      "observed": 0.3356,
+      "null_mean": 0.1637,
+      "null_p95": 0.2222,
       "p_value": 0.0476
     }
   },
@@ -164,5 +182,31 @@
       "mean": -0.0084,
       "std": 0.0091
     }
-  ]
+  ],
+  "forward": {
+    "cutoff": "2023-01-01",
+    "train_releases": 104,
+    "test_releases": 110,
+    "new_units": 67,
+    "results": {
+      "logistic+smooth": {
+        "roc_auc": 0.6821,
+        "avg_precision": 0.0312,
+        "capture_top10pct_units": 0.2836,
+        "capture_top10pct_area": 0.2239
+      },
+      "baseline_area": {
+        "roc_auc": 0.4929,
+        "avg_precision": 0.0115,
+        "capture_top10pct_units": 0.0597,
+        "capture_top10pct_area": 0.0448
+      },
+      "baseline_area_population": {
+        "roc_auc": 0.6718,
+        "avg_precision": 0.021,
+        "capture_top10pct_units": 0.1642,
+        "capture_top10pct_area": 0.1045
+      }
+    }
+  }
 }

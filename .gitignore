@@ -10,9 +10,7 @@ data/interim/
 
 # Keep the evaluation summary; the rest is regenerated (the published map lives in docs/)
 outputs/*
-!outputs/evaluation.md
-!outputs/evaluation.json
-!outputs/hex*/
-outputs/hex*/*
-!outputs/hex*/evaluation.md
-!outputs/hex*/evaluation.json
+!outputs/*/
+outputs/*/*
+!outputs/*/evaluation.md
+!outputs/*/evaluation.json

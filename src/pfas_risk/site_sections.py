@@ -15,6 +15,7 @@ import pandas as pd
 
 from .config import CRS
 from .industry import sector_definitions
+from .model import risk_density
 
 GROUP_LABELS = {
     "land_area": "Land area",
@@ -169,9 +170,9 @@ def releases_by_year_chart(releases: pd.DataFrame) -> str:
 
 def watchlist(df: gpd.GeoDataFrame, oof: pd.DataFrame, model: str, releases: gpd.GeoDataFrame,
               n: int = 20) -> pd.DataFrame:
-    """Highest risk-per-km² block groups with no reported release, with nearby context."""
+    """Highest risk-per-km² units with no reported release, with nearby context."""
     d = df.copy()
-    d["density"] = oof[model] / d["land_km2"]
+    d["density"] = risk_density(oof[model], d)
     d["pct"] = d["density"].rank(pct=True) * 100
     top = d[d["releases"] == 0].sort_values("density", ascending=False).head(n)
     rep = gpd.GeoDataFrame(geometry=top.representative_point(), crs=CRS)
@@ -203,7 +204,7 @@ def watchlist_rows(w: pd.DataFrame) -> str:
 
 # ---- Downloads ------------------------------------------------------------------------
 
-def write_downloads(site_dir: Path, df: pd.DataFrame, oof: pd.DataFrame, model: str,
+def write_downloads(site_dir: Path, key: str, plural: str, df: pd.DataFrame, oof: pd.DataFrame, model: str,
                     releases: pd.DataFrame) -> list[tuple[str, str]]:
     out = site_dir / "data"
     out.mkdir(parents=True, exist_ok=True)
@@ -211,13 +212,13 @@ def write_downloads(site_dir: Path, df: pd.DataFrame, oof: pd.DataFrame, model: 
         "geoid": df.index, "town": df["town"].values, "land_km2": df["land_km2"].round(4).values,
         "population": df["POP20"].values, "reported_pfas_releases": df["releases"].values,
         "risk_score": oof[model].round(5).values,
-        "risk_per_km2_percentile": (oof[model] / df["land_km2"]).rank(pct=True).mul(100).round(2).values,
+        "risk_per_km2_percentile": risk_density(oof[model], df).rank(pct=True).mul(100).round(2).values,
     })
-    scores.to_csv(out / "block_group_risk.csv", index=False)
+    scores.rename(columns={"geoid": "unit_id"}).to_csv(out / f"{key}_risk.csv", index=False)
     cols = [c for c in ["rtn", "town", "address", "site_name", "notification_date", "chemical", "status",
                         "source", "geocode_precision", "x", "y"] if c in releases]
     releases[cols].to_csv(out / "pfas_releases.csv", index=False)
-    return [("data/block_group_risk.csv", f"Block-group risk scores ({len(scores):,} rows)"),
+    return [(f"data/{key}_risk.csv", f"Risk scores for {len(scores):,} {plural}"),
             ("data/pfas_releases.csv", f"PFAS release list with locations ({len(releases)} rows)")]
 
 

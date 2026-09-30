@@ -9,18 +9,17 @@ from datetime import datetime, timezone
 
 import pandas as pd
 
-from .config import OUTPUT_DIR
+from .config import FORWARD_CUTOFF, OUTPUT_DIR
 from .features import attach_releases, build_features, unit_key
 from .fetch import fetch_release_zip, recorded_sha256, sha256
-from .mapping import risk_map
-from .model import evaluate, grouped_importance, permutation_null
+from .mapping import BASELINE_TEXT, risk_map
+from .model import BASELINES, evaluate, forward_test, grouped_importance, permutation_null
 from .releases import build_release_list, locate_releases
-from .site import build_site
+from .site import PRIMARY_UNIT, UnitResult, build_site
 from .sources import download_all
 
 log = logging.getLogger("pfas_risk")
 
-BASELINES = ("baseline_area", "baseline_area_population")
 SELECTION_METRIC = "capture_top10pct_area"
 
 
@@ -40,12 +39,10 @@ def _key(args) -> str:
 
 
 def _out_dir(args):
-    """outputs/ for block groups (the published default), outputs/<key>/ for other units."""
-    key = _key(args)
-    return OUTPUT_DIR if key == "bg" else OUTPUT_DIR / key
+    return OUTPUT_DIR / _key(args)
 
 
-def _dataset(args=None, force: bool = False, unit: str = "bg", cell_km2: float = 4.0):
+def _dataset(args=None, force: bool = False, unit: str = "hex", cell_km2: float = 4.0):
     if args is not None:
         unit, cell_km2 = args.unit, args.cell_km2
     releases = locate_releases()
@@ -88,6 +85,7 @@ def cmd_evaluate(args) -> None:
     best = candidates[(SELECTION_METRIC, "mean")].idxmax()
     null = permutation_null(df, best, permutations=args.null)
     importance = grouped_importance(df, best)
+    forward = _forward(df, releases, best, args.cutoff)
 
     out_dir.mkdir(parents=True, exist_ok=True)
     metrics.to_csv(out_dir / "cv_metrics.csv", index=False)
@@ -109,10 +107,27 @@ def cmd_evaluate(args) -> None:
         "mean": metrics.drop(columns="repeat").groupby("model").mean().round(4).to_dict("index"),
         "null": _null_summary(metrics[metrics["model"] == best], null),
         "importance": importance.round(4).to_dict("records"),
+        "forward": forward,
     }
     (out_dir / "evaluation.json").write_text(json.dumps(report, indent=2))
     (out_dir / "evaluation.md").write_text(_markdown(report, summary, null))
     print((out_dir / "evaluation.md").read_text())
+
+
+def _forward(df, releases, best: str, cutoff: str) -> dict:
+    """Train on releases reported before ``cutoff``; score units whose first release came after."""
+    dates = pd.to_datetime(releases["notification_date"], errors="coerce")
+    features = df.drop(columns="releases")
+    before = attach_releases(features, releases[dates < cutoff])["releases"].to_numpy()
+    after = attach_releases(features, releases[dates >= cutoff])["releases"].to_numpy()
+    new_after = (after > 0) & (before == 0)
+    return {
+        "cutoff": cutoff,
+        "train_releases": int((dates < cutoff).sum()),
+        "test_releases": int((dates >= cutoff).sum()),
+        "new_units": int(new_after.sum()),
+        "results": forward_test(df, before, new_after, [best, *BASELINES]),
+    }
 
 
 METRIC_COLS = ["roc_auc", "avg_precision", "capture_top10pct_units", "capture_top10pct_area"]
@@ -165,6 +180,21 @@ def _markdown(report: dict, summary: pd.DataFrame, null: pd.DataFrame) -> str:
     ]
     for c, v in report["null"].items():
         lines.append(f"| {c} | {v['observed']:.3f} | {v['null_mean']:.3f} | {v['null_p95']:.3f} | {v['p_value']:.3f} |")
+    fwd = report.get("forward")
+    if fwd:
+        lines += [
+            "",
+            "## Does it predict new reports?",
+            "",
+            (f"Trained on the {fwd['train_releases']} releases reported before {fwd['cutoff']}; scored on the "
+             f"{fwd['new_units']} {plural} whose first release was reported on or after it (only {plural} "
+             "without an earlier release are scored)."),
+            "",
+            "| model | " + " | ".join(cols) + " |",
+            "|---|" + "---|" * len(cols),
+        ]
+        for model, m in fwd["results"].items():
+            lines.append(f"| {model} | " + " | ".join(f"{m[c]:.3f}" for c in cols) + " |")
     lines.append("")
     return "\n".join(lines)
 
@@ -177,24 +207,29 @@ def cmd_map(args) -> None:
     oof = pd.read_parquet(out_dir / "oof_scores.parquet")
     note = ("MassDEP PFAS release list" if report["release_source"] == "massdep_pfas_releases.csv"
             else "2021 seed list of MassDEP PFAS RTNs")
-    path = risk_map(df, oof[model], releases, model, report["mean"][model], report["mean"]["baseline_area"],
-                    out_dir / "risk_map.html", note, unit_labels(_key(args)))
+    kind = "hex" if args.unit == "hex" else "bg"
+    base = report["mean"]["baseline_area_population" if kind == "hex" else "baseline_area"]
+    path = risk_map(df, oof[model], releases, model, report["mean"][model], base,
+                    out_dir / "risk_map.html", note, unit_labels(_key(args)), BASELINE_TEXT[kind])
     print(path)
 
 
 def cmd_site(args) -> None:
-    """The site always leads with block groups; other units' results are added when present."""
-    df, releases = _dataset()
-    oof = pd.read_parquet(OUTPUT_DIR / "oof_scores.parquet")
-    others = []
+    """Lead with the primary unit (4 km² hexagons); add every other evaluated unit for comparison."""
+    releases = locate_releases()
+    results = []
     for report_path in sorted(OUTPUT_DIR.glob("*/evaluation.json")):
         report = json.loads(report_path.read_text())
-        key = report.get("unit", report_path.parent.name)
+        key = report["unit"]
         unit, size = ("hex", float(key.removeprefix("hex"))) if key.startswith("hex") else ("bg", 4.0)
-        udf, _ = _dataset(unit=unit, cell_km2=size)
-        others.append((key, unit_labels(key), report, udf, pd.read_parquet(report_path.parent / "oof_scores.parquet"),
-                       report_path.parent / "risk_map.html"))
-    print(build_site(df, oof, releases, others))
+        df = attach_releases(build_features(unit=unit, cell_km2=size), releases)
+        results.append(UnitResult(key, unit_labels(key), report, df,
+                                  pd.read_parquet(report_path.parent / "oof_scores.parquet"),
+                                  report_path.parent / "risk_map.html"))
+    if not results:
+        raise SystemExit("no evaluated units in outputs/; run `pfas-risk --unit hex evaluate` first")
+    primary = next((u for u in results if u.key == PRIMARY_UNIT), results[0])
+    print(build_site(primary, [u for u in results if u is not primary], releases))
 
 
 def cmd_run(args) -> None:
@@ -207,8 +242,8 @@ def cmd_run(args) -> None:
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="pfas-risk", description=__doc__)
     parser.add_argument("-v", "--verbose", action="store_true")
-    parser.add_argument("--unit", choices=["bg", "hex"], default="bg",
-                        help="spatial unit: census block groups (default) or equal-area hexagons")
+    parser.add_argument("--unit", choices=["bg", "hex"], default="hex",
+                        help="spatial unit: equal-area hexagons (default) or census block groups")
     parser.add_argument("--cell-km2", type=float, default=4.0, help="hexagon area in km² (default 4)")
     sub = parser.add_subparsers(dest="command", required=True)
 
@@ -235,9 +270,11 @@ def main(argv: list[str] | None = None) -> None:
         p = sub.add_parser(name, help=help_)
         p.add_argument("--repeats", type=int, default=10)
         p.add_argument("--null", type=int, default=20, help="label permutations for the null test")
+        p.add_argument("--cutoff", default=FORWARD_CUTOFF,
+                       help="forward test: train on releases before this date (default %(default)s)")
         p.set_defaults(func=func)
 
-    p = sub.add_parser("map", help="write outputs/risk_map.html")
+    p = sub.add_parser("map", help="write outputs/<unit>/risk_map.html")
     p.add_argument("--model", help="model to map (default: the selected model)")
     p.set_defaults(func=cmd_map)
 

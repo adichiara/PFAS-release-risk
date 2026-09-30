@@ -21,6 +21,10 @@ OUTPUT_DIR = Path(os.environ.get("PFAS_RISK_OUTPUT", ROOT / "outputs"))
 CRS = "EPSG:26986"
 WGS84 = "EPSG:4326"
 
+# Forward-in-time test: train on releases notified before this date, test on later ones.
+# Time-varying features (drinking-water results) only use data from before it.
+FORWARD_CUTOFF = "2023-01-01"
+
 SEED_RELEASES = SEED_DIR / "massdep_pfas_releases_2021-11-07.csv"
 
 
