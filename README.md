@@ -27,12 +27,13 @@ necessarily missing from the labels.
 with a link to the interactive map). Latest evaluation:
 [`outputs/evaluation.md`](outputs/evaluation.md).
 
-In short, with 194 located releases in 140 block groups the model now clearly adds
-information beyond size. Gradient boosting finds about 32% of releases in the highest-risk
-10% of land, against 13% for land area alone and 16% for area plus density (ROC AUC 0.84
-vs 0.83). It beat all 20 permutations of a null that keeps size and density effects, on
-every metric (p < 0.05, the smallest p 20 permutations can show). Scores are still relative
-risk of a *reported* release, which also reflects where investigations happen.
+In short, with 194 located releases in 140 block groups the model clearly adds information
+beyond size. Gradient boosting finds about 31% of releases in the highest-risk 10% of land,
+against 13% for land area alone and 16% for area plus density (ROC AUC 0.84 vs 0.83). It beat
+all 20 permutations of a null that keeps size and density effects, on every metric (p < 0.05,
+the smallest p 20 permutations can show). Adding EPA facilities in PFAS-related industries
+raised average precision from 0.111 to 0.125. Scores are relative risk of a *reported*
+release, which also reflects where investigations happen.
 
 ## Run it
 

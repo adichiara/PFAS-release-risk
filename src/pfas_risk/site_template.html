@@ -57,7 +57,12 @@
   .note { font-size: 14px; color: var(--text-muted); }
   .status { font-size: 12px; padding: 2px 8px; border-radius: 99px; border: 1px solid var(--border); color: var(--text-secondary); }
   footer { margin-top: 48px; font-size: 14px; color: var(--text-muted); }
-  .figure { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 12px 8px 4px; }
+  .figure { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 12px 8px 4px;
+    overflow-x: auto; }
+  /* Keep chart text legible on phones: scroll the panel sideways instead of shrinking the chart. */
+  .figure .chart { min-width: 560px; }
+  .figure .legend { min-width: 0; }
+  table.watch { min-width: 780px; }
   .chart { display: block; width: 100%; height: auto; font: 12px system-ui, -apple-system, "Segoe UI", sans-serif; }
   .chart .grid { stroke: var(--border); stroke-width: 1; }
   .chart .guide { stroke: var(--text-muted); stroke-width: 1; stroke-dasharray: 3 3; }
@@ -111,7 +116,7 @@
      releases have been reported. The last column counts EPA-registered facilities in PFAS-related
      industries within 2 km, with the three largest sectors. Ranking is per km², so small, dense urban
      block groups with many industrial sites nearby rise to the top.</p>
-  <div class="scroll"><table>
+  <div class="scroll"><table class="watch">
     <thead><tr><th>Town</th><th>Block group</th><th>Risk percentile</th><th>Land km²</th><th>Population</th>
       <th>Nearest reported release (km)</th><th class="wrap">PFAS-related industries within 2 km</th></tr></thead>
     <tbody>__WATCH_ROWS__</tbody>
@@ -120,7 +125,8 @@
   <h2>What drives the scores</h2>
   <p>How much the model's held-out ROC AUC drops when one group of features is shuffled (count inside,
      count within 2 km and distance to the nearest site together). Larger drops mean the model leans
-     on that group more. This shows association with reported releases, not cause.</p>
+     on that group more. Correlated groups share credit: industrial sites cluster together, so shuffling one
+     sector leaves others carrying similar information. This shows association with reported releases, not cause.</p>
   <div class="figure">__IMPORTANCE_CHART__</div>
 
   <h2>How well it validates</h2>

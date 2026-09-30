@@ -1,5 +1,5 @@
 {
-  "run_date": "2026-09-29",
+  "run_date": "2026-09-30",
   "release_source": "massdep_pfas_releases.csv",
   "block_groups": 5109,
   "located_releases": 194,
@@ -23,48 +23,145 @@
       "capture_top10pct_area": 0.1572
     },
     "gradient_boosting": {
-      "roc_auc": 0.8376,
-      "avg_precision": 0.1112,
-      "capture_top10pct_units": 0.4361,
-      "capture_top10pct_area": 0.316
+      "roc_auc": 0.8414,
+      "avg_precision": 0.125,
+      "capture_top10pct_units": 0.4505,
+      "capture_top10pct_area": 0.3103
     },
     "logistic": {
-      "roc_auc": 0.8345,
-      "avg_precision": 0.1004,
-      "capture_top10pct_units": 0.418,
-      "capture_top10pct_area": 0.2742
+      "roc_auc": 0.8419,
+      "avg_precision": 0.1162,
+      "capture_top10pct_units": 0.4928,
+      "capture_top10pct_area": 0.2897
     },
     "poisson_rate": {
-      "roc_auc": 0.8267,
-      "avg_precision": 0.0899,
-      "capture_top10pct_units": 0.4088,
-      "capture_top10pct_area": 0.199
+      "roc_auc": 0.8301,
+      "avg_precision": 0.0913,
+      "capture_top10pct_units": 0.4191,
+      "capture_top10pct_area": 0.2727
     }
   },
   "null": {
     "roc_auc": {
-      "observed": 0.8376,
-      "null_mean": 0.774,
-      "null_p95": 0.7912,
+      "observed": 0.8414,
+      "null_mean": 0.7727,
+      "null_p95": 0.7905,
       "p_value": 0.0476
     },
     "avg_precision": {
-      "observed": 0.1112,
-      "null_mean": 0.0744,
-      "null_p95": 0.0872,
+      "observed": 0.125,
+      "null_mean": 0.0736,
+      "null_p95": 0.0831,
       "p_value": 0.0476
     },
     "capture_top10pct_units": {
-      "observed": 0.4361,
-      "null_mean": 0.3021,
-      "null_p95": 0.3765,
+      "observed": 0.4505,
+      "null_mean": 0.3067,
+      "null_p95": 0.3616,
       "p_value": 0.0476
     },
     "capture_top10pct_area": {
-      "observed": 0.316,
-      "null_mean": 0.1964,
-      "null_p95": 0.2683,
+      "observed": 0.3103,
+      "null_mean": 0.1946,
+      "null_p95": 0.2644,
       "p_value": 0.0476
     }
-  }
+  },
+  "importance": [
+    {
+      "group": "land_area",
+      "mean": 0.0801,
+      "std": 0.0145
+    },
+    {
+      "group": "population",
+      "mean": 0.0349,
+      "std": 0.0071
+    },
+    {
+      "group": "air_permit",
+      "mean": 0.0147,
+      "std": 0.0077
+    },
+    {
+      "group": "fire_station",
+      "mean": 0.014,
+      "std": 0.0053
+    },
+    {
+      "group": "ind_electronics",
+      "mean": 0.0105,
+      "std": 0.003
+    },
+    {
+      "group": "ust",
+      "mean": 0.0101,
+      "std": 0.0027
+    },
+    {
+      "group": "bwp_major",
+      "mean": 0.0066,
+      "std": 0.0023
+    },
+    {
+      "group": "water_frac",
+      "mean": 0.0054,
+      "std": 0.0029
+    },
+    {
+      "group": "haz_waste_lqg",
+      "mean": 0.0032,
+      "std": 0.0017
+    },
+    {
+      "group": "ind_waste_wastewater",
+      "mean": 0.0032,
+      "std": 0.0019
+    },
+    {
+      "group": "ind_chemicals_plastics",
+      "mean": 0.0025,
+      "std": 0.002
+    },
+    {
+      "group": "ind_aviation_military",
+      "mean": 0.0018,
+      "std": 0.0026
+    },
+    {
+      "group": "ind_metal_finishing",
+      "mean": 0.0017,
+      "std": 0.0017
+    },
+    {
+      "group": "landfill",
+      "mean": 0.0006,
+      "std": 0.0012
+    },
+    {
+      "group": "ind_petroleum",
+      "mean": 0.0003,
+      "std": 0.0018
+    },
+    {
+      "group": "major_road_km_per_km2",
+      "mean": 0.0002,
+      "std": 0.0018
+    },
+    {
+      "group": "ind_textiles_leather",
+      "mean": -0.0007,
+      "std": 0.0019
+    },
+    {
+      "group": "aquifer_frac",
+      "mean": -0.0008,
+      "std": 0.0018
+    },
+    {
+      "group": "ind_paper_printing",
+      "mean": -0.0021,
+      "std": 0.0024
+    }
+  ]
 }
