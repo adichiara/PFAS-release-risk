@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PFAS Drinking Water Map</title>
+<title>Private-Well PFAS Map</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -93,23 +93,10 @@
 
 <div id="panel" role="region" aria-label="Map controls">
   <header>
-    <h1><span class="long">PFAS in Massachusetts drinking water</span><span class="short">PFAS in MA drinking water</span></h1>
+    <h1><span class="long">PFAS in Massachusetts private wells</span><span class="short">PFAS in MA private wells</span></h1>
     <button id="collapse" aria-expanded="true" aria-controls="panel-body">Hide</button>
   </header>
   <div class="body" id="panel-body">
-    <div class="ctl" id="ctl-public">
-      <div class="name">Public water <span class="unit">PFAS6, ng/L</span></div>
-      <div class="seg" role="group" aria-label="Public water layer">
-        <button data-level="current" aria-pressed="true">Now</button>
-        <button data-level="peak" aria-pressed="false">Worst year</button>
-        <button data-level="off" aria-pressed="false">Off</button>
-      </div>
-      <div class="ramp" aria-hidden="true">
-        <i style="background:var(--pub-0)"></i><i style="background:var(--pub-1)"></i>
-        <i style="background:var(--pub-2)"></i><i style="background:var(--pub-3)"></i>
-        <span>None</span><span>2–10</span><span>10–20</span><span>20+</span>
-      </div>
-    </div>
     <div class="ctl" id="ctl-private">
       <div class="name"><label class="switch"><input type="checkbox" id="show-private" checked> Private wells</label>
         <span class="unit">chance of 20+ ng/L</span></div>
@@ -119,20 +106,33 @@
         <span>&lt;5%</span><span>5–10%</span><span>10–20%</span><span>20%+</span>
       </div>
     </div>
+    <div class="ctl" id="ctl-public">
+      <div class="name">Public water <span class="unit">PFAS6, ng/L</span></div>
+      <div class="seg" role="group" aria-label="Public water layer">
+        <button data-level="current" aria-pressed="false">Now</button>
+        <button data-level="peak" aria-pressed="false">Worst year</button>
+        <button data-level="off" aria-pressed="true">Off</button>
+      </div>
+      <div class="ramp" aria-hidden="true">
+        <i style="background:var(--pub-0)"></i><i style="background:var(--pub-1)"></i>
+        <i style="background:var(--pub-2)"></i><i style="background:var(--pub-3)"></i>
+        <span>None</span><span>2–10</span><span>10–20</span><span>20+</span>
+      </div>
+    </div>
     <div class="ctl">
       <label class="switch"><input type="checkbox" id="show-releases"> Reported release sites</label>
     </div>
     <details class="about">
       <summary>About this map</summary>
-      <p>Public water systems are colored by their measured PFAS6 in treated water, now or in their worst
-         year (often before treatment was added). Areas outside public water service, where homes use private
-         wells, show the estimated chance that groundwater there is at or above the 20 ng/L state standard,
-         calibrated to MassDEP's testing of 1,649 private wells.</p>
+      <p>Areas outside community water service, where homes use private wells, show the estimated chance that
+         groundwater there is at or above the 20 ng/L PFAS6 standard: a model trained on public-well results,
+         calibrated to MassDEP's testing of 1,649 private wells. Public water systems can be added, colored by
+         measured PFAS6 in treated water now or in their worst year.</p>
       <p class="warn">Private-well estimates are for areas, not individual wells. Only a test tells a household
          what is in its water.</p>
-      <p class="about-links"><a href="index.html">Home</a> · <a href="analysis.html">Detailed findings and method</a></p>
+      <p class="about-links"><a href="index.html">Private-well study</a> · <a href="analysis.html">Public water</a></p>
     </details>
-    <nav class="links"><a href="index.html">Home</a> · <a href="analysis.html">Detailed findings and method</a></nav>
+    <nav class="links"><a href="index.html">Private-well study</a> · <a href="analysis.html">Public water</a></nav>
   </div>
 </div>
 
@@ -218,9 +218,9 @@ const releaseLayer = L.geoJSON(RELEASES, {
     `<div class="tt"><b>${esc(f.properties.site_name || 'PFAS release')}</b><br><span>RTN ${esc(f.properties.rtn)} · ${esc(f.properties.town)}</span></div>`),
 });
 
-// Layer state. A link ending in #wells opens with public water hidden; #public hides private wells.
+// Layer state. Opens on private wells; #all adds public water (now), #public shows public water alone.
 const view = location.hash.replace('#', '');
-const state = { level: view === 'wells' ? 'off' : 'current', private: view !== 'public', releases: false };
+const state = { level: ['all', 'public'].includes(view) ? 'current' : 'off', private: view !== 'public', releases: false };
 
 function render() {
   const showPublic = state.level !== 'off';

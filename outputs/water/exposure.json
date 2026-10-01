@@ -23,6 +23,7 @@
     "public_purchased": 2179454,
     "private_wells": 1020619,
     "private_expected_over20": 70176,
+    "private_expected_over20_uncalibrated": 175097,
     "private_expected_detected": 642582,
     "private_with_nearby_public_wells": 792731
   },
@@ -106,6 +107,1996 @@
     "10 to 20%": 215147,
     "20% or more": 17429
   },
+  "private_towns": [
+    {
+      "town": "Taunton",
+      "residents": 18895,
+      "share": 0.1047,
+      "model_share": 0.2491,
+      "expected": 1978
+    },
+    {
+      "town": "Marlborough",
+      "residents": 9373,
+      "share": 0.1851,
+      "model_share": 0.3862,
+      "expected": 1735
+    },
+    {
+      "town": "Carver",
+      "residents": 10307,
+      "share": 0.1089,
+      "model_share": 0.2072,
+      "expected": 1123
+    },
+    {
+      "town": "Acton",
+      "residents": 7531,
+      "share": 0.1411,
+      "model_share": 0.3226,
+      "expected": 1063
+    },
+    {
+      "town": "Tyngsborough",
+      "residents": 7292,
+      "share": 0.142,
+      "model_share": 0.2753,
+      "expected": 1035
+    },
+    {
+      "town": "Carlisle",
+      "residents": 5237,
+      "share": 0.1913,
+      "model_share": 0.2318,
+      "expected": 1002
+    },
+    {
+      "town": "Westport",
+      "residents": 16179,
+      "share": 0.0612,
+      "model_share": 0.1962,
+      "expected": 990
+    },
+    {
+      "town": "Dudley",
+      "residents": 6942,
+      "share": 0.1287,
+      "model_share": 0.2953,
+      "expected": 893
+    },
+    {
+      "town": "Stow",
+      "residents": 6942,
+      "share": 0.1263,
+      "model_share": 0.2385,
+      "expected": 877
+    },
+    {
+      "town": "Westford",
+      "residents": 7577,
+      "share": 0.1151,
+      "model_share": 0.2728,
+      "expected": 872
+    },
+    {
+      "town": "Canton",
+      "residents": 7652,
+      "share": 0.1115,
+      "model_share": 0.2599,
+      "expected": 854
+    },
+    {
+      "town": "Hopkinton",
+      "residents": 9731,
+      "share": 0.0852,
+      "model_share": 0.2116,
+      "expected": 829
+    },
+    {
+      "town": "Stoughton",
+      "residents": 5533,
+      "share": 0.1477,
+      "model_share": 0.3329,
+      "expected": 817
+    },
+    {
+      "town": "Dartmouth",
+      "residents": 12534,
+      "share": 0.0636,
+      "model_share": 0.1621,
+      "expected": 798
+    },
+    {
+      "town": "Charlton",
+      "residents": 12078,
+      "share": 0.0654,
+      "model_share": 0.139,
+      "expected": 790
+    },
+    {
+      "town": "Grafton",
+      "residents": 7866,
+      "share": 0.0983,
+      "model_share": 0.2392,
+      "expected": 773
+    },
+    {
+      "town": "Leicester",
+      "residents": 7715,
+      "share": 0.0945,
+      "model_share": 0.2303,
+      "expected": 729
+    },
+    {
+      "town": "Framingham",
+      "residents": 5804,
+      "share": 0.1245,
+      "model_share": 0.2764,
+      "expected": 723
+    },
+    {
+      "town": "Plymouth",
+      "residents": 14976,
+      "share": 0.0462,
+      "model_share": 0.123,
+      "expected": 692
+    },
+    {
+      "town": "Middleton",
+      "residents": 6123,
+      "share": 0.1122,
+      "model_share": 0.2634,
+      "expected": 687
+    },
+    {
+      "town": "Rehoboth",
+      "residents": 12472,
+      "share": 0.0547,
+      "model_share": 0.1614,
+      "expected": 683
+    },
+    {
+      "town": "Millbury",
+      "residents": 5256,
+      "share": 0.1241,
+      "model_share": 0.2897,
+      "expected": 652
+    },
+    {
+      "town": "Ipswich",
+      "residents": 7166,
+      "share": 0.0905,
+      "model_share": 0.2222,
+      "expected": 649
+    },
+    {
+      "town": "Pembroke",
+      "residents": 7196,
+      "share": 0.0894,
+      "model_share": 0.2217,
+      "expected": 644
+    },
+    {
+      "town": "Tewksbury",
+      "residents": 6642,
+      "share": 0.0957,
+      "model_share": 0.2323,
+      "expected": 635
+    },
+    {
+      "town": "Lakeville",
+      "residents": 10456,
+      "share": 0.0601,
+      "model_share": 0.1935,
+      "expected": 629
+    },
+    {
+      "town": "Shrewsbury",
+      "residents": 4143,
+      "share": 0.1456,
+      "model_share": 0.3298,
+      "expected": 603
+    },
+    {
+      "town": "Hingham",
+      "residents": 4661,
+      "share": 0.1279,
+      "model_share": 0.2969,
+      "expected": 596
+    },
+    {
+      "town": "Lunenburg",
+      "residents": 6894,
+      "share": 0.0856,
+      "model_share": 0.2112,
+      "expected": 590
+    },
+    {
+      "town": "Amesbury",
+      "residents": 5806,
+      "share": 0.1007,
+      "model_share": 0.2419,
+      "expected": 585
+    },
+    {
+      "town": "Medway",
+      "residents": 4627,
+      "share": 0.1257,
+      "model_share": 0.2937,
+      "expected": 581
+    },
+    {
+      "town": "Sutton",
+      "residents": 6082,
+      "share": 0.0939,
+      "model_share": 0.2001,
+      "expected": 571
+    },
+    {
+      "town": "Weymouth",
+      "residents": 2808,
+      "share": 0.2024,
+      "model_share": 0.4245,
+      "expected": 568
+    },
+    {
+      "town": "Raynham",
+      "residents": 4606,
+      "share": 0.1228,
+      "model_share": 0.2892,
+      "expected": 565
+    },
+    {
+      "town": "Boxborough",
+      "residents": 4679,
+      "share": 0.119,
+      "model_share": 0.29,
+      "expected": 557
+    },
+    {
+      "town": "Dracut",
+      "residents": 6534,
+      "share": 0.0844,
+      "model_share": 0.2043,
+      "expected": 551
+    },
+    {
+      "town": "Sharon",
+      "residents": 4515,
+      "share": 0.1175,
+      "model_share": 0.2779,
+      "expected": 531
+    },
+    {
+      "town": "Sherborn",
+      "residents": 4260,
+      "share": 0.1196,
+      "model_share": 0.2038,
+      "expected": 509
+    },
+    {
+      "town": "Groton",
+      "residents": 6509,
+      "share": 0.0781,
+      "model_share": 0.1959,
+      "expected": 508
+    },
+    {
+      "town": "Douglas",
+      "residents": 8122,
+      "share": 0.0615,
+      "model_share": 0.1592,
+      "expected": 499
+    },
+    {
+      "town": "Norwood",
+      "residents": 2706,
+      "share": 0.184,
+      "model_share": 0.3961,
+      "expected": 498
+    },
+    {
+      "town": "Ludlow",
+      "residents": 8188,
+      "share": 0.0593,
+      "model_share": 0.1528,
+      "expected": 486
+    },
+    {
+      "town": "Sturbridge",
+      "residents": 7191,
+      "share": 0.0651,
+      "model_share": 0.1667,
+      "expected": 468
+    },
+    {
+      "town": "Swansea",
+      "residents": 6000,
+      "share": 0.0761,
+      "model_share": 0.1921,
+      "expected": 457
+    },
+    {
+      "town": "Mendon",
+      "residents": 6044,
+      "share": 0.0754,
+      "model_share": 0.2565,
+      "expected": 456
+    },
+    {
+      "town": "Uxbridge",
+      "residents": 5860,
+      "share": 0.0743,
+      "model_share": 0.1858,
+      "expected": 436
+    },
+    {
+      "town": "Townsend",
+      "residents": 6596,
+      "share": 0.0659,
+      "model_share": 0.1674,
+      "expected": 435
+    },
+    {
+      "town": "Norfolk",
+      "residents": 4509,
+      "share": 0.0945,
+      "model_share": 0.2323,
+      "expected": 426
+    },
+    {
+      "town": "Duxbury",
+      "residents": 4766,
+      "share": 0.0887,
+      "model_share": 0.2129,
+      "expected": 423
+    },
+    {
+      "town": "Littleton",
+      "residents": 3989,
+      "share": 0.1038,
+      "model_share": 0.2515,
+      "expected": 414
+    },
+    {
+      "town": "North Reading",
+      "residents": 5116,
+      "share": 0.0806,
+      "model_share": 0.1993,
+      "expected": 412
+    },
+    {
+      "town": "Franklin",
+      "residents": 3536,
+      "share": 0.114,
+      "model_share": 0.271,
+      "expected": 403
+    },
+    {
+      "town": "Burlington",
+      "residents": 1981,
+      "share": 0.2032,
+      "model_share": 0.4222,
+      "expected": 403
+    },
+    {
+      "town": "Wilbraham",
+      "residents": 7715,
+      "share": 0.0521,
+      "model_share": 0.1353,
+      "expected": 402
+    },
+    {
+      "town": "Salisbury",
+      "residents": 6184,
+      "share": 0.0635,
+      "model_share": 0.1623,
+      "expected": 393
+    },
+    {
+      "town": "Eastham",
+      "residents": 3312,
+      "share": 0.1185,
+      "model_share": 0.2804,
+      "expected": 392
+    },
+    {
+      "town": "Dighton",
+      "residents": 5527,
+      "share": 0.0706,
+      "model_share": 0.1809,
+      "expected": 390
+    },
+    {
+      "town": "Newbury",
+      "residents": 3322,
+      "share": 0.1166,
+      "model_share": 0.1823,
+      "expected": 387
+    },
+    {
+      "town": "Oxford",
+      "residents": 6796,
+      "share": 0.056,
+      "model_share": 0.1465,
+      "expected": 380
+    },
+    {
+      "town": "Braintree",
+      "residents": 2374,
+      "share": 0.1591,
+      "model_share": 0.3461,
+      "expected": 378
+    },
+    {
+      "town": "Webster",
+      "residents": 3479,
+      "share": 0.1069,
+      "model_share": 0.253,
+      "expected": 372
+    },
+    {
+      "town": "Leominster",
+      "residents": 5829,
+      "share": 0.0637,
+      "model_share": 0.1619,
+      "expected": 371
+    },
+    {
+      "town": "Holbrook",
+      "residents": 2906,
+      "share": 0.1273,
+      "model_share": 0.2947,
+      "expected": 370
+    },
+    {
+      "town": "Brockton",
+      "residents": 2070,
+      "share": 0.1726,
+      "model_share": 0.3758,
+      "expected": 357
+    },
+    {
+      "town": "Barnstable",
+      "residents": 5197,
+      "share": 0.0679,
+      "model_share": 0.1702,
+      "expected": 353
+    },
+    {
+      "town": "Palmer",
+      "residents": 6935,
+      "share": 0.0499,
+      "model_share": 0.1287,
+      "expected": 346
+    },
+    {
+      "town": "Northborough",
+      "residents": 3677,
+      "share": 0.0941,
+      "model_share": 0.2298,
+      "expected": 346
+    },
+    {
+      "town": "Fall River",
+      "residents": 4036,
+      "share": 0.0853,
+      "model_share": 0.197,
+      "expected": 344
+    },
+    {
+      "town": "Freetown",
+      "residents": 8519,
+      "share": 0.0403,
+      "model_share": 0.2088,
+      "expected": 343
+    },
+    {
+      "town": "Middleborough",
+      "residents": 5526,
+      "share": 0.061,
+      "model_share": 0.1562,
+      "expected": 337
+    },
+    {
+      "town": "Millville",
+      "residents": 3174,
+      "share": 0.1059,
+      "model_share": 0.2248,
+      "expected": 336
+    },
+    {
+      "town": "Walpole",
+      "residents": 2765,
+      "share": 0.1207,
+      "model_share": 0.2827,
+      "expected": 334
+    },
+    {
+      "town": "Georgetown",
+      "residents": 4030,
+      "share": 0.082,
+      "model_share": 0.2061,
+      "expected": 331
+    },
+    {
+      "town": "Granby",
+      "residents": 5643,
+      "share": 0.0585,
+      "model_share": 0.1218,
+      "expected": 330
+    },
+    {
+      "town": "Marshfield",
+      "residents": 5954,
+      "share": 0.0553,
+      "model_share": 0.1381,
+      "expected": 329
+    },
+    {
+      "town": "Holden",
+      "residents": 4410,
+      "share": 0.0705,
+      "model_share": 0.1785,
+      "expected": 311
+    },
+    {
+      "town": "Gloucester",
+      "residents": 5895,
+      "share": 0.0521,
+      "model_share": 0.1354,
+      "expected": 307
+    },
+    {
+      "town": "Peabody",
+      "residents": 3812,
+      "share": 0.0805,
+      "model_share": 0.1989,
+      "expected": 307
+    },
+    {
+      "town": "Halifax",
+      "residents": 4584,
+      "share": 0.0646,
+      "model_share": 0.1661,
+      "expected": 296
+    },
+    {
+      "town": "Auburn",
+      "residents": 2709,
+      "share": 0.1088,
+      "model_share": 0.2596,
+      "expected": 295
+    },
+    {
+      "town": "Westminster",
+      "residents": 5930,
+      "share": 0.0494,
+      "model_share": 0.129,
+      "expected": 293
+    },
+    {
+      "town": "Rockland",
+      "residents": 2392,
+      "share": 0.1219,
+      "model_share": 0.2853,
+      "expected": 291
+    },
+    {
+      "town": "Whitman",
+      "residents": 1812,
+      "share": 0.1595,
+      "model_share": 0.3544,
+      "expected": 289
+    },
+    {
+      "town": "Ashland",
+      "residents": 4143,
+      "share": 0.0692,
+      "model_share": 0.1758,
+      "expected": 287
+    },
+    {
+      "town": "Medfield",
+      "residents": 2547,
+      "share": 0.1109,
+      "model_share": 0.2655,
+      "expected": 282
+    },
+    {
+      "town": "Sandwich",
+      "residents": 4382,
+      "share": 0.0638,
+      "model_share": 0.1629,
+      "expected": 280
+    },
+    {
+      "town": "Kingston",
+      "residents": 5084,
+      "share": 0.0546,
+      "model_share": 0.1435,
+      "expected": 278
+    },
+    {
+      "town": "Spencer",
+      "residents": 5836,
+      "share": 0.0474,
+      "model_share": 0.1244,
+      "expected": 277
+    },
+    {
+      "town": "Harvard",
+      "residents": 5376,
+      "share": 0.0513,
+      "model_share": 0.191,
+      "expected": 276
+    },
+    {
+      "town": "Amherst",
+      "residents": 7026,
+      "share": 0.0391,
+      "model_share": 0.1055,
+      "expected": 275
+    },
+    {
+      "town": "Rochester",
+      "residents": 5602,
+      "share": 0.0487,
+      "model_share": 0.1006,
+      "expected": 273
+    },
+    {
+      "town": "Seekonk",
+      "residents": 3840,
+      "share": 0.0693,
+      "model_share": 0.1738,
+      "expected": 266
+    },
+    {
+      "town": "Attleboro",
+      "residents": 3857,
+      "share": 0.0683,
+      "model_share": 0.1718,
+      "expected": 264
+    },
+    {
+      "town": "Groveland",
+      "residents": 2637,
+      "share": 0.0991,
+      "model_share": 0.2408,
+      "expected": 261
+    },
+    {
+      "town": "Abington",
+      "residents": 1766,
+      "share": 0.1472,
+      "model_share": 0.3323,
+      "expected": 260
+    },
+    {
+      "town": "Boxford",
+      "residents": 8134,
+      "share": 0.0314,
+      "model_share": 0.1896,
+      "expected": 255
+    },
+    {
+      "town": "West Tisbury",
+      "residents": 3555,
+      "share": 0.0717,
+      "model_share": 0.085,
+      "expected": 255
+    },
+    {
+      "town": "Holliston",
+      "residents": 2556,
+      "share": 0.0994,
+      "model_share": 0.2412,
+      "expected": 254
+    },
+    {
+      "town": "Belchertown",
+      "residents": 12381,
+      "share": 0.0205,
+      "model_share": 0.1159,
+      "expected": 254
+    },
+    {
+      "town": "Nantucket",
+      "residents": 2547,
+      "share": 0.0971,
+      "model_share": 0.1402,
+      "expected": 247
+    },
+    {
+      "town": "Bourne",
+      "residents": 5194,
+      "share": 0.0473,
+      "model_share": 0.1256,
+      "expected": 246
+    },
+    {
+      "town": "Harwich",
+      "residents": 4058,
+      "share": 0.0601,
+      "model_share": 0.1552,
+      "expected": 244
+    },
+    {
+      "town": "Wrentham",
+      "residents": 4065,
+      "share": 0.0598,
+      "model_share": 0.1543,
+      "expected": 243
+    },
+    {
+      "town": "Yarmouth",
+      "residents": 2922,
+      "share": 0.0831,
+      "model_share": 0.2059,
+      "expected": 243
+    },
+    {
+      "town": "Natick",
+      "residents": 1537,
+      "share": 0.1576,
+      "model_share": 0.3512,
+      "expected": 242
+    },
+    {
+      "town": "Southborough",
+      "residents": 3561,
+      "share": 0.0679,
+      "model_share": 0.1718,
+      "expected": 242
+    },
+    {
+      "town": "Wellfleet",
+      "residents": 3245,
+      "share": 0.0743,
+      "model_share": 0.1255,
+      "expected": 241
+    },
+    {
+      "town": "Reading",
+      "residents": 2637,
+      "share": 0.0905,
+      "model_share": 0.217,
+      "expected": 239
+    },
+    {
+      "town": "Dover",
+      "residents": 3892,
+      "share": 0.0612,
+      "model_share": 0.2466,
+      "expected": 238
+    },
+    {
+      "town": "Wilmington",
+      "residents": 3808,
+      "share": 0.0625,
+      "model_share": 0.1592,
+      "expected": 238
+    },
+    {
+      "town": "Upton",
+      "residents": 4417,
+      "share": 0.0535,
+      "model_share": 0.1404,
+      "expected": 236
+    },
+    {
+      "town": "Wenham",
+      "residents": 3411,
+      "share": 0.0689,
+      "model_share": 0.1742,
+      "expected": 235
+    },
+    {
+      "town": "Pittsfield",
+      "residents": 6520,
+      "share": 0.0357,
+      "model_share": 0.097,
+      "expected": 233
+    },
+    {
+      "town": "Pepperell",
+      "residents": 2580,
+      "share": 0.0889,
+      "model_share": 0.2162,
+      "expected": 229
+    },
+    {
+      "town": "Winchendon",
+      "residents": 6002,
+      "share": 0.0377,
+      "model_share": 0.1008,
+      "expected": 226
+    },
+    {
+      "town": "Berlin",
+      "residents": 2622,
+      "share": 0.0862,
+      "model_share": 0.1623,
+      "expected": 226
+    },
+    {
+      "town": "West Boylston",
+      "residents": 2178,
+      "share": 0.1024,
+      "model_share": 0.2406,
+      "expected": 223
+    },
+    {
+      "town": "South Hadley",
+      "residents": 4499,
+      "share": 0.048,
+      "model_share": 0.1272,
+      "expected": 216
+    },
+    {
+      "town": "Hopedale",
+      "residents": 1349,
+      "share": 0.1575,
+      "model_share": 0.3487,
+      "expected": 212
+    },
+    {
+      "town": "Monson",
+      "residents": 6218,
+      "share": 0.0339,
+      "model_share": 0.0911,
+      "expected": 211
+    },
+    {
+      "town": "Templeton",
+      "residents": 5210,
+      "share": 0.04,
+      "model_share": 0.1067,
+      "expected": 208
+    },
+    {
+      "town": "Shirley",
+      "residents": 2774,
+      "share": 0.0742,
+      "model_share": 0.1885,
+      "expected": 206
+    },
+    {
+      "town": "Rutland",
+      "residents": 6392,
+      "share": 0.0319,
+      "model_share": 0.0866,
+      "expected": 204
+    },
+    {
+      "town": "Essex",
+      "residents": 2556,
+      "share": 0.0781,
+      "model_share": 0.1972,
+      "expected": 200
+    },
+    {
+      "town": "Acushnet",
+      "residents": 5430,
+      "share": 0.0367,
+      "model_share": 0.0988,
+      "expected": 199
+    },
+    {
+      "town": "Berkley",
+      "residents": 6764,
+      "share": 0.0293,
+      "model_share": 0.1659,
+      "expected": 198
+    },
+    {
+      "town": "Gardner",
+      "residents": 3306,
+      "share": 0.0596,
+      "model_share": 0.1535,
+      "expected": 197
+    },
+    {
+      "town": "Northbridge",
+      "residents": 2617,
+      "share": 0.075,
+      "model_share": 0.1892,
+      "expected": 196
+    },
+    {
+      "town": "Weston",
+      "residents": 2760,
+      "share": 0.0709,
+      "model_share": 0.1737,
+      "expected": 196
+    },
+    {
+      "town": "Dunstable",
+      "residents": 3175,
+      "share": 0.0607,
+      "model_share": 0.202,
+      "expected": 193
+    },
+    {
+      "town": "Easton",
+      "residents": 2033,
+      "share": 0.0926,
+      "model_share": 0.227,
+      "expected": 188
+    },
+    {
+      "town": "Northampton",
+      "residents": 6076,
+      "share": 0.031,
+      "model_share": 0.085,
+      "expected": 188
+    },
+    {
+      "town": "Salem",
+      "residents": 3120,
+      "share": 0.0579,
+      "model_share": 0.1511,
+      "expected": 181
+    },
+    {
+      "town": "Scituate",
+      "residents": 1986,
+      "share": 0.0894,
+      "model_share": 0.222,
+      "expected": 177
+    },
+    {
+      "town": "Norton",
+      "residents": 2540,
+      "share": 0.0691,
+      "model_share": 0.1761,
+      "expected": 175
+    },
+    {
+      "town": "Bolton",
+      "residents": 5234,
+      "share": 0.0335,
+      "model_share": 0.1749,
+      "expected": 175
+    },
+    {
+      "town": "Haverhill",
+      "residents": 3179,
+      "share": 0.0544,
+      "model_share": 0.1414,
+      "expected": 173
+    },
+    {
+      "town": "East Bridgewater",
+      "residents": 1716,
+      "share": 0.1002,
+      "model_share": 0.2439,
+      "expected": 172
+    },
+    {
+      "town": "Millis",
+      "residents": 1457,
+      "share": 0.113,
+      "model_share": 0.2692,
+      "expected": 165
+    },
+    {
+      "town": "Hamilton",
+      "residents": 2284,
+      "share": 0.071,
+      "model_share": 0.179,
+      "expected": 162
+    },
+    {
+      "town": "West Brookfield",
+      "residents": 2951,
+      "share": 0.0544,
+      "model_share": 0.1413,
+      "expected": 160
+    },
+    {
+      "town": "Phillipston",
+      "residents": 1726,
+      "share": 0.0921,
+      "model_share": 0.1588,
+      "expected": 159
+    },
+    {
+      "town": "Concord",
+      "residents": 1926,
+      "share": 0.0824,
+      "model_share": 0.2052,
+      "expected": 159
+    },
+    {
+      "town": "Greenfield",
+      "residents": 4330,
+      "share": 0.0362,
+      "model_share": 0.098,
+      "expected": 157
+    },
+    {
+      "town": "Ashburnham",
+      "residents": 4515,
+      "share": 0.0341,
+      "model_share": 0.0911,
+      "expected": 154
+    },
+    {
+      "town": "Shutesbury",
+      "residents": 1717,
+      "share": 0.0891,
+      "model_share": 0.0817,
+      "expected": 153
+    },
+    {
+      "town": "Athol",
+      "residents": 4369,
+      "share": 0.0349,
+      "model_share": 0.0942,
+      "expected": 153
+    },
+    {
+      "town": "Westborough",
+      "residents": 1414,
+      "share": 0.1078,
+      "model_share": 0.2601,
+      "expected": 152
+    },
+    {
+      "town": "Lancaster",
+      "residents": 2832,
+      "share": 0.0531,
+      "model_share": 0.1381,
+      "expected": 150
+    },
+    {
+      "town": "Southwick",
+      "residents": 5986,
+      "share": 0.0249,
+      "model_share": 0.0692,
+      "expected": 149
+    },
+    {
+      "town": "Milford",
+      "residents": 1168,
+      "share": 0.1275,
+      "model_share": 0.2959,
+      "expected": 149
+    },
+    {
+      "town": "West Springfield",
+      "residents": 3572,
+      "share": 0.0412,
+      "model_share": 0.1109,
+      "expected": 147
+    },
+    {
+      "town": "Paxton",
+      "residents": 2691,
+      "share": 0.0539,
+      "model_share": 0.1414,
+      "expected": 145
+    },
+    {
+      "town": "Milton",
+      "residents": 2402,
+      "share": 0.0596,
+      "model_share": 0.1493,
+      "expected": 143
+    },
+    {
+      "town": "Merrimac",
+      "residents": 2714,
+      "share": 0.0525,
+      "model_share": 0.1379,
+      "expected": 143
+    },
+    {
+      "town": "Hubbardston",
+      "residents": 4284,
+      "share": 0.0326,
+      "model_share": 0.1024,
+      "expected": 140
+    },
+    {
+      "town": "Saugus",
+      "residents": 3075,
+      "share": 0.0452,
+      "model_share": 0.1208,
+      "expected": 139
+    },
+    {
+      "town": "Warren",
+      "residents": 3395,
+      "share": 0.0409,
+      "model_share": 0.1083,
+      "expected": 139
+    },
+    {
+      "town": "Orange",
+      "residents": 4149,
+      "share": 0.0325,
+      "model_share": 0.0886,
+      "expected": 135
+    },
+    {
+      "town": "West Newbury",
+      "residents": 2471,
+      "share": 0.0541,
+      "model_share": 0.1418,
+      "expected": 134
+    },
+    {
+      "town": "North Andover",
+      "residents": 3121,
+      "share": 0.0422,
+      "model_share": 0.111,
+      "expected": 132
+    },
+    {
+      "town": "Topsfield",
+      "residents": 1407,
+      "share": 0.0933,
+      "model_share": 0.2299,
+      "expected": 131
+    },
+    {
+      "town": "Mansfield",
+      "residents": 1254,
+      "share": 0.1043,
+      "model_share": 0.2503,
+      "expected": 131
+    },
+    {
+      "town": "Bridgewater",
+      "residents": 1347,
+      "share": 0.097,
+      "model_share": 0.2369,
+      "expected": 131
+    },
+    {
+      "town": "Great Barrington",
+      "residents": 3688,
+      "share": 0.0348,
+      "model_share": 0.0922,
+      "expected": 128
+    },
+    {
+      "town": "Blackstone",
+      "residents": 1231,
+      "share": 0.1023,
+      "model_share": 0.249,
+      "expected": 126
+    },
+    {
+      "town": "Brookfield",
+      "residents": 2413,
+      "share": 0.0514,
+      "model_share": 0.1359,
+      "expected": 124
+    },
+    {
+      "town": "Ware",
+      "residents": 4950,
+      "share": 0.0249,
+      "model_share": 0.0692,
+      "expected": 123
+    },
+    {
+      "town": "North Adams",
+      "residents": 3390,
+      "share": 0.035,
+      "model_share": 0.0948,
+      "expected": 119
+    },
+    {
+      "town": "Holyoke",
+      "residents": 3006,
+      "share": 0.0393,
+      "model_share": 0.1057,
+      "expected": 118
+    },
+    {
+      "town": "Leverett",
+      "residents": 1855,
+      "share": 0.0621,
+      "model_share": 0.1097,
+      "expected": 115
+    },
+    {
+      "town": "Plainville",
+      "residents": 2446,
+      "share": 0.0464,
+      "model_share": 0.122,
+      "expected": 113
+    },
+    {
+      "town": "Wayland",
+      "residents": 1014,
+      "share": 0.1095,
+      "model_share": 0.2613,
+      "expected": 111
+    },
+    {
+      "town": "Montague",
+      "residents": 2807,
+      "share": 0.0393,
+      "model_share": 0.1059,
+      "expected": 110
+    },
+    {
+      "town": "Agawam",
+      "residents": 3307,
+      "share": 0.0332,
+      "model_share": 0.0908,
+      "expected": 110
+    },
+    {
+      "town": "Fitchburg",
+      "residents": 2010,
+      "share": 0.0542,
+      "model_share": 0.139,
+      "expected": 109
+    },
+    {
+      "town": "Manchester-By-The-Sea",
+      "residents": 2705,
+      "share": 0.0399,
+      "model_share": 0.1074,
+      "expected": 108
+    },
+    {
+      "town": "Barre",
+      "residents": 4310,
+      "share": 0.025,
+      "model_share": 0.0693,
+      "expected": 108
+    },
+    {
+      "town": "Norwell",
+      "residents": 1315,
+      "share": 0.0819,
+      "model_share": 0.2059,
+      "expected": 108
+    },
+    {
+      "town": "Holland",
+      "residents": 2603,
+      "share": 0.0405,
+      "model_share": 0.0765,
+      "expected": 105
+    },
+    {
+      "town": "Easthampton",
+      "residents": 2753,
+      "share": 0.0382,
+      "model_share": 0.1033,
+      "expected": 105
+    },
+    {
+      "town": "Brewster",
+      "residents": 2508,
+      "share": 0.0414,
+      "model_share": 0.1104,
+      "expected": 104
+    },
+    {
+      "town": "Chicopee",
+      "residents": 2127,
+      "share": 0.0482,
+      "model_share": 0.1278,
+      "expected": 102
+    },
+    {
+      "town": "North Attleborough",
+      "residents": 1106,
+      "share": 0.0911,
+      "model_share": 0.2227,
+      "expected": 101
+    },
+    {
+      "town": "Southampton",
+      "residents": 3729,
+      "share": 0.0269,
+      "model_share": 0.0744,
+      "expected": 100
+    },
+    {
+      "town": "Deerfield",
+      "residents": 3584,
+      "share": 0.0278,
+      "model_share": 0.0766,
+      "expected": 100
+    },
+    {
+      "town": "Wellesley",
+      "residents": 525,
+      "share": 0.1898,
+      "model_share": 0.4043,
+      "expected": 100
+    },
+    {
+      "town": "Falmouth",
+      "residents": 1337,
+      "share": 0.0742,
+      "model_share": 0.1827,
+      "expected": 99
+    },
+    {
+      "town": "Princeton",
+      "residents": 3495,
+      "share": 0.0267,
+      "model_share": 0.1588,
+      "expected": 93
+    },
+    {
+      "town": "Sunderland",
+      "residents": 2740,
+      "share": 0.0333,
+      "model_share": 0.091,
+      "expected": 91
+    },
+    {
+      "town": "Plympton",
+      "residents": 2930,
+      "share": 0.0309,
+      "model_share": 0.1258,
+      "expected": 91
+    },
+    {
+      "town": "North Brookfield",
+      "residents": 2899,
+      "share": 0.0305,
+      "model_share": 0.0835,
+      "expected": 88
+    },
+    {
+      "town": "Foxborough",
+      "residents": 987,
+      "share": 0.0891,
+      "model_share": 0.2195,
+      "expected": 88
+    },
+    {
+      "town": "Waltham",
+      "residents": 1525,
+      "share": 0.0571,
+      "model_share": 0.1494,
+      "expected": 87
+    },
+    {
+      "town": "Northfield",
+      "residents": 2462,
+      "share": 0.0346,
+      "model_share": 0.0919,
+      "expected": 85
+    },
+    {
+      "town": "Chelmsford",
+      "residents": 594,
+      "share": 0.1382,
+      "model_share": 0.3182,
+      "expected": 82
+    },
+    {
+      "town": "Rowley",
+      "residents": 1215,
+      "share": 0.0663,
+      "model_share": 0.1704,
+      "expected": 81
+    },
+    {
+      "town": "Bellingham",
+      "residents": 764,
+      "share": 0.1047,
+      "model_share": 0.254,
+      "expected": 80
+    },
+    {
+      "town": "Boylston",
+      "residents": 1538,
+      "share": 0.0502,
+      "model_share": 0.1326,
+      "expected": 77
+    },
+    {
+      "town": "Somerset",
+      "residents": 1768,
+      "share": 0.0433,
+      "model_share": 0.1162,
+      "expected": 77
+    },
+    {
+      "town": "Lenox",
+      "residents": 1995,
+      "share": 0.038,
+      "model_share": 0.102,
+      "expected": 76
+    },
+    {
+      "town": "Westfield",
+      "residents": 2674,
+      "share": 0.0283,
+      "model_share": 0.0782,
+      "expected": 76
+    },
+    {
+      "town": "Hadley",
+      "residents": 3269,
+      "share": 0.022,
+      "model_share": 0.0614,
+      "expected": 72
+    },
+    {
+      "town": "Sudbury",
+      "residents": 1049,
+      "share": 0.0674,
+      "model_share": 0.1667,
+      "expected": 71
+    },
+    {
+      "town": "Sterling",
+      "residents": 1365,
+      "share": 0.048,
+      "model_share": 0.1266,
+      "expected": 65
+    },
+    {
+      "town": "Bedford",
+      "residents": 653,
+      "share": 0.0983,
+      "model_share": 0.2404,
+      "expected": 64
+    },
+    {
+      "town": "East Brookfield",
+      "residents": 1460,
+      "share": 0.0426,
+      "model_share": 0.1144,
+      "expected": 62
+    },
+    {
+      "town": "Hatfield",
+      "residents": 2457,
+      "share": 0.0244,
+      "model_share": 0.0678,
+      "expected": 60
+    },
+    {
+      "town": "Brimfield",
+      "residents": 3625,
+      "share": 0.0164,
+      "model_share": 0.0628,
+      "expected": 60
+    },
+    {
+      "town": "Hampden",
+      "residents": 4863,
+      "share": 0.0118,
+      "model_share": 0.0784,
+      "expected": 57
+    },
+    {
+      "town": "Sheffield",
+      "residents": 3241,
+      "share": 0.0175,
+      "model_share": 0.0492,
+      "expected": 57
+    },
+    {
+      "town": "Rockport",
+      "residents": 1699,
+      "share": 0.0332,
+      "model_share": 0.091,
+      "expected": 56
+    },
+    {
+      "town": "Lee",
+      "residents": 1785,
+      "share": 0.0314,
+      "model_share": 0.0847,
+      "expected": 56
+    },
+    {
+      "town": "Southbridge",
+      "residents": 1817,
+      "share": 0.0304,
+      "model_share": 0.0828,
+      "expected": 55
+    },
+    {
+      "town": "Pelham",
+      "residents": 1252,
+      "share": 0.0424,
+      "model_share": 0.0732,
+      "expected": 53
+    },
+    {
+      "town": "Williamstown",
+      "residents": 2050,
+      "share": 0.0257,
+      "model_share": 0.071,
+      "expected": 53
+    },
+    {
+      "town": "Edgartown",
+      "residents": 1931,
+      "share": 0.0261,
+      "model_share": 0.0721,
+      "expected": 50
+    },
+    {
+      "town": "Mashpee",
+      "residents": 687,
+      "share": 0.072,
+      "model_share": 0.1809,
+      "expected": 49
+    },
+    {
+      "town": "Egremont",
+      "residents": 1331,
+      "share": 0.037,
+      "model_share": 0.0994,
+      "expected": 49
+    },
+    {
+      "town": "Lanesborough",
+      "residents": 2104,
+      "share": 0.0234,
+      "model_share": 0.0651,
+      "expected": 49
+    },
+    {
+      "town": "Adams",
+      "residents": 1674,
+      "share": 0.0289,
+      "model_share": 0.0796,
+      "expected": 48
+    },
+    {
+      "town": "Dalton",
+      "residents": 1842,
+      "share": 0.0256,
+      "model_share": 0.0711,
+      "expected": 47
+    },
+    {
+      "town": "Cheshire",
+      "residents": 2147,
+      "share": 0.0215,
+      "model_share": 0.0601,
+      "expected": 46
+    },
+    {
+      "town": "Lincoln",
+      "residents": 870,
+      "share": 0.053,
+      "model_share": 0.1377,
+      "expected": 46
+    },
+    {
+      "town": "Newburyport",
+      "residents": 533,
+      "share": 0.0846,
+      "model_share": 0.2083,
+      "expected": 45
+    },
+    {
+      "town": "Ashby",
+      "residents": 3193,
+      "share": 0.014,
+      "model_share": 0.068,
+      "expected": 45
+    },
+    {
+      "town": "Truro",
+      "residents": 2058,
+      "share": 0.0201,
+      "model_share": 0.1253,
+      "expected": 41
+    },
+    {
+      "town": "Gill",
+      "residents": 1169,
+      "share": 0.0349,
+      "model_share": 0.095,
+      "expected": 41
+    },
+    {
+      "town": "Clarksburg",
+      "residents": 1548,
+      "share": 0.0263,
+      "model_share": 0.0782,
+      "expected": 41
+    },
+    {
+      "town": "Westhampton",
+      "residents": 1622,
+      "share": 0.0244,
+      "model_share": 0.046,
+      "expected": 40
+    },
+    {
+      "town": "Chatham",
+      "residents": 606,
+      "share": 0.0643,
+      "model_share": 0.1658,
+      "expected": 39
+    },
+    {
+      "town": "Mattapoisett",
+      "residents": 1476,
+      "share": 0.0263,
+      "model_share": 0.0728,
+      "expected": 39
+    },
+    {
+      "town": "Williamsburg",
+      "residents": 1948,
+      "share": 0.0188,
+      "model_share": 0.0527,
+      "expected": 37
+    },
+    {
+      "town": "Lawrence",
+      "residents": 557,
+      "share": 0.0648,
+      "model_share": 0.1666,
+      "expected": 36
+    },
+    {
+      "town": "East Longmeadow",
+      "residents": 924,
+      "share": 0.0387,
+      "model_share": 0.1045,
+      "expected": 36
+    },
+    {
+      "town": "Lynn",
+      "residents": 623,
+      "share": 0.0559,
+      "model_share": 0.1469,
+      "expected": 35
+    },
+    {
+      "town": "Stockbridge",
+      "residents": 1403,
+      "share": 0.0248,
+      "model_share": 0.0687,
+      "expected": 35
+    },
+    {
+      "town": "Russell",
+      "residents": 1643,
+      "share": 0.0202,
+      "model_share": 0.0568,
+      "expected": 33
+    },
+    {
+      "town": "Hinsdale",
+      "residents": 1613,
+      "share": 0.0204,
+      "model_share": 0.0572,
+      "expected": 33
+    },
+    {
+      "town": "Huntington",
+      "residents": 1651,
+      "share": 0.0199,
+      "model_share": 0.0558,
+      "expected": 33
+    },
+    {
+      "town": "Hardwick",
+      "residents": 1733,
+      "share": 0.0183,
+      "model_share": 0.0513,
+      "expected": 32
+    },
+    {
+      "town": "Petersham",
+      "residents": 1187,
+      "share": 0.0262,
+      "model_share": 0.1132,
+      "expected": 31
+    },
+    {
+      "town": "Wales",
+      "residents": 1737,
+      "share": 0.0174,
+      "model_share": 0.0627,
+      "expected": 30
+    },
+    {
+      "town": "Oak Bluffs",
+      "residents": 901,
+      "share": 0.0335,
+      "model_share": 0.0918,
+      "expected": 30
+    },
+    {
+      "town": "Oakham",
+      "residents": 1851,
+      "share": 0.0161,
+      "model_share": 0.0546,
+      "expected": 30
+    },
+    {
+      "town": "Bernardston",
+      "residents": 1398,
+      "share": 0.0211,
+      "model_share": 0.059,
+      "expected": 30
+    },
+    {
+      "town": "Erving",
+      "residents": 1333,
+      "share": 0.0216,
+      "model_share": 0.0788,
+      "expected": 29
+    },
+    {
+      "town": "Provincetown",
+      "residents": 688,
+      "share": 0.039,
+      "model_share": 0.1057,
+      "expected": 27
+    },
+    {
+      "town": "Chilmark",
+      "residents": 1212,
+      "share": 0.0219,
+      "model_share": 0.061,
+      "expected": 27
+    },
+    {
+      "town": "West Stockbridge",
+      "residents": 1213,
+      "share": 0.0211,
+      "model_share": 0.0588,
+      "expected": 26
+    },
+    {
+      "town": "Becket",
+      "residents": 1931,
+      "share": 0.013,
+      "model_share": 0.0736,
+      "expected": 25
+    },
+    {
+      "town": "Plainfield",
+      "residents": 633,
+      "share": 0.036,
+      "model_share": 0.0401,
+      "expected": 23
+    },
+    {
+      "town": "Otis",
+      "residents": 1634,
+      "share": 0.0134,
+      "model_share": 0.0706,
+      "expected": 22
+    },
+    {
+      "town": "Buckland",
+      "residents": 1333,
+      "share": 0.0149,
+      "model_share": 0.0536,
+      "expected": 20
+    },
+    {
+      "town": "Whately",
+      "residents": 1205,
+      "share": 0.0164,
+      "model_share": 0.0464,
+      "expected": 20
+    },
+    {
+      "town": "Hancock",
+      "residents": 741,
+      "share": 0.023,
+      "model_share": 0.0639,
+      "expected": 17
+    },
+    {
+      "town": "Granville",
+      "residents": 1538,
+      "share": 0.011,
+      "model_share": 0.0427,
+      "expected": 17
+    },
+    {
+      "town": "Richmond",
+      "residents": 1390,
+      "share": 0.012,
+      "model_share": 0.0795,
+      "expected": 17
+    },
+    {
+      "town": "Chester",
+      "residents": 966,
+      "share": 0.0169,
+      "model_share": 0.0476,
+      "expected": 16
+    },
+    {
+      "town": "Savoy",
+      "residents": 645,
+      "share": 0.0248,
+      "model_share": 0.0739,
+      "expected": 16
+    },
+    {
+      "town": "Charlemont",
+      "residents": 1170,
+      "share": 0.0133,
+      "model_share": 0.0453,
+      "expected": 16
+    },
+    {
+      "town": "Blandford",
+      "residents": 1019,
+      "share": 0.0148,
+      "model_share": 0.0419,
+      "expected": 15
+    },
+    {
+      "town": "New Braintree",
+      "residents": 996,
+      "share": 0.0145,
+      "model_share": 0.0443,
+      "expected": 14
+    },
+    {
+      "town": "New Salem",
+      "residents": 983,
+      "share": 0.0146,
+      "model_share": 0.1012,
+      "expected": 14
+    },
+    {
+      "town": "Wendell",
+      "residents": 924,
+      "share": 0.0153,
+      "model_share": 0.1065,
+      "expected": 14
+    },
+    {
+      "town": "Monterey",
+      "residents": 997,
+      "share": 0.0139,
+      "model_share": 0.0471,
+      "expected": 14
+    },
+    {
+      "town": "Worthington",
+      "residents": 1002,
+      "share": 0.0135,
+      "model_share": 0.0383,
+      "expected": 14
+    },
+    {
+      "town": "Chesterfield",
+      "residents": 1186,
+      "share": 0.0113,
+      "model_share": 0.0426,
+      "expected": 13
+    },
+    {
+      "town": "Conway",
+      "residents": 1761,
+      "share": 0.0074,
+      "model_share": 0.0475,
+      "expected": 13
+    },
+    {
+      "town": "Colrain",
+      "residents": 1543,
+      "share": 0.0082,
+      "model_share": 0.0404,
+      "expected": 13
+    },
+    {
+      "town": "Ashfield",
+      "residents": 1664,
+      "share": 0.0074,
+      "model_share": 0.0416,
+      "expected": 12
+    },
+    {
+      "town": "Royalston",
+      "residents": 1250,
+      "share": 0.0096,
+      "model_share": 0.0397,
+      "expected": 12
+    },
+    {
+      "town": "New Marlborough",
+      "residents": 1513,
+      "share": 0.0074,
+      "model_share": 0.0425,
+      "expected": 11
+    },
+    {
+      "town": "Sandisfield",
+      "residents": 989,
+      "share": 0.0111,
+      "model_share": 0.0416,
+      "expected": 11
+    },
+    {
+      "town": "Shelburne",
+      "residents": 1149,
+      "share": 0.009,
+      "model_share": 0.0463,
+      "expected": 10
+    },
+    {
+      "town": "Goshen",
+      "residents": 960,
+      "share": 0.0104,
+      "model_share": 0.0462,
+      "expected": 10
+    },
+    {
+      "town": "Cummington",
+      "residents": 699,
+      "share": 0.014,
+      "model_share": 0.0398,
+      "expected": 10
+    },
+    {
+      "town": "Florida",
+      "residents": 694,
+      "share": 0.0141,
+      "model_share": 0.0416,
+      "expected": 10
+    },
+    {
+      "town": "Peru",
+      "residents": 814,
+      "share": 0.0112,
+      "model_share": 0.0433,
+      "expected": 9
+    },
+    {
+      "town": "Montgomery",
+      "residents": 819,
+      "share": 0.0109,
+      "model_share": 0.0497,
+      "expected": 9
+    },
+    {
+      "town": "Windsor",
+      "residents": 831,
+      "share": 0.0104,
+      "model_share": 0.0416,
+      "expected": 9
+    },
+    {
+      "town": "Heath",
+      "residents": 723,
+      "share": 0.0106,
+      "model_share": 0.0352,
+      "expected": 8
+    },
+    {
+      "town": "Leyden",
+      "residents": 734,
+      "share": 0.0101,
+      "model_share": 0.0428,
+      "expected": 7
+    },
+    {
+      "town": "Warwick",
+      "residents": 780,
+      "share": 0.006,
+      "model_share": 0.0328,
+      "expected": 5
+    }
+  ],
   "groundwater_validation": {
     "wells": 1030,
     "over20": {
@@ -154,11 +2145,677 @@
       "flat_rate": 326.0
     },
     "offset": -1.07,
-    "prior_weight_wells": 24.3
+    "prior_weight_wells": 24.3,
+    "town_table": [
+      {
+        "town": "Aquinnah",
+        "n": 10,
+        "k": 0,
+        "model": 0.1134,
+        "loto": 0.0424,
+        "blended": 0.0298
+      },
+      {
+        "town": "Nantucket",
+        "n": 41,
+        "k": 5,
+        "model": 0.1402,
+        "loto": 0.0532,
+        "blended": 0.0971
+      },
+      {
+        "town": "West Tisbury",
+        "n": 42,
+        "k": 4,
+        "model": 0.085,
+        "loto": 0.0299,
+        "blended": 0.0717
+      },
+      {
+        "town": "Westport",
+        "n": 40,
+        "k": 2,
+        "model": 0.1962,
+        "loto": 0.0808,
+        "blended": 0.0612
+      },
+      {
+        "town": "Rochester",
+        "n": 15,
+        "k": 1,
+        "model": 0.1006,
+        "loto": 0.0374,
+        "blended": 0.0487
+      },
+      {
+        "town": "Freetown",
+        "n": 26,
+        "k": 0,
+        "model": 0.2088,
+        "loto": 0.0858,
+        "blended": 0.0403
+      },
+      {
+        "town": "Berkley",
+        "n": 29,
+        "k": 0,
+        "model": 0.1659,
+        "loto": 0.0659,
+        "blended": 0.0293
+      },
+      {
+        "town": "Lakeville",
+        "n": 40,
+        "k": 2,
+        "model": 0.1935,
+        "loto": 0.0779,
+        "blended": 0.0601
+      },
+      {
+        "town": "Rehoboth",
+        "n": 40,
+        "k": 2,
+        "model": 0.1614,
+        "loto": 0.063,
+        "blended": 0.0547
+      },
+      {
+        "town": "Wellfleet",
+        "n": 45,
+        "k": 4,
+        "model": 0.1255,
+        "loto": 0.0461,
+        "blended": 0.0743
+      },
+      {
+        "town": "Plympton",
+        "n": 13,
+        "k": 0,
+        "model": 0.1258,
+        "loto": 0.0479,
+        "blended": 0.0309
+      },
+      {
+        "town": "Millville",
+        "n": 6,
+        "k": 1,
+        "model": 0.2248,
+        "loto": 0.0904,
+        "blended": 0.1059
+      },
+      {
+        "town": "Truro",
+        "n": 33,
+        "k": 0,
+        "model": 0.1253,
+        "loto": 0.0483,
+        "blended": 0.0201
+      },
+      {
+        "town": "Holland",
+        "n": 17,
+        "k": 1,
+        "model": 0.0765,
+        "loto": 0.0275,
+        "blended": 0.0405
+      },
+      {
+        "town": "Wales",
+        "n": 7,
+        "k": 0,
+        "model": 0.0627,
+        "loto": 0.0225,
+        "blended": 0.0174
+      },
+      {
+        "town": "Hampden",
+        "n": 34,
+        "k": 0,
+        "model": 0.0784,
+        "loto": 0.0288,
+        "blended": 0.0118
+      },
+      {
+        "town": "Mendon",
+        "n": 10,
+        "k": 0,
+        "model": 0.2565,
+        "loto": 0.1078,
+        "blended": 0.0754
+      },
+      {
+        "town": "Granville",
+        "n": 9,
+        "k": 0,
+        "model": 0.0427,
+        "loto": 0.0151,
+        "blended": 0.011
+      },
+      {
+        "town": "Tolland",
+        "n": 21,
+        "k": 0,
+        "model": 0.037,
+        "loto": 0.0131,
+        "blended": 0.007
+      },
+      {
+        "town": "New Marlborough",
+        "n": 25,
+        "k": 0,
+        "model": 0.0425,
+        "loto": 0.0151,
+        "blended": 0.0074
+      },
+      {
+        "town": "Brimfield",
+        "n": 9,
+        "k": 0,
+        "model": 0.0628,
+        "loto": 0.0226,
+        "blended": 0.0164
+      },
+      {
+        "town": "Charlton",
+        "n": 26,
+        "k": 2,
+        "model": 0.139,
+        "loto": 0.0526,
+        "blended": 0.0654
+      },
+      {
+        "town": "Sutton",
+        "n": 7,
+        "k": 1,
+        "model": 0.2001,
+        "loto": 0.0793,
+        "blended": 0.0939
+      },
+      {
+        "town": "Sandisfield",
+        "n": 8,
+        "k": 0,
+        "model": 0.0416,
+        "loto": 0.0148,
+        "blended": 0.0111
+      },
+      {
+        "town": "Montgomery",
+        "n": 15,
+        "k": 0,
+        "model": 0.0497,
+        "loto": 0.0177,
+        "blended": 0.0109
+      },
+      {
+        "town": "Monterey",
+        "n": 5,
+        "k": 0,
+        "model": 0.0471,
+        "loto": 0.0167,
+        "blended": 0.0139
+      },
+      {
+        "town": "Otis",
+        "n": 22,
+        "k": 0,
+        "model": 0.0706,
+        "loto": 0.0257,
+        "blended": 0.0134
+      },
+      {
+        "town": "Sherborn",
+        "n": 34,
+        "k": 5,
+        "model": 0.2038,
+        "loto": 0.0788,
+        "blended": 0.1196
+      },
+      {
+        "town": "Dover",
+        "n": 16,
+        "k": 0,
+        "model": 0.2466,
+        "loto": 0.1035,
+        "blended": 0.0612
+      },
+      {
+        "town": "Tyringham",
+        "n": 11,
+        "k": 0,
+        "model": 0.0376,
+        "loto": 0.0133,
+        "blended": 0.0091
+      },
+      {
+        "town": "Granby",
+        "n": 29,
+        "k": 2,
+        "model": 0.1218,
+        "loto": 0.0455,
+        "blended": 0.0585
+      },
+      {
+        "town": "Alford",
+        "n": 5,
+        "k": 0,
+        "model": 0.0585,
+        "loto": 0.0211,
+        "blended": 0.0175
+      },
+      {
+        "town": "Becket",
+        "n": 26,
+        "k": 0,
+        "model": 0.0736,
+        "loto": 0.0271,
+        "blended": 0.013
+      },
+      {
+        "town": "Belchertown",
+        "n": 28,
+        "k": 0,
+        "model": 0.1159,
+        "loto": 0.0448,
+        "blended": 0.0205
+      },
+      {
+        "town": "New Braintree",
+        "n": 2,
+        "k": 0,
+        "model": 0.0443,
+        "loto": 0.0157,
+        "blended": 0.0145
+      },
+      {
+        "town": "Westhampton",
+        "n": 33,
+        "k": 1,
+        "model": 0.046,
+        "loto": 0.0162,
+        "blended": 0.0244
+      },
+      {
+        "town": "Middlefield",
+        "n": 3,
+        "k": 0,
+        "model": 0.0317,
+        "loto": 0.0111,
+        "blended": 0.0099
+      },
+      {
+        "town": "Oakham",
+        "n": 5,
+        "k": 0,
+        "model": 0.0546,
+        "loto": 0.0195,
+        "blended": 0.0161
+      },
+      {
+        "town": "Berlin",
+        "n": 5,
+        "k": 1,
+        "model": 0.1623,
+        "loto": 0.0622,
+        "blended": 0.0862
+      },
+      {
+        "town": "Pelham",
+        "n": 38,
+        "k": 2,
+        "model": 0.0732,
+        "loto": 0.0261,
+        "blended": 0.0424
+      },
+      {
+        "town": "Washington",
+        "n": 10,
+        "k": 0,
+        "model": 0.0389,
+        "loto": 0.0137,
+        "blended": 0.0097
+      },
+      {
+        "town": "Richmond",
+        "n": 34,
+        "k": 0,
+        "model": 0.0795,
+        "loto": 0.0292,
+        "blended": 0.012
+      },
+      {
+        "town": "Chesterfield",
+        "n": 8,
+        "k": 0,
+        "model": 0.0426,
+        "loto": 0.0151,
+        "blended": 0.0113
+      },
+      {
+        "town": "Stow",
+        "n": 42,
+        "k": 6,
+        "model": 0.2385,
+        "loto": 0.0954,
+        "blended": 0.1263
+      },
+      {
+        "town": "Bolton",
+        "n": 25,
+        "k": 0,
+        "model": 0.1749,
+        "loto": 0.0695,
+        "blended": 0.0335
+      },
+      {
+        "town": "Goshen",
+        "n": 14,
+        "k": 0,
+        "model": 0.0462,
+        "loto": 0.0164,
+        "blended": 0.0104
+      },
+      {
+        "town": "Peru",
+        "n": 9,
+        "k": 0,
+        "model": 0.0433,
+        "loto": 0.0153,
+        "blended": 0.0112
+      },
+      {
+        "town": "Shutesbury",
+        "n": 40,
+        "k": 5,
+        "model": 0.0817,
+        "loto": 0.0283,
+        "blended": 0.0891
+      },
+      {
+        "town": "Princeton",
+        "n": 32,
+        "k": 0,
+        "model": 0.1588,
+        "loto": 0.0634,
+        "blended": 0.0267
+      },
+      {
+        "town": "Boxborough",
+        "n": 43,
+        "k": 5,
+        "model": 0.29,
+        "loto": 0.1242,
+        "blended": 0.119
+      },
+      {
+        "town": "Leverett",
+        "n": 40,
+        "k": 3,
+        "model": 0.1097,
+        "loto": 0.04,
+        "blended": 0.0621
+      },
+      {
+        "town": "Hubbardston",
+        "n": 4,
+        "k": 0,
+        "model": 0.1024,
+        "loto": 0.038,
+        "blended": 0.0326
+      },
+      {
+        "town": "New Salem",
+        "n": 39,
+        "k": 0,
+        "model": 0.1012,
+        "loto": 0.0389,
+        "blended": 0.0146
+      },
+      {
+        "town": "Petersham",
+        "n": 15,
+        "k": 0,
+        "model": 0.1132,
+        "loto": 0.0427,
+        "blended": 0.0262
+      },
+      {
+        "town": "Harvard",
+        "n": 31,
+        "k": 1,
+        "model": 0.191,
+        "loto": 0.077,
+        "blended": 0.0513
+      },
+      {
+        "town": "Carlisle",
+        "n": 40,
+        "k": 10,
+        "model": 0.2318,
+        "loto": 0.0872,
+        "blended": 0.1913
+      },
+      {
+        "town": "Plainfield",
+        "n": 13,
+        "k": 1,
+        "model": 0.0401,
+        "loto": 0.014,
+        "blended": 0.036
+      },
+      {
+        "town": "Windsor",
+        "n": 10,
+        "k": 0,
+        "model": 0.0416,
+        "loto": 0.0148,
+        "blended": 0.0104
+      },
+      {
+        "town": "Ashfield",
+        "n": 24,
+        "k": 0,
+        "model": 0.0416,
+        "loto": 0.0148,
+        "blended": 0.0074
+      },
+      {
+        "town": "Conway",
+        "n": 31,
+        "k": 0,
+        "model": 0.0475,
+        "loto": 0.017,
+        "blended": 0.0074
+      },
+      {
+        "town": "Wendell",
+        "n": 40,
+        "k": 0,
+        "model": 0.1065,
+        "loto": 0.0413,
+        "blended": 0.0153
+      },
+      {
+        "town": "Phillipston",
+        "n": 3,
+        "k": 1,
+        "model": 0.1588,
+        "loto": 0.0616,
+        "blended": 0.0921
+      },
+      {
+        "town": "Buckland",
+        "n": 7,
+        "k": 0,
+        "model": 0.0536,
+        "loto": 0.0192,
+        "blended": 0.0149
+      },
+      {
+        "town": "Hawley",
+        "n": 1,
+        "k": 0,
+        "model": 0.0384,
+        "loto": 0.0136,
+        "blended": 0.013
+      },
+      {
+        "town": "Erving",
+        "n": 8,
+        "k": 0,
+        "model": 0.0788,
+        "loto": 0.0288,
+        "blended": 0.0216
+      },
+      {
+        "town": "New Ashford",
+        "n": 3,
+        "k": 0,
+        "model": 0.0437,
+        "loto": 0.0155,
+        "blended": 0.0138
+      },
+      {
+        "town": "Shelburne",
+        "n": 20,
+        "k": 0,
+        "model": 0.0463,
+        "loto": 0.0165,
+        "blended": 0.009
+      },
+      {
+        "town": "Savoy",
+        "n": 2,
+        "k": 0,
+        "model": 0.0739,
+        "loto": 0.0269,
+        "blended": 0.0248
+      },
+      {
+        "town": "Charlemont",
+        "n": 5,
+        "k": 0,
+        "model": 0.0453,
+        "loto": 0.0161,
+        "blended": 0.0133
+      },
+      {
+        "town": "Tyngsborough",
+        "n": 38,
+        "k": 6,
+        "model": 0.2753,
+        "loto": 0.1149,
+        "blended": 0.142
+      },
+      {
+        "town": "Dunstable",
+        "n": 8,
+        "k": 0,
+        "model": 0.202,
+        "loto": 0.0813,
+        "blended": 0.0607
+      },
+      {
+        "town": "Ashby",
+        "n": 18,
+        "k": 0,
+        "model": 0.068,
+        "loto": 0.0246,
+        "blended": 0.014
+      },
+      {
+        "town": "Warwick",
+        "n": 22,
+        "k": 0,
+        "model": 0.0328,
+        "loto": 0.0115,
+        "blended": 0.006
+      },
+      {
+        "town": "Boxford",
+        "n": 34,
+        "k": 0,
+        "model": 0.1896,
+        "loto": 0.0777,
+        "blended": 0.0314
+      },
+      {
+        "town": "Leyden",
+        "n": 12,
+        "k": 0,
+        "model": 0.0428,
+        "loto": 0.0152,
+        "blended": 0.0101
+      },
+      {
+        "town": "Colrain",
+        "n": 18,
+        "k": 0,
+        "model": 0.0404,
+        "loto": 0.0143,
+        "blended": 0.0082
+      },
+      {
+        "town": "Heath",
+        "n": 4,
+        "k": 0,
+        "model": 0.0352,
+        "loto": 0.0124,
+        "blended": 0.0106
+      },
+      {
+        "town": "Rowe",
+        "n": 2,
+        "k": 0,
+        "model": 0.0335,
+        "loto": 0.0118,
+        "blended": 0.0109
+      },
+      {
+        "town": "Florida",
+        "n": 1,
+        "k": 0,
+        "model": 0.0416,
+        "loto": 0.0147,
+        "blended": 0.0141
+      },
+      {
+        "town": "Clarksburg",
+        "n": 2,
+        "k": 0,
+        "model": 0.0782,
+        "loto": 0.0285,
+        "blended": 0.0263
+      },
+      {
+        "town": "Newbury",
+        "n": 25,
+        "k": 4,
+        "model": 0.1823,
+        "loto": 0.0699,
+        "blended": 0.1166
+      },
+      {
+        "town": "Royalston",
+        "n": 11,
+        "k": 0,
+        "model": 0.0397,
+        "loto": 0.014,
+        "blended": 0.0096
+      },
+      {
+        "town": "Carver",
+        "n": 31,
+        "k": 4,
+        "model": 0.2072,
+        "loto": 0.0818,
+        "blended": 0.1089
+      }
+    ]
   },
   "ucmr5_check": {
     "systems": 257,
     "correlation": 0.67
   },
-  "run_date": "2026-09-30"
+  "run_date": "2026-10-01"
 }

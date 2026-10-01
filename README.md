@@ -1,19 +1,22 @@
-# PFAS in Massachusetts drinking water
+# PFAS in Massachusetts private wells
 
-Who in Massachusetts drinks water with PFAS, built only from public data:
+About 1.0 million Massachusetts residents live outside community water service and drink from
+private wells that no public program tests. This project estimates, for every census block on
+private wells, the probability that groundwater there has PFAS6 at or above the 20 ng/L state
+standard, using public data only:
 
-- **Public water (6.0 million residents), measured.** Every community water system's treated-water
-  PFAS6 results (MassDEP), with towns that buy their water (the MWRA communities, for example)
-  given their supplier's results through EPA's purchase links, cross-checked against EPA's UCMR 5.
-- **Private wells (1.0 million residents), estimated.** A groundwater model trained on raw-water
-  PFAS6 at about 1,030 public wells, applied where homes are outside public water service.
-- **Who is affected,** by the state's 2020 Environmental Justice block groups.
+- a **groundwater model** trained on raw-water PFAS6 at about 1,030 public wells;
+- an **independent check** against MassDEP's Private Wells PFAS Sampling Program (1,649 wells,
+  83 towns), which is then used to **calibrate** the model and **blend** in each tested town's
+  own results;
+- **measured public water** for the other 6.0 million residents, as context and as the source
+  of who is on private wells.
 
-**Site:** https://adichiara.github.io/PFAS-release-risk/ is written for the public: what PFAS
-are, what the state data shows, how to check your area and what to do (following MassDEP and
-EPA guidance). [Detailed findings](https://adichiara.github.io/PFAS-release-risk/analysis.html)
-has the method, validation and every table; there are also the drinking-water map, the
-reported-release analysis and downloads.
+**Site:** https://adichiara.github.io/PFAS-release-risk/ is the private-well study (data,
+model, validation, calibration, results and limitations). There are also the
+[map](https://adichiara.github.io/PFAS-release-risk/water_map.html) (private wells by default;
+public water can be added), [public water](https://adichiara.github.io/PFAS-release-risk/analysis.html)
+and the [reported-release analysis](https://adichiara.github.io/PFAS-release-risk/releases.html).
 
 It grew out of a rebuild of the release risk model from the 2021 WPI Data Science / MassDEP
 graduate capstone ([GQP-TeamMassDEP/Mass_PFAS-Analysis](https://github.com/GQP-TeamMassDEP/Mass_PFAS-Analysis)),
@@ -21,7 +24,30 @@ which ranks where MassDEP is likely to receive a PFAS release report. That model
 supporting context (see [Reported-release risk](#reported-release-risk)): reports follow where
 testing happens as much as where PFAS is, so it is not a measure of exposure.
 
-## Drinking-water findings
+## Private-well study
+
+**Groundwater model.** Logistic regression on the highest raw PFAS6 result at each public well.
+Features: the inverse-distance-weighted PFAS6 at other systems' public wells within 5 km and their
+count, population within 1 km, sewer service and aquifer. Holding out whole towns, it ranks wells
+by PFAS6 >= 20 ng/L with ROC AUC 0.67 (0.78 for any detection), against 0.62 (0.76) for
+population alone. Distance to mapped industries, airports, military sites, landfills and other
+likely sources added nothing, whether counted around the well or inside its Zone II recharge area.
+
+**Checked against private-well tests.** MassDEP's 2020-2022 program published each tested town's
+count of wells sampled and wells at or above 20 ng/L (82 of 1,649, 5.0%). The model never saw
+them. It ranks those towns well (Spearman 0.55; AUC 0.82 for towns with any well at 20+), but
+predicted 12.7%: public wells are more contaminated than private wells.
+
+**Calibration and blending.** One log-odds shift (-1.07), fit by maximum likelihood to the towns'
+counts; leave-one-town-out log loss 306, against 362 uncalibrated and 326 for one statewide rate.
+In tested towns the calibrated estimate is blended with the town's own results, the model counting
+as a beta-binomial prior worth 24 wells.
+
+**Results.** About 70,000 of 1.0 million private-well residents (7%) are expected to live where
+groundwater is at or above 20 ng/L (175,000 before calibration). Three quarters of the program's
+invitations targeted wells near suspected sources, so this may still run high.
+
+## Public water
 
 | Public-water residents by PFAS6 in their tap water | Now | Highest year |
 |---|---|---|
@@ -30,27 +56,11 @@ testing happens as much as where PFAS is, so it is not a measure of exposure.
 | 10 to <20 ng/L | 497,000 | 1.1 million |
 | 20 ng/L or more (state standard) | 45,000 | 434,000 |
 
+Every community system's treated-water PFAS6 results (MassDEP), with towns that buy their water
+(the MWRA communities, for example) given their supplier's results through EPA's purchase links.
 "Now" is each system's average over its last 12 months of results; "highest year" its worst
 calendar-year average, often before treatment was installed. State and EPA UCMR 5 levels
 correlate at 0.67 across 257 systems (UCMR 5 reports compounds only above 3 to 4 ng/L).
-
-**Private wells.** The groundwater model ranks public wells by PFAS6 >= 20 ng/L with ROC AUC 0.67
-(0.78 for any detection), against 0.62 (0.76) for development alone, holding out whole towns.
-The signal is measured PFAS at nearby public wells (groundwater PFAS clusters within a few
-kilometres) plus development. Distance to mapped industries, airports, military sites, landfills
-and other likely sources added nothing, whether counted around the well or inside its Zone II
-recharge area.
-
-**Checked against private-well tests.** MassDEP's 2020-2022 Private Wells PFAS Sampling Program
-tested 1,649 private wells in 83 towns and published each town's results (82 wells, 5.0%, at or
-above 20 ng/L). The model never saw them. It ranks those towns well (Spearman 0.55; AUC 0.82 for
-towns with any well at 20+), but it predicted 12.7% for them: public wells are more contaminated
-than private wells. So the private-well estimates are calibrated to the program (one log-odds
-shift, -1.07, fit to the towns' counts; leave-one-town-out log loss 306 vs 362 uncalibrated and
-326 for one statewide rate) and, in tested towns, blended with the town's own results
-(beta-binomial weight equal to 24 wells). Result: about 70,000 of 1.0 million private-well
-residents (7%) live where groundwater is likely at or above 20 ng/L. Three quarters of the
-program's invitations targeted wells near suspected sources, so this may still run high.
 
 **Environmental Justice areas.** Residents of EJ block groups on public water are less likely
 than others to have PFAS in their tap water (0.2% at 20+ ng/L now vs 1.4%; 42% vs 54% detected),
@@ -69,7 +79,7 @@ longer tags with a PFAS chemical. 194 of the 214 are located (see Method). About
 notified since 2019 have no chemical recorded at all, so some PFAS releases are
 necessarily missing from the labels.
 
-**Site:** https://adichiara.github.io/PFAS-release-risk/ (results, method and data sources,
+**Site:** https://adichiara.github.io/PFAS-release-risk/releases.html (results, method and data sources,
 with links to the interactive maps). Latest evaluations:
 [`outputs/hex1/evaluation.md`](outputs/hex1/evaluation.md) (primary),
 [`outputs/hex2/`](outputs/hex2/evaluation.md), [`outputs/hex4/`](outputs/hex4/evaluation.md)
@@ -263,7 +273,7 @@ src/pfas_risk/
   private_wells.py        check and calibration against MassDEP private-well testing
   exposure.py             drinking-water exposure by census block
   water_map.py            drinking-water map
-  water_site.py           public front page (index.html) and detailed findings (analysis.html)
+  water_site.py           private-well study (index.html) and public water (analysis.html)
   api_sources.py          fetchers for sources served by web APIs
   model.py                models, town-grouped CV, permutation null
   mapping.py              interactive Leaflet map
@@ -272,7 +282,7 @@ src/pfas_risk/
 tests/
 outputs/<unit>/           evaluation.md / .json per unit, population.json for the primary unit
                           (other outputs are regenerated, not committed)
-docs/                     published site: index.html (public), analysis.html, water_map.html,
+docs/                     published site: index.html (private-well study), analysis.html, water_map.html,
                           releases.html, map.html (release-risk hexagons), map_bg.html, data/
 ```
 

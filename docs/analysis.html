@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PFAS Drinking Water</title>
-<meta name="description" content="Who in Massachusetts drinks water with PFAS: measured public water results and a groundwater model for private wells, built on public data.">
+<title>PFAS in Public Water</title>
+<meta name="description" content="Measured PFAS6 in treated water for every Massachusetts community water system, including purchased water, cross-checked against EPA UCMR 5.">
 <style>
   :root {
     color-scheme: light;
@@ -110,29 +110,27 @@
 </head>
 <body>
 <main>
-  <nav class="site" aria-label="Site"><a href="index.html">Home</a><a href="analysis.html" aria-current="page">Detailed findings</a><a href="water_map.html">Map</a><a href="releases.html">Reported releases</a><a href="https://github.com/adichiara/PFAS-release-risk">Code and data</a></nav>
-  <h1>PFAS in Massachusetts drinking water: detailed findings</h1>
-  <p class="lede">Who drinks water with PFAS: measured results for every community water system,
-     and a groundwater model for the homes on private wells. Built only from public data.</p>
-  <a class="cta" href="water_map.html">Open the drinking-water map</a>
-  <a class="cta secondary" href="releases.html">Reported-release risk</a>
-  <a class="cta secondary" href="https://github.com/adichiara/PFAS-release-risk">Code and data on GitHub</a>
+  <nav class="site" aria-label="Site"><a href="index.html">Private-well study</a><a href="water_map.html">Map</a><a href="analysis.html" aria-current="page">Public water</a><a href="releases.html">Reported releases</a><a href="https://github.com/adichiara/PFAS-release-risk">Code and data</a></nav>
+  <h1>PFAS in Massachusetts public water</h1>
+  <p class="lede">Measured PFAS6 in treated water for every community water system, assigned to the census blocks each
+     system serves. This is the measured side of the analysis; the private-well study models the residents no public
+     program tests.</p>
+  <a class="cta" href="water_map.html#public">Open the public-water map</a>
+  <a class="cta secondary" href="index.html">Private-well study</a>
 
-  <div class="kpis"><div class="kpi"><div class="v">45,000</div><div class="l">on public water now at or above the 20 ng/L state standard</div></div><div class="kpi"><div class="v">434,000</div><div class="l">on systems that reached it in their worst year</div></div><div class="kpi"><div class="v">2.8 million</div><div class="l">with PFAS6 detected in their tap water now</div></div><div class="kpi"><div class="v">70,000</div><div class="l">estimated among 1.0 million private-well residents (rough)</div></div></div>
+  <div class="kpis"><div class="kpi"><div class="v">45,000</div><div class="l">on public water now at or above the 20 ng/L state standard</div></div><div class="kpi"><div class="v">434,000</div><div class="l">on systems that reached it in their worst year</div></div><div class="kpi"><div class="v">2.8 million</div><div class="l">of 6.0 million with PFAS6 detected in their tap water now</div></div><div class="kpi"><div class="v">2.0 million</div><div class="l">in 38 systems on MWRA water, PFAS6 not detected</div></div></div>
 
-  <h2>Public water: measured</h2>
-  <p>Every community water system had to test its treated water for PFAS6 (six PFAS compounds)
-     under the 2020 state standard of 20 ng/L, so these are measurements, not estimates. Towns
-     that buy their water, such as the MWRA communities around Boston, take their supplier's
-     results. "Now" is each system's average over its last 12 months of results (for small systems that
-     tested less often after low early results, that can be 2021 or 2022); "highest year" is its worst
-     calendar-year average, often before treatment was installed.</p>
+  <h2>Residents by PFAS6 in their tap water</h2>
+  <p>Since 2020 every community system has had to test its treated water for PFAS6 (the sum of PFOA, PFOS, PFHxS, PFNA,
+     PFHpA and PFDA) against the 20 ng/L state standard. <b>Now</b> is a system's mean over its last 12 months of results;
+     small systems that moved to reduced monitoring after low early results may have their latest results from 2021 or 2022.
+     <b>Highest year</b> is its highest calendar-year mean, usually before treatment was installed. Non-detects count as zero.</p>
   <div class="figure"><svg class="chart stack" viewBox="0 0 720 114" role="img" aria-label="Public-water residents by PFAS6 level in their tap water, now and in each system's highest year"><text class="tick" x="100" y="31.0" text-anchor="end">Now</text><rect class="seg-0" x="110.0" y="10" width="313.7" height="34"><title>Not detected (&lt;2): 3,173,203 people (53%)</title></rect><text class="value" x="266.8" y="31.0" text-anchor="middle" style="fill:#0b0b0b">53%</text><rect class="seg-1" x="423.7" y="10" width="226.8" height="34"><title>2 to &lt;10: 2,294,190 people (38%)</title></rect><text class="value" x="537.0" y="31.0" text-anchor="middle" style="fill:#0b0b0b">38%</text><rect class="seg-2" x="650.4" y="10" width="49.1" height="34"><title>10 to &lt;20: 496,714 people (8%)</title></rect><text class="value" x="675.0" y="31.0" text-anchor="middle" style="fill:#ffffff">8%</text><rect class="seg-3" x="699.5" y="10" width="4.5" height="34"><title>20 or more (state standard): 45,191 people (1%)</title></rect><text class="tick" x="100" y="83.0" text-anchor="end">Highest year</text><rect class="seg-0" x="110.0" y="62" width="262.9" height="34"><title>Not detected (&lt;2): 2,659,733 people (44%)</title></rect><text class="value" x="241.5" y="83.0" text-anchor="middle" style="fill:#0b0b0b">44%</text><rect class="seg-1" x="372.9" y="62" width="174.5" height="34"><title>2 to &lt;10: 1,765,785 people (29%)</title></rect><text class="value" x="460.2" y="83.0" text-anchor="middle" style="fill:#0b0b0b">29%</text><rect class="seg-2" x="547.4" y="62" width="113.7" height="34"><title>10 to &lt;20: 1,149,966 people (19%)</title></rect><text class="value" x="604.3" y="83.0" text-anchor="middle" style="fill:#ffffff">19%</text><rect class="seg-3" x="661.1" y="62" width="42.9" height="34"><title>20 or more (state standard): 433,814 people (7%)</title></rect></svg>
     <div class="legend"><span><i class="sw seg-0"></i>Not detected</span><span><i class="sw seg-1"></i>2 to &lt;10 ng/L</span><span><i class="sw seg-2"></i>10 to &lt;20 ng/L</span><span><i class="sw seg-3"></i>20+ ng/L (state standard)</span></div>
   </div>
   <p class="note">Cross-check: for the 257 systems also tested under EPA's UCMR 5 (2023 to 2025), the state and federal PFAS6 levels correlate at 0.67. UCMR 5 reports each compound only above 3 to 4 ng/L, so its sums run lower.</p>
 
-  <h3>Systems at 10 ng/L or more now</h3>
+  <h3>Systems at 10 ng/L or more now, by population served</h3>
   <div class="scroll"><table>
     <thead><tr><th>Water system</th><th>People served</th><th>PFAS6 now (ng/L)</th>
       <th>Highest year (ng/L)</th><th>EPA UCMR 5, 2023–25 (ng/L)</th></tr></thead>
@@ -162,89 +160,37 @@
 <tr><td class="wrap">Pepperell Dpw Water Division</td><td>9,217</td><td>10.0</td><td>15.4</td><td>9.6</td></tr>
 <tr><td class="wrap">Norfolk Water Division</td><td>7,602</td><td>10.1</td><td>12.4</td><td>2.1</td></tr></tbody>
   </table></div>
-
-  <h2>Private wells: estimated</h2>
-  <p>About 1.0 million people live outside every community water service area and are presumed to
-     drink from private wells, which no public program tests. Their risk is estimated from public wells,
-     which were tested systematically: a model trained on the highest raw (untreated) PFAS6 result at
-     1,030 public groundwater wells, using measured PFAS at other public wells within 5 km and how
-     developed the area is (population, sewer service, aquifer).</p>
-  <div class="scroll"><table>
-    <thead><tr><th>How well it predicts, holding out whole towns</th><th>PFAS6 20 ng/L or more</th>
-      <th>PFAS detected</th></tr></thead>
-    <tbody><tr><td class="wrap">Model</td><td>0.67</td><td>0.78</td></tr>
-<tr><td class="wrap">Development alone (population within 1 km)</td><td>0.62</td><td>0.76</td></tr>
-<tr><td class="wrap">Share of wells in the category</td><td>18%</td><td>66%</td></tr></tbody>
-  </table></div>
-  <p>ROC AUC is 0.5 for a coin flip and 1.0 for perfect ranking. The model beats development alone, but
-     it cannot say which well is contaminated: groundwater PFAS here is widespread and depends on things
-     public data does not capture (past spills, well depth, local geology). Distance to mapped industries,
-     airports, landfills and other likely sources added nothing once nearby well results and development
-     were included.</p>
-
-  <h3>Checked against private-well tests</h3>
-  <p>From 2020 to 2022 MassDEP tested 1,649 private wells in 83 towns where most residents use
-     private wells, and published each town's results: 82 wells (5%) had PFAS6 at or above
-     20 ng/L. The model never saw these wells, so they are an independent check.</p>
-  <div class="scroll"><table>
-    <thead><tr><th>Check across the 83 tested towns</th><th>Result</th></tr></thead>
-    <tbody><tr><td class="wrap">Rank agreement between the model&#x27;s town estimates and measured town rates (Spearman)</td><td>0.55</td></tr>
-<tr><td class="wrap">Picking out towns with at least one well at 20 ng/L or more (ROC AUC)</td><td>0.82</td></tr>
-<tr><td class="wrap">Predicting each town&#x27;s results with the calibration fit on the other towns (log loss; lower is better)</td><td>306, against 362 uncalibrated and 326 for one statewide rate</td></tr></tbody>
-  </table></div>
-  <p>The model ranks towns well, but public wells are more contaminated than private wells: it predicted
-     13% of tested private wells would reach 20 ng/L, against 5% measured. So the private-well
-     estimates are <b>calibrated</b> to the program (one shift in the model's log-odds, fit to the towns'
-     counts), and in tested towns they are <b>blended</b> with the town's own results, weighted as if the model
-     were 24 wells. The program's invitations were mostly (77%) targeted near suspected
-     sources, so its rate, and these calibrated estimates, may still run high for private wells in general.
-     Read the results as area-level odds; only testing a well answers the question for a home.</p>
-  <div class="scroll"><table>
-    <thead><tr><th>Estimated chance that water at the location has PFAS6 of 20 ng/L or more</th>
-      <th>Private-well residents</th></tr></thead>
-    <tbody><tr><td>20% or more</td><td>17,429</td></tr>
-<tr><td>10 to 20%</td><td>215,147</td></tr>
-<tr><td>5 to 10%</td><td>338,830</td></tr>
-<tr><td>Under 5%</td><td>449,213</td></tr></tbody>
-  </table></div>
-
-  <h2>Who is affected</h2>
-  <p>By the state's 2020 Environmental Justice block groups (minority, income and English-isolation
-     criteria). Shares for public water are of that group's residents on public water; private-well
-     figures are model estimates.</p>
-  <div class="scroll"><table>
-    <thead><tr><th>Group</th><th>Residents</th><th>Public water: 20+ now</th><th>10 to &lt;20 now</th>
-      <th>Detected now</th><th>20+ in highest year</th><th>On private wells</th>
-      <th>Private wells: est. share 20+</th></tr></thead>
-    <tbody><tr class="selected"><td class="wrap">All residents</td><td>7,029,917</td><td>0.8%</td><td>8.3%</td><td>47%</td><td>7.2%</td><td>1,020,619</td><td>6.9%</td></tr>
-<tr><td class="wrap">In EJ block groups</td><td>3,482,860</td><td>0.2%</td><td>5.6%</td><td>42%</td><td>4.5%</td><td>142,342</td><td>9.5%</td></tr>
-<tr><td class="wrap">EJ: minority criterion</td><td>3,232,896</td><td>0.2%</td><td>5.9%</td><td>42%</td><td>4.4%</td><td>103,587</td><td>11%</td></tr>
-<tr><td class="wrap">EJ: income criterion</td><td>1,301,284</td><td>0.3%</td><td>1.4%</td><td>43%</td><td>2.0%</td><td>56,241</td><td>7.7%</td></tr>
-<tr><td class="wrap">EJ: English isolation</td><td>408,157</td><td>0.0%</td><td>0.4%</td><td>42%</td><td>0.5%</td><td>3,363</td><td>14%</td></tr>
-<tr><td class="wrap">Not in EJ block groups</td><td>3,547,057</td><td>1.4%</td><td>12%</td><td>54%</td><td>11%</td><td>878,277</td><td>6.5%</td></tr></tbody>
-  </table></div>
-  <p class="note">Many EJ neighborhoods are in cities served by MWRA reservoir water, where PFAS6 is not
-     detected; their residents are less likely than others to have PFAS in their tap water.</p>
+  <p class="note">Full table for all systems in the downloads below.</p>
 
   <h2>Method</h2>
   <ul>
-    <li><b>Public water:</b> finished-water PFAS6 results per system (MassDEP drinking-water data on the
-        EEA Data Portal; non-detects count as zero). Purchased water follows EPA SDWIS buyer-seller links.
-        Census blocks take the community system whose service area holds them.</li>
-    <li><b>Private wells:</b> census blocks outside every community service area. Estimates come from a
-        logistic model trained on public groundwater wells and applied at each block.</li>
-    <li><b>Checks:</b> state PFAS6 levels against EPA's UCMR 5 results; the groundwater model with
-        town-grouped cross-validation.</li>
-    <li><b>Limits:</b> the drinking-water API returns at most 100 results per system and water type, so
-        about 40 large systems are represented by a sample of their results; small non-community
-        systems (schools, workplaces) and bottled water are not modeled.</li>
+    <li><b>Results:</b> finished-water PFAS6 per system from MassDEP's drinking-water data (EEA Data Portal), queried per
+        system and water type. The API returns at most 100 results per query, so about 40 heavily sampled systems are
+        represented by a sample of their results.</li>
+    <li><b>Purchased water:</b> systems that buy all their water take their seller's results, following EPA SDWIS
+        buyer-seller links up to three hops. The 38 systems on MWRA reservoir water (2.0 million residents)
+        report PFAS6 not detected.</li>
+    <li><b>Residents:</b> 2020 census blocks take the community system whose MassDEP service area contains them; populated
+        blocks outside every service area are the private-well population used by the study.</li>
+    <li><b>Not covered:</b> non-community systems (schools, workplaces), bottled water, and exposure at levels below
+        reporting limits.</li>
   </ul>
 
-  <h2>Reported releases</h2>
-  <p>The companion analysis ranks where MassDEP is most likely to receive a PFAS release report. It
-     reflects where testing and investigations happen as much as where PFAS is (metro Boston, on
-     reservoir water with few wells to test, has almost no reported PFAS releases), so it is kept as
-     supporting context: <a href="releases.html">reported-release risk</a>.</p>
+  <h2>By Environmental Justice block group</h2>
+  <p>Shares of each group's residents on public water, by the state's 2020 EJ criteria (minority, income, English
+     isolation).</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Group</th><th>On public water</th><th>20+ now</th><th>10 to &lt;20 now</th>
+      <th>Detected now</th><th>20+ in highest year</th></tr></thead>
+    <tbody><tr class="selected"><td class="wrap">All residents</td><td>6,009,298</td><td>0.8%</td><td>8.3%</td><td>47%</td><td>7.2%</td></tr>
+<tr><td class="wrap">In EJ block groups</td><td>3,340,518</td><td>0.2%</td><td>5.6%</td><td>42%</td><td>4.5%</td></tr>
+<tr><td class="wrap">EJ: minority criterion</td><td>3,129,309</td><td>0.2%</td><td>5.9%</td><td>42%</td><td>4.4%</td></tr>
+<tr><td class="wrap">EJ: income criterion</td><td>1,245,043</td><td>0.3%</td><td>1.4%</td><td>43%</td><td>2.0%</td></tr>
+<tr><td class="wrap">EJ: English isolation</td><td>404,794</td><td>0.0%</td><td>0.4%</td><td>42%</td><td>0.5%</td></tr>
+<tr><td class="wrap">Not in EJ block groups</td><td>2,668,780</td><td>1.4%</td><td>12%</td><td>54%</td><td>11%</td></tr></tbody>
+  </table></div>
+  <p class="note">EJ block groups are concentrated in cities on MWRA water, where PFAS6 is not detected, so EJ residents
+     on public water are less likely than others to have PFAS in their tap water.</p>
 
   <h2>Data sources</h2>
   <div class="scroll"><table>
@@ -279,7 +225,8 @@
   <h2>Downloads</h2>
   <ul class="downloads"><li><a href="data/block_group_drinking_water.csv">Drinking water by 2020 block group: public-water PFAS6 now and at peak, private-well share and estimate, EJ fields</a></li><li><a href="data/water_systems_pfas6.csv">PFAS6 levels for every community water system, with the UCMR 5 cross-check</a></li></ul>
 
-  <footer>Run 2026-09-30. Code, data catalog and method: <a href="https://github.com/adichiara/PFAS-release-risk">GitHub</a>.</footer>
+  <footer>An independent analysis built from public data; not an official product of MassDEP or any agency.
+    Run 2026-10-01. Code, data catalog and method: <a href="https://github.com/adichiara/PFAS-release-risk">GitHub</a>.</footer>
 </main>
 </body>
 </html>

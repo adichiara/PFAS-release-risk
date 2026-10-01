@@ -102,6 +102,7 @@ def headline(b: pd.DataFrame) -> dict:
         "public_purchased": round(float(pub[b.loc[public, "source"] == "purchased"].sum())),
         "private_wells": round(float(pop[~public].sum())),
         "private_expected_over20": round(float((pop * b["p_over20"].fillna(0))[~public].sum())),
+        "private_expected_over20_uncalibrated": round(float((pop * b["p_over20_model"].fillna(0))[~public].sum())),
         "private_expected_detected": round(float((pop * b["p_detect"].fillna(0))[~public].sum())),
         "private_with_nearby_public_wells": round(float(pop[~public & (b["n_neigh"] > 0)].sum())),
     }
@@ -160,6 +161,18 @@ def groundwater_validation(repeats: int = 5) -> dict:
     return out
 
 
+def private_towns(blocks: pd.DataFrame, min_residents: int = 500) -> list[dict]:
+    """Towns by private-well residents and their estimated share at PFAS6 >= 20 ng/L."""
+    prv = blocks[blocks["private_well"]]
+    pop = prv["POP20"]
+    g = pd.DataFrame({"residents": pop, "expected": pop * prv["p_over20"],
+                      "model": pop * prv["p_over20_model"]}).groupby(prv["TOWN"].str.title()).sum()
+    g = g[g["residents"] >= min_residents]
+    return [{"town": t, "residents": round(float(r.residents)), "share": round(float(r.expected / r.residents), 4),
+             "model_share": round(float(r.model / r.residents), 4), "expected": round(float(r.expected))}
+            for t, r in g.sort_values("expected", ascending=False).iterrows()]
+
+
 def exposure_report(blocks: pd.DataFrame, systems: pd.DataFrame) -> dict:
     from .water_map import private_band_counts
     both = systems.dropna(subset=["pfas6_current_ng_l", "ucmr5_pfas6_ng_l"])
@@ -172,6 +185,7 @@ def exposure_report(blocks: pd.DataFrame, systems: pd.DataFrame) -> dict:
         "headline": headline(blocks),
         "groups": summarize(blocks),
         "private_bands": private_band_counts(blocks),
+        "private_towns": private_towns(blocks),
         "groundwater_validation": groundwater_validation(),
         "private_well_validation": blocks.attrs.get("private_well_validation", {}),
         "ucmr5_check": {"systems": len(both), "correlation": round(float(

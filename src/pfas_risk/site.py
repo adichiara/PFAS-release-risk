@@ -286,7 +286,7 @@ def build_site(primary: UnitResult, others: list[UnitResult], releases: gpd.GeoD
     for u in [primary, *others]:
         if u.map_path.exists():
             shutil.copyfile(u.map_path, SITE_DIR / u.map_file)
-    # The drinking-water analysis is the front page when its outputs exist.
+    # The private-well study is the front page when the drinking-water outputs exist.
     front = build_water_page(SITE_DIR, REPO_URL, _source_rows())
     if front is None:
         shutil.copyfile(SITE_DIR / "releases.html", SITE_DIR / "index.html")
