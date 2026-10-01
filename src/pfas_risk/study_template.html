@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Private-Well PFAS Study</title>
+<meta name="description" content="A groundwater model of PFAS6 in Massachusetts private wells, trained on public-well results and calibrated to MassDEP private-well testing. Public data only.">
+__STYLE__
+<style>
+  :root { --prv-0: #e6e0f3; --prv-1: #bba9e2; --prv-2: #8a6cc9; --prv-3: #553592; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --prv-0: #3b3450; --prv-1: #6b58a3; --prv-2: #9a7fe0; --prv-3: #cbb8ff; }
+  }
+  :root[data-theme="dark"] { --prv-0: #3b3450; --prv-1: #6b58a3; --prv-2: #9a7fe0; --prv-3: #cbb8ff; }
+  .eq { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 14px;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px;
+    overflow-x: auto; color: var(--text-primary); white-space: pre; }
+  .bars .b0 { fill: var(--prv-0); } .bars .b1 { fill: var(--prv-1); } .bars .b2 { fill: var(--prv-2); } .bars .b3 { fill: var(--prv-3); }
+  .scatter .pt { fill: var(--series-1); fill-opacity: .55; stroke: var(--panel); stroke-width: 1.5; }
+  .scatter .pt:hover { fill-opacity: 1; }
+  .scatter .ref { stroke: var(--text-muted); stroke-width: 1.2; stroke-dasharray: 4 4; }
+  ol.sections { columns: 2; column-gap: 32px; padding-left: 20px; }
+  @media (max-width: 600px) { ol.sections { columns: 1; } }
+</style>
+</head>
+<body>
+<main>
+  __NAV__
+  <h1>PFAS in Massachusetts private wells</h1>
+  <p class="lede">About __PRIVATE_POP__ residents live outside community water service and drink from private wells
+     that no public program tests. This study estimates, for every census block on private wells, the probability that
+     groundwater there has PFAS6 at or above the 20 ng/L state standard: a model trained on public-well results,
+     checked against and calibrated to MassDEP's private-well testing. Public data only.</p>
+  <a class="cta" href="water_map.html">Open the private-well map</a>
+  <a class="cta secondary" href="__REPO__">Code and data</a>
+
+  <div class="kpis">__KPIS__</div>
+
+  <ol class="sections">
+    <li><a href="#data">Data</a></li>
+    <li><a href="#model">Groundwater model</a></li>
+    <li><a href="#check">Check against private-well testing</a></li>
+    <li><a href="#calibration">Calibration and blending</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#limits">Limitations</a></li>
+  </ol>
+
+  <h2 id="data">1. Data</h2>
+  <div class="scroll"><table>
+    <thead><tr><th class="wrap">Data</th><th class="wrap">Role</th><th class="wrap">Size</th></tr></thead>
+    <tbody>
+      <tr><td class="wrap">Raw-water PFAS6 at public groundwater sources (MassDEP drinking-water data, EEA Data Portal)</td>
+          <td class="wrap">Training labels: the highest raw PFAS6 result per source</td>
+          <td class="wrap">__N_WELLS__ wells; __GW_PREV20__ at 20 ng/L or more, __GW_PREVDET__ detected</td></tr>
+      <tr><td class="wrap">MassDEP Private Wells PFAS Sampling Program, 2020–2022 (results by town)</td>
+          <td class="wrap">Independent check; calibration and blending</td>
+          <td class="wrap">__PW_WELLS__ wells in __PW_TOWNS__ towns; __PW_OVER__ (__PW_SHARE__) at 20 ng/L or more</td></tr>
+      <tr><td class="wrap">Community water service areas, 2020 census blocks</td>
+          <td class="wrap">Who is on private wells: populated blocks outside every service area</td>
+          <td class="wrap">__PRIVATE_POP__ residents</td></tr>
+      <tr><td class="wrap">Public water supply sources, sewer service areas, high/medium-yield aquifers, census block population</td>
+          <td class="wrap">Features</td><td class="wrap">Statewide (MassGIS)</td></tr>
+    </tbody>
+  </table></div>
+  <p>Raw-water samples are tied to a source by their sampling-point code (<code>RW-03G</code> becomes
+     <code>&lt;system&gt;-03G</code>), or, for systems with a single groundwater source, to that source. The drinking-water
+     API returns at most 100 results per system and water type, so heavily sampled systems are represented by a sample
+     of their results; the label is a well's maximum, which is robust to that.</p>
+
+  <h2 id="model">2. Groundwater model</h2>
+  <p>A logistic regression (L2, C = 0.1, standardized log1p features) predicts whether a public well's highest raw PFAS6
+     reached 20 ng/L, and separately whether PFAS6 was detected. Features, all measured at the well:</p>
+  <ul>
+    <li><b>Nearby measured PFAS:</b> the inverse-distance-squared weighted mean of log(1 + PFAS6) at public wells within
+        5 km, excluding the well's own water system (distance floored at 200 m), and the number of such wells.</li>
+    <li><b>Development:</b> population within 1 km (census blocks), whether the point is inside a sewer service area
+        (outside it, homes use septic systems), and whether it is over a high- or medium-yield aquifer.</li>
+  </ul>
+  <p>Validation holds out whole towns (5 folds, 5 repeats), so each well is scored by a model fit without its town. The
+     nearby-PFAS feature never uses the well's own system, which keeps a system's other wells (often a few hundred meters
+     away, on the same aquifer) from standing in for the answer. Applied statewide, the same features are computed at each
+     private-well census block's representative point.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>ROC AUC, town-grouped cross-validation</th><th>PFAS6 20 ng/L or more</th><th>PFAS detected</th></tr></thead>
+    <tbody>__GW_ROWS__</tbody>
+  </table></div>
+  <p><b>What did not help.</b> Counts of and distances to mapped hazard sources (EPA facilities in PFAS-related industries,
+     MassDEP major facilities, hazardous-waste generators, underground storage tanks, fire stations, airports, military
+     installations, landfills, TRI reporters), measured within 1 and 3 km of a well or inside its Zone II recharge area,
+     left ROC AUC within 0.03 of development alone; gradient boosting was no better than the logistic model. Groundwater
+     PFAS at public wells is spatially clustered and tracks development, but mapped source locations do not explain
+     which wells exceed the standard.</p>
+
+  <h2 id="check">3. Check against private-well testing</h2>
+  <p>MassDEP's program tested private wells in towns where most residents use them and published each town's count of
+     wells sampled and wells at 20 ng/L or more. The model never sees these results, so they test whether a model learned
+     on public wells transfers to private ones.</p>
+  <div class="scroll"><table>
+    <thead><tr><th class="wrap">Across the __PW_TOWNS__ tested towns</th><th>Result</th></tr></thead>
+    <tbody>__PW_ROWS__</tbody>
+  </table></div>
+  <p>The ranking transfers; the level does not. The model predicted __PW_MODEL_SHARE__ of tested wells would reach 20 ng/L,
+     against __PW_SHARE__ measured. Public wells are more contaminated than private wells, plausibly because they pump far
+     larger volumes from productive aquifers and draw from a wider area. Each point below is a tested town: its calibrated rate predicted with the calibration fit on the other
+     towns, against its measured rate. Larger points are towns with more wells tested.</p>
+  <div class="figure">__SCATTER__</div>
+  <p class="note">Measured rates in towns with few tested wells are noisy (one well in three is 33%). __PW_TARGETED__ of the
+     program's invitations targeted wells near suspected sources, so its rates likely run above those of private wells
+     generally.</p>
+
+  <h2 id="calibration">4. Calibration and blending</h2>
+  <p><b>Calibration.</b> One shift in the model's log-odds, fit by maximum likelihood to the towns' counts, where a town's
+     rate is the population-weighted mean over its private-well blocks:</p>
+  <div class="eq">p_cal = σ( logit(p_model) + β ),   β = __OFFSET__
+k_t ~ Binomial( n_t, mean over town t of p_cal )</div>
+  <p>Adding a slope (σ(a·logit p + β)) did not improve leave-one-town-out log loss, so the offset alone is used.</p>
+  <p><b>Blending.</b> In tested towns the calibrated estimate is combined with the town's own result, with the model acting
+     as a prior worth m wells; m is fit by beta-binomial maximum likelihood. Each block's log-odds in the town are then
+     shifted so the town's mean equals the blend:</p>
+  <div class="eq">r_t = ( k_t + m · p̄_t ) / ( n_t + m ),   m = __PRIOR__ wells</div>
+  <p>A town with 40 tested wells therefore leans about __BLEND_WEIGHT__ on its own results. Untested towns keep the calibrated
+     model estimate.</p>
+
+  <h2 id="results">5. Results</h2>
+  <p>Estimated private-well residents living where groundwater is at or above 20 ng/L: <b>__PRIVATE_20__</b>
+     (__PRIVATE_SHARE__ of __PRIVATE_POP__); before calibration the model put this at __PRIVATE_20_MODEL__. Residents by
+     estimated probability:</p>
+  <div class="figure">__BAND_CHART__</div>
+
+  <h3>Towns with the most private-well residents estimated at 20 ng/L or more</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>Town</th><th>Private-well residents</th><th>Estimated share 20+</th><th>Expected residents</th>
+      <th>Before calibration</th><th>MassDEP program: wells at 20+ / tested</th></tr></thead>
+    <tbody>__TOWN_ROWS__</tbody>
+  </table></div>
+  <p class="note">Full lists: <a href="data/private_well_towns.csv">all towns</a> and
+     <a href="data/private_well_program_towns.csv">tested towns with predictions</a>.</p>
+
+  <h3>By Environmental Justice block group</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>Group</th><th>Private-well residents</th><th>Share of group on private wells</th><th>Estimated share 20+</th></tr></thead>
+    <tbody>__GROUP_ROWS__</tbody>
+  </table></div>
+  <p class="note">Few EJ residents use private wells; the shares for those groups rest on small populations.</p>
+
+  <h2 id="limits">6. Limitations</h2>
+  <ul>
+    <li>Estimates are area-level probabilities from a model with modest discrimination; they cannot identify individual
+        contaminated wells.</li>
+    <li>Calibration rests on __PW_TOWNS__ towns chosen because most residents use private wells, and on invitations mostly
+        targeted near suspected sources; rates in other settings may differ.</li>
+    <li>The outcome is PFAS6 against the 20 ng/L state standard. EPA's 2024 limits of 4 ng/L each for PFOA and PFOS are
+        stricter and would classify more wells.</li>
+    <li>Private-well status is inferred from community water service areas; homes inside a service area that still use
+        wells, and service-area boundary errors, are not captured.</li>
+    <li>Public-well results run through __DATA_DATE__ and the private-well program sampled in 2020 to 2022; groundwater
+        PFAS can change over time.</li>
+  </ul>
+
+  <h2>Related analyses</h2>
+  <ul>
+    <li><a href="analysis.html">Public water</a>: measured PFAS6 for every community water system, including
+        purchased water, cross-checked against EPA UCMR 5.</li>
+    <li><a href="releases.html">Reported releases</a>: where MassDEP is likely to receive a PFAS release report. Reports follow
+        where testing happens, so this is context rather than a measure of exposure.</li>
+  </ul>
+
+  <h2>Data sources</h2>
+  <div class="scroll"><table>
+    <thead><tr><th class="wrap">Dataset</th><th class="wrap">Publisher</th><th>Status</th></tr></thead>
+    <tbody>__SOURCE_ROWS__</tbody>
+  </table></div>
+
+  <h2>Downloads</h2>
+  <ul class="downloads">__DOWNLOADS__</ul>
+
+  <footer>An independent analysis built from public data; not an official product of MassDEP or any agency.
+    Run __RUN_DATE__. Code, data catalog and method: <a href="__REPO__">GitHub</a>.</footer>
+</main>
+</body>
+</html>

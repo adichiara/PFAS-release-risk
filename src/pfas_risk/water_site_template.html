@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PFAS Drinking Water</title>
-<meta name="description" content="Who in Massachusetts drinks water with PFAS: measured public water results and a groundwater model for private wells, built on public data.">
+<title>PFAS in Public Water</title>
+<meta name="description" content="Measured PFAS6 in treated water for every Massachusetts community water system, including purchased water, cross-checked against EPA UCMR 5.">
 __STYLE__
 <style>
   :root { --pub-0: #e7e5df; --pub-1: #f5c58a; --pub-2: #e07b39; --pub-3: #a8251b; }
@@ -23,104 +23,57 @@ __STYLE__
 <body>
 <main>
   __NAV__
-  <h1>PFAS in Massachusetts drinking water: detailed findings</h1>
-  <p class="lede">Who drinks water with PFAS: measured results for every community water system,
-     and a groundwater model for the homes on private wells. Built only from public data.</p>
-  <a class="cta" href="water_map.html">Open the drinking-water map</a>
-  <a class="cta secondary" href="releases.html">Reported-release risk</a>
-  <a class="cta secondary" href="__REPO__">Code and data on GitHub</a>
+  <h1>PFAS in Massachusetts public water</h1>
+  <p class="lede">Measured PFAS6 in treated water for every community water system, assigned to the census blocks each
+     system serves. This is the measured side of the analysis; the private-well study models the residents no public
+     program tests.</p>
+  <a class="cta" href="water_map.html#public">Open the public-water map</a>
+  <a class="cta secondary" href="index.html">Private-well study</a>
 
   <div class="kpis">__KPIS__</div>
 
-  <h2>Public water: measured</h2>
-  <p>Every community water system had to test its treated water for PFAS6 (six PFAS compounds)
-     under the 2020 state standard of 20 ng/L, so these are measurements, not estimates. Towns
-     that buy their water, such as the MWRA communities around Boston, take their supplier's
-     results. "Now" is each system's average over its last 12 months of results (for small systems that
-     tested less often after low early results, that can be 2021 or 2022); "highest year" is its worst
-     calendar-year average, often before treatment was installed.</p>
+  <h2>Residents by PFAS6 in their tap water</h2>
+  <p>Since 2020 every community system has had to test its treated water for PFAS6 (the sum of PFOA, PFOS, PFHxS, PFNA,
+     PFHpA and PFDA) against the 20 ng/L state standard. <b>Now</b> is a system's mean over its last 12 months of results;
+     small systems that moved to reduced monitoring after low early results may have their latest results from 2021 or 2022.
+     <b>Highest year</b> is its highest calendar-year mean, usually before treatment was installed. Non-detects count as zero.</p>
   <div class="figure">__STACK_CHART__
     <div class="legend">__STACK_LEGEND__</div>
   </div>
   <p class="note">__UCMR5_NOTE__</p>
 
-  <h3>Systems at 10 ng/L or more now</h3>
+  <h3>Systems at 10 ng/L or more now, by population served</h3>
   <div class="scroll"><table>
     <thead><tr><th>Water system</th><th>People served</th><th>PFAS6 now (ng/L)</th>
       <th>Highest year (ng/L)</th><th>EPA UCMR 5, 2023–25 (ng/L)</th></tr></thead>
     <tbody>__SYSTEM_ROWS__</tbody>
   </table></div>
-
-  <h2>Private wells: estimated</h2>
-  <p>About __PRIVATE_POP__ people live outside every community water service area and are presumed to
-     drink from private wells, which no public program tests. Their risk is estimated from public wells,
-     which were tested systematically: a model trained on the highest raw (untreated) PFAS6 result at
-     __N_WELLS__ public groundwater wells, using measured PFAS at other public wells within 5 km and how
-     developed the area is (population, sewer service, aquifer).</p>
-  <div class="scroll"><table>
-    <thead><tr><th>How well it predicts, holding out whole towns</th><th>PFAS6 20 ng/L or more</th>
-      <th>PFAS detected</th></tr></thead>
-    <tbody>__GW_ROWS__</tbody>
-  </table></div>
-  <p>ROC AUC is 0.5 for a coin flip and 1.0 for perfect ranking. The model beats development alone, but
-     it cannot say which well is contaminated: groundwater PFAS here is widespread and depends on things
-     public data does not capture (past spills, well depth, local geology). Distance to mapped industries,
-     airports, landfills and other likely sources added nothing once nearby well results and development
-     were included.</p>
-
-  <h3>Checked against private-well tests</h3>
-  <p>From 2020 to 2022 MassDEP tested __PW_WELLS__ private wells in __PW_TOWNS__ towns where most residents use
-     private wells, and published each town's results: __PW_OVER__ wells (__PW_SHARE__) had PFAS6 at or above
-     20 ng/L. The model never saw these wells, so they are an independent check.</p>
-  <div class="scroll"><table>
-    <thead><tr><th>Check across the __PW_TOWNS__ tested towns</th><th>Result</th></tr></thead>
-    <tbody>__PW_ROWS__</tbody>
-  </table></div>
-  <p>The model ranks towns well, but public wells are more contaminated than private wells: it predicted
-     __PW_MODEL_SHARE__ of tested private wells would reach 20 ng/L, against __PW_SHARE__ measured. So the private-well
-     estimates are <b>calibrated</b> to the program (one shift in the model's log-odds, fit to the towns'
-     counts), and in tested towns they are <b>blended</b> with the town's own results, weighted as if the model
-     were __PW_PRIOR__ wells. The program's invitations were mostly (__PW_TARGETED__) targeted near suspected
-     sources, so its rate, and these calibrated estimates, may still run high for private wells in general.
-     Read the results as area-level odds; only testing a well answers the question for a home.</p>
-  <div class="scroll"><table>
-    <thead><tr><th>Estimated chance that water at the location has PFAS6 of 20 ng/L or more</th>
-      <th>Private-well residents</th></tr></thead>
-    <tbody>__PRIVATE_ROWS__</tbody>
-  </table></div>
-
-  <h2>Who is affected</h2>
-  <p>By the state's 2020 Environmental Justice block groups (minority, income and English-isolation
-     criteria). Shares for public water are of that group's residents on public water; private-well
-     figures are model estimates.</p>
-  <div class="scroll"><table>
-    <thead><tr><th>Group</th><th>Residents</th><th>Public water: 20+ now</th><th>10 to &lt;20 now</th>
-      <th>Detected now</th><th>20+ in highest year</th><th>On private wells</th>
-      <th>Private wells: est. share 20+</th></tr></thead>
-    <tbody>__GROUP_ROWS__</tbody>
-  </table></div>
-  <p class="note">Many EJ neighborhoods are in cities served by MWRA reservoir water, where PFAS6 is not
-     detected; their residents are less likely than others to have PFAS in their tap water.</p>
+  <p class="note">Full table for all systems in the downloads below.</p>
 
   <h2>Method</h2>
   <ul>
-    <li><b>Public water:</b> finished-water PFAS6 results per system (MassDEP drinking-water data on the
-        EEA Data Portal; non-detects count as zero). Purchased water follows EPA SDWIS buyer-seller links.
-        Census blocks take the community system whose service area holds them.</li>
-    <li><b>Private wells:</b> census blocks outside every community service area. Estimates come from a
-        logistic model trained on public groundwater wells and applied at each block.</li>
-    <li><b>Checks:</b> state PFAS6 levels against EPA's UCMR 5 results; the groundwater model with
-        town-grouped cross-validation.</li>
-    <li><b>Limits:</b> the drinking-water API returns at most 100 results per system and water type, so
-        about 40 large systems are represented by a sample of their results; small non-community
-        systems (schools, workplaces) and bottled water are not modeled.</li>
+    <li><b>Results:</b> finished-water PFAS6 per system from MassDEP's drinking-water data (EEA Data Portal), queried per
+        system and water type. The API returns at most 100 results per query, so about 40 heavily sampled systems are
+        represented by a sample of their results.</li>
+    <li><b>Purchased water:</b> systems that buy all their water take their seller's results, following EPA SDWIS
+        buyer-seller links up to three hops. The __MWRA_SYSTEMS__ systems on MWRA reservoir water (__MWRA_POP__ residents)
+        report PFAS6 not detected.</li>
+    <li><b>Residents:</b> 2020 census blocks take the community system whose MassDEP service area contains them; populated
+        blocks outside every service area are the private-well population used by the study.</li>
+    <li><b>Not covered:</b> non-community systems (schools, workplaces), bottled water, and exposure at levels below
+        reporting limits.</li>
   </ul>
 
-  <h2>Reported releases</h2>
-  <p>The companion analysis ranks where MassDEP is most likely to receive a PFAS release report. It
-     reflects where testing and investigations happen as much as where PFAS is (metro Boston, on
-     reservoir water with few wells to test, has almost no reported PFAS releases), so it is kept as
-     supporting context: <a href="releases.html">reported-release risk</a>.</p>
+  <h2>By Environmental Justice block group</h2>
+  <p>Shares of each group's residents on public water, by the state's 2020 EJ criteria (minority, income, English
+     isolation).</p>
+  <div class="scroll"><table>
+    <thead><tr><th>Group</th><th>On public water</th><th>20+ now</th><th>10 to &lt;20 now</th>
+      <th>Detected now</th><th>20+ in highest year</th></tr></thead>
+    <tbody>__GROUP_ROWS__</tbody>
+  </table></div>
+  <p class="note">EJ block groups are concentrated in cities on MWRA water, where PFAS6 is not detected, so EJ residents
+     on public water are less likely than others to have PFAS in their tap water.</p>
 
   <h2>Data sources</h2>
   <div class="scroll"><table>
@@ -131,7 +84,8 @@ __STYLE__
   <h2>Downloads</h2>
   <ul class="downloads">__DOWNLOADS__</ul>
 
-  <footer>Run __RUN_DATE__. Code, data catalog and method: <a href="__REPO__">GitHub</a>.</footer>
+  <footer>An independent analysis built from public data; not an official product of MassDEP or any agency.
+    Run __RUN_DATE__. Code, data catalog and method: <a href="__REPO__">GitHub</a>.</footer>
 </main>
 </body>
 </html>

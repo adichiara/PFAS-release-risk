@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PFAS in Massachusetts Water</title>
-<meta name="description" content="Is there PFAS in Massachusetts drinking water? A plain-language look at public water results and private wells, built on public data.">
+<title>Private-Well PFAS Study</title>
+<meta name="description" content="A groundwater model of PFAS6 in Massachusetts private wells, trained on public-well results and calibrated to MassDEP private-well testing. Public data only.">
 <style>
   :root {
     color-scheme: light;
@@ -95,204 +95,228 @@
   nav.site a[aria-current="page"] { color: var(--text-primary); font-weight: 600; }
 </style>
 <style>
-  :root { --pub-0: #e7e5df; --pub-1: #f5c58a; --pub-2: #e07b39; --pub-3: #a8251b; --good: #2e7d4f; }
+  :root { --prv-0: #e6e0f3; --prv-1: #bba9e2; --prv-2: #8a6cc9; --prv-3: #553592; }
   @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) { --pub-0: #3a3935; --pub-1: #b8864a; --pub-2: #e07b39; --pub-3: #f0584a; --good: #5cc28a; }
+    :root:not([data-theme="light"]) { --prv-0: #3b3450; --prv-1: #6b58a3; --prv-2: #9a7fe0; --prv-3: #cbb8ff; }
   }
-  :root[data-theme="dark"] { --pub-0: #3a3935; --pub-1: #b8864a; --pub-2: #e07b39; --pub-3: #f0584a; --good: #5cc28a; }
-  .lede { font-size: 20px; line-height: 1.5; color: var(--text-primary); }
-  .answer { border-left: 4px solid var(--accent); padding: 4px 0 4px 16px; margin: 20px 0; }
-  .answer p { margin: 6px 0; font-size: 17px; color: var(--text-primary); }
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin: 16px 0; }
-  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
-  .card .big { font-size: 26px; font-weight: 650; line-height: 1.15; font-variant-numeric: tabular-nums; }
-  .card h3 { margin: 6px 0 6px; font-size: 16px; }
-  .card p { margin: 0; font-size: 15px; }
-  .steps { counter-reset: step; list-style: none; padding: 0; }
-  .steps li { counter-increment: step; position: relative; padding-left: 40px; margin: 12px 0; }
-  .steps li::before { content: counter(step); position: absolute; left: 0; top: 0; width: 26px; height: 26px;
-    border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-weight: 650; font-size: 14px;
-    display: flex; align-items: center; justify-content: center; }
-  .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
-  .box { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 4px 18px 10px; }
-  .box h3 { margin-top: 14px; }
-  .box li { margin: 6px 0; }
-  .bars .b-peak { fill: var(--pub-3); opacity: .45; } .bars .b-now { fill: var(--pub-3); }
-  .scale { display: grid; grid-template-columns: 1fr; gap: 6px; margin: 12px 0; }
-  .scale div { display: flex; gap: 10px; align-items: baseline; }
-  .scale b { min-width: 110px; font-variant-numeric: tabular-nums; }
-  details { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 10px 16px; margin: 10px 0; }
-  details summary { cursor: pointer; font-weight: 600; color: var(--text-primary); }
-  .disclaimer { font-size: 14px; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 16px; margin-top: 40px; }
+  :root[data-theme="dark"] { --prv-0: #3b3450; --prv-1: #6b58a3; --prv-2: #9a7fe0; --prv-3: #cbb8ff; }
+  .eq { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 14px;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px;
+    overflow-x: auto; color: var(--text-primary); white-space: pre; }
+  .bars .b0 { fill: var(--prv-0); } .bars .b1 { fill: var(--prv-1); } .bars .b2 { fill: var(--prv-2); } .bars .b3 { fill: var(--prv-3); }
+  .scatter .pt { fill: var(--series-1); fill-opacity: .55; stroke: var(--panel); stroke-width: 1.5; }
+  .scatter .pt:hover { fill-opacity: 1; }
+  .scatter .ref { stroke: var(--text-muted); stroke-width: 1.2; stroke-dasharray: 4 4; }
+  ol.sections { columns: 2; column-gap: 32px; padding-left: 20px; }
+  @media (max-width: 600px) { ol.sections { columns: 1; } }
 </style>
 </head>
 <body>
 <main>
-  <nav class="site" aria-label="Site"><a href="index.html" aria-current="page">Home</a><a href="analysis.html">Detailed findings</a><a href="water_map.html">Map</a><a href="releases.html">Reported releases</a><a href="https://github.com/adichiara/PFAS-release-risk">Code and data</a></nav>
-  <h1>Is there PFAS in Massachusetts drinking water?</h1>
-  <p class="lede">PFAS, the "forever chemicals," have been found in drinking water across the state.
-     Here is what public records show about the water people actually drink, and what you can do.</p>
+  <nav class="site" aria-label="Site"><a href="index.html" aria-current="page">Private-well study</a><a href="water_map.html">Map</a><a href="analysis.html">Public water</a><a href="releases.html">Reported releases</a><a href="https://github.com/adichiara/PFAS-release-risk">Code and data</a></nav>
+  <h1>PFAS in Massachusetts private wells</h1>
+  <p class="lede">About 1.0 million residents live outside community water service and drink from private wells
+     that no public program tests. This study estimates, for every census block on private wells, the probability that
+     groundwater there has PFAS6 at or above the 20 ng/L state standard: a model trained on public-well results,
+     checked against and calibrated to MassDEP's private-well testing. Public data only.</p>
+  <a class="cta" href="water_map.html">Open the private-well map</a>
+  <a class="cta secondary" href="https://github.com/adichiara/PFAS-release-risk">Code and data</a>
 
-  <div class="answer">
-    <p><b>The short answer:</b> for most people on public water, PFAS levels are low or not detected,
-       and they have dropped sharply as water systems added treatment. About half of people on
-       public water have no detectable PFAS in their tap water.</p>
-    <p><b>The biggest unknown is private wells.</b> About 1.0 million people drink from private wells, which
-       nobody tests unless the owner does.</p>
-  </div>
-  <a class="cta" href="water_map.html">See the map</a>
-  <a class="cta secondary" href="#what-you-can-do">What you can do</a>
+  <div class="kpis"><div class="kpi"><div class="v">1.0 million</div><div class="l">residents outside community water service, on private wells</div></div><div class="kpi"><div class="v">70,000</div><div class="l">expected at 20 ng/L or more (7%), calibrated</div></div><div class="kpi"><div class="v">1,649</div><div class="l">private wells tested by MassDEP in 83 towns, used to check and calibrate</div></div><div class="kpi"><div class="v">0.55</div><div class="l">rank agreement with measured town rates, before calibration</div></div></div>
 
-  <h2>What are PFAS?</h2>
-  <p>PFAS (per- and polyfluoroalkyl substances) are a large family of human-made chemicals used since the
-     1950s in nonstick cookware, stain- and water-resistant fabrics and carpets, grease-resistant food packaging,
-     and some firefighting foams. They break down extremely slowly, so they build up in water, soil and people.
-     Most people have some PFAS in their blood.</p>
-  <p>Long-term exposure to some PFAS has been linked to health effects, including changes in cholesterol,
-     effects on the immune system and on infant growth, and some cancers. Drinking water is one of the main ways
-     people are exposed where it is contaminated; showering and washing are much less of a concern.
-     Pregnant and nursing women and infants are considered the most sensitive.</p>
-
-  <h3>How much is too much?</h3>
-  <p>PFAS are measured in <b>nanograms per liter (ng/L)</b>, also called parts per trillion. One part per
-     trillion is roughly one drop of water in 20 Olympic swimming pools.</p>
-  <div class="scale">
-    <div><b>20 ng/L</b><span><b>Massachusetts standard</b> (in effect since 2020) for the combined total of six
-      PFAS, called PFAS6. This analysis measures water against this standard.</span></div>
-    <div><b>4 ng/L each</b><span><b>Federal limits</b> for the two best-known PFAS, PFOA and PFOS, set by EPA in 2024.
-      Water systems have until 2029 to comply (EPA has proposed allowing some until 2031), so these limits
-      are stricter than the state standard and are not yet in force.</span></div>
-  </div>
-
-  <h2>What we found</h2>
-  <div class="cards">
-    <div class="card"><div class="big">Half</div><h3>of people on public water have no detectable PFAS</h3>
-      <p>Based on each water system's most recent year of test results.</p></div>
-    <div class="card"><div class="big">434,000 → 45,000</div><h3>people whose water was at or above the state standard, then and now</h3>
-      <p>At each system's worst year, often around 2021 and 2022, compared with now. Many of those systems have
-         since added treatment or changed sources.</p></div>
-    <div class="card"><div class="big">2.0 million</div><h3>people in 38 communities get MWRA water</h3>
-      <p>Boston and many nearby cities and towns drink reservoir water from the Quabbin and Wachusett
-         reservoirs; PFAS6 has not been detected in the treated water.</p></div>
-    <div class="card"><div class="big">1.0 million</div><h3>people on private wells</h3>
-      <p>Mostly in smaller towns. No public program tests these wells, so their water is the least known.</p></div>
-  </div>
-
-  <h3>Levels have come down</h3>
-  <p>People on public water with PFAS at or above the 20 ng/L state standard, in each system's worst year
-     and now:</p>
-  <div class="figure"><svg class="chart bars" viewBox="0 0 720 112" role="img" aria-label="People on public water at or above the state PFAS standard: 434,000 in the worst year, 45,000 now"><text class="tick" x="120" y="31.0" text-anchor="end">Worst year</text><rect class="b-peak" x="130" y="8" width="500.0" height="36" rx="3"><title>Worst year: 433,814 people</title></rect><text class="value" x="638.0" y="31.0">434,000</text><text class="tick" x="120" y="83.0" text-anchor="end">Now</text><rect class="b-now" x="130" y="60" width="52.1" height="36" rx="3"><title>Now: 45,191 people</title></rect><text class="value" x="190.1" y="83.0">45,000</text></svg></div>
-  <p>That is real progress, but "below the standard" is not the same as "none": about 2.8 million people on
-     public water still have some PFAS in their tap water, and the stricter federal limits would apply to more
-     systems than the state standard does.</p>
-
-  <h3>Private wells: an estimate, checked against real tests</h3>
-  <p>No public data shows what is in each private well. To estimate the risk, we started from public wells, which
-     were all tested, and found that PFAS in groundwater tends to cluster: wells near other contaminated wells are
-     more likely to be contaminated.</p>
-  <p>We then checked that estimate against the one direct look at private wells: MassDEP's free testing of
-     1,649 private wells in 83 towns from 2020 to 2022, where 5% of wells were at or above the state
-     standard. The estimate picked out the right towns (towns it ranked higher did have more contaminated wells), but
-     it overstated the level, because public wells are more contaminated than private wells. So we adjusted it to
-     match MassDEP's results, and in the tested towns we combined it with the town's actual test results.</p>
-  <p>The result: roughly <b>1 in 15 private-well users</b> (about 70,000 people) may live where groundwater
-     is at or above the state standard. Some areas are higher: about 17,000 people live where the estimated
-     chance is 20% or more. Even in the lowest-risk areas, some wells are contaminated, and a test is the
-     only way to know about yours.</p>
-  <a class="cta secondary" href="water_map.html#wells">See private-well areas on the map</a>
-
-  <h3>Who is affected</h3>
-  <p>Residents of the state's Environmental Justice neighborhoods (areas with higher shares of minority,
-     lower-income or limited-English households) are <b>less</b> likely than others to have PFAS in their tap
-     water: 42% of those on public water have detectable PFAS, compared with 54% elsewhere. Many of
-     these neighborhoods are in cities served by MWRA. A 2022 federal review by the U.S. Government Accountability
-     Office reached the same conclusion for Massachusetts.</p>
-
-  <h2 id="check-your-area">Check your area</h2>
-  <ol class="steps">
-    <li><b>Find your water source.</b> If you pay a water bill, you are on public water; your bill or your supplier's
-      annual water quality report (the <a href="https://www.epa.gov/ccr">Consumer Confidence Report</a>) names
-      the water system. If you have no water bill, you most likely have a private well.</li>
-    <li><b>Open the <a href="water_map.html">map</a></b> and find your home. Public water areas are colored by the
-      system's measured PFAS; hover or tap for its name and levels, now and at their worst. Purple areas are
-      private-well areas, shaded by the estimated chance of high PFAS; use the panel to hide public water and
-      see <a href="water_map.html#wells">private wells only</a>.</li>
-    <li><b>Look up your system's details</b> in the <a href="analysis.html">detailed findings</a>, or download the
-      <a href="data/water_systems_pfas6.csv">list of every water system</a>.</li>
+  <ol class="sections">
+    <li><a href="#data">Data</a></li>
+    <li><a href="#model">Groundwater model</a></li>
+    <li><a href="#check">Check against private-well testing</a></li>
+    <li><a href="#calibration">Calibration and blending</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#limits">Limitations</a></li>
   </ol>
 
-  <h2 id="what-you-can-do">What you can do</h2>
-  <div class="two">
-    <div class="box">
-      <h3>If you are on public water</h3>
-      <ul>
-        <li>Read your water system's annual water quality report, or ask your supplier about its PFAS results and
-            any treatment plans.</li>
-        <li>If you want extra protection (for example while pregnant, nursing or preparing infant formula), a home
-            filter certified to <b>NSF/ANSI 53 or 58</b> for PFAS can reduce levels. Check that the maker has
-            independent test results.</li>
-        <li>Showering, bathing and laundry are not a significant PFAS concern.</li>
-      </ul>
-    </div>
-    <div class="box">
-      <h3>If you have a private well</h3>
-      <ul>
-        <li><b>Test it.</b> MassDEP recommends testing all private wells for PFAS, especially within 1 to 2 miles of a
-            known source (such as an airfield, firefighting training area, certain factories or waste sites) or of
-            other water supplies where PFAS was found.</li>
-        <li>Use a <a href="https://www.mass.gov/certified-laboratories">MassDEP-certified laboratory</a> (EPA methods 533
-            or 537.1). If nothing is detected, retest about every 10 years.</li>
-        <li>If PFAS is found, options include bottled water for drinking and cooking, or a treatment system (activated
-            carbon, ion exchange or reverse osmosis). See MassDEP's
-            <a href="https://www.mass.gov/info-details/pfas-in-private-well-drinking-water-supplies-faq">private well
-            FAQ</a>.</li>
-      </ul>
-    </div>
-  </div>
+  <h2 id="data">1. Data</h2>
+  <div class="scroll"><table>
+    <thead><tr><th class="wrap">Data</th><th class="wrap">Role</th><th class="wrap">Size</th></tr></thead>
+    <tbody>
+      <tr><td class="wrap">Raw-water PFAS6 at public groundwater sources (MassDEP drinking-water data, EEA Data Portal)</td>
+          <td class="wrap">Training labels: the highest raw PFAS6 result per source</td>
+          <td class="wrap">1,030 wells; 18% at 20 ng/L or more, 66% detected</td></tr>
+      <tr><td class="wrap">MassDEP Private Wells PFAS Sampling Program, 2020–2022 (results by town)</td>
+          <td class="wrap">Independent check; calibration and blending</td>
+          <td class="wrap">1,649 wells in 83 towns; 82 (5%) at 20 ng/L or more</td></tr>
+      <tr><td class="wrap">Community water service areas, 2020 census blocks</td>
+          <td class="wrap">Who is on private wells: populated blocks outside every service area</td>
+          <td class="wrap">1.0 million residents</td></tr>
+      <tr><td class="wrap">Public water supply sources, sewer service areas, high/medium-yield aquifers, census block population</td>
+          <td class="wrap">Features</td><td class="wrap">Statewide (MassGIS)</td></tr>
+    </tbody>
+  </table></div>
+  <p>Raw-water samples are tied to a source by their sampling-point code (<code>RW-03G</code> becomes
+     <code>&lt;system&gt;-03G</code>), or, for systems with a single groundwater source, to that source. The drinking-water
+     API returns at most 100 results per system and water type, so heavily sampled systems are represented by a sample
+     of their results; the label is a well's maximum, which is robust to that.</p>
 
-  <h2>How we did this</h2>
-  <ol class="steps">
-    <li><b>Public water:</b> every community water system in Massachusetts had to test its treated water for PFAS
-      under the 2020 state standard. We took each system's results from the state's public data, and for towns that
-      buy their water (like the MWRA communities), used their supplier's results. EPA's own national testing
-      (2023 to 2025) broadly agrees.</li>
-    <li><b>Private wells:</b> we learned how PFAS in groundwater relates to its surroundings from about 1,030
-      tested public wells, then applied that to areas outside public water service.</li>
-    <li><b>People:</b> we matched every census block (the smallest area the Census counts) to its water system or to
-      private wells, then counted residents, including by the state's Environmental Justice designations.</li>
-  </ol>
-
-  <details>
-    <summary>What this can and can't tell you</summary>
-    <ul>
-      <li>Public water levels are averages for a whole system. Levels can differ between neighborhoods served by
-          different wells, and from year to year.</li>
-      <li>"Now" means each system's most recent year of results. Some small systems test less often after low early
-          results, so their latest results may be from 2021 or 2022.</li>
-      <li>The private-well estimate is for areas, not individual wells. It is adjusted to MassDEP's private-well
-          testing, which mostly invited wells near suspected sources, so it may still run somewhat high.</li>
-      <li>This covers drinking water only, not food, consumer products or other ways people are exposed to PFAS.</li>
-      <li>Results are based on the state's public data as of 2026-09-21.</li>
-    </ul>
-  </details>
-
-  <h2>Learn more</h2>
+  <h2 id="model">2. Groundwater model</h2>
+  <p>A logistic regression (L2, C = 0.1, standardized log1p features) predicts whether a public well's highest raw PFAS6
+     reached 20 ng/L, and separately whether PFAS6 was detected. Features, all measured at the well:</p>
   <ul>
-    <li><a href="analysis.html">Detailed findings</a>: every number above, with methods, validation and the full
-        breakdown by community.</li>
-    <li><a href="water_map.html">Drinking-water map</a></li>
-    <li><a href="releases.html">Reported PFAS releases</a>: a separate analysis of where MassDEP is likely to receive
-        reports of PFAS contamination.</li>
-    <li>MassDEP: <a href="https://www.mass.gov/info-details/per-and-polyfluoroalkyl-substances-pfas">PFAS in drinking
-        water</a> and <a href="https://www.mass.gov/info-details/pfas-in-private-well-drinking-water-supplies-faq">private
-        well FAQ</a></li>
-    <li><a href="https://www.atsdr.cdc.gov/pfas/index.html">CDC/ATSDR: PFAS and your health</a> ·
-        <a href="https://www.epa.gov/sdwa/and-polyfluoroalkyl-substances-pfas">EPA: PFAS drinking water rule</a></li>
+    <li><b>Nearby measured PFAS:</b> the inverse-distance-squared weighted mean of log(1 + PFAS6) at public wells within
+        5 km, excluding the well's own water system (distance floored at 200 m), and the number of such wells.</li>
+    <li><b>Development:</b> population within 1 km (census blocks), whether the point is inside a sewer service area
+        (outside it, homes use septic systems), and whether it is over a high- or medium-yield aquifer.</li>
+  </ul>
+  <p>Validation holds out whole towns (5 folds, 5 repeats), so each well is scored by a model fit without its town. The
+     nearby-PFAS feature never uses the well's own system, which keeps a system's other wells (often a few hundred meters
+     away, on the same aquifer) from standing in for the answer. Applied statewide, the same features are computed at each
+     private-well census block's representative point.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>ROC AUC, town-grouped cross-validation</th><th>PFAS6 20 ng/L or more</th><th>PFAS detected</th></tr></thead>
+    <tbody><tr><td class="wrap">Logistic model (all features)</td><td>0.67</td><td>0.78</td></tr>
+<tr><td class="wrap">Gradient boosting (same features)</td><td>0.61</td><td>0.75</td></tr>
+<tr><td class="wrap">Population within 1 km alone</td><td>0.62</td><td>0.76</td></tr>
+<tr><td class="wrap">Share of wells in the class</td><td>18%</td><td>66%</td></tr></tbody>
+  </table></div>
+  <p><b>What did not help.</b> Counts of and distances to mapped hazard sources (EPA facilities in PFAS-related industries,
+     MassDEP major facilities, hazardous-waste generators, underground storage tanks, fire stations, airports, military
+     installations, landfills, TRI reporters), measured within 1 and 3 km of a well or inside its Zone II recharge area,
+     left ROC AUC within 0.03 of development alone; gradient boosting was no better than the logistic model. Groundwater
+     PFAS at public wells is spatially clustered and tracks development, but mapped source locations do not explain
+     which wells exceed the standard.</p>
+
+  <h2 id="check">3. Check against private-well testing</h2>
+  <p>MassDEP's program tested private wells in towns where most residents use them and published each town's count of
+     wells sampled and wells at 20 ng/L or more. The model never sees these results, so they test whether a model learned
+     on public wells transfers to private ones.</p>
+  <div class="scroll"><table>
+    <thead><tr><th class="wrap">Across the 83 tested towns</th><th>Result</th></tr></thead>
+    <tbody><tr><td class="wrap">Rank agreement between the model&#x27;s town rates and measured town rates (Spearman)</td><td class="wrap">0.55</td></tr>
+<tr><td class="wrap">Separating towns with any well at 20 ng/L or more from those with none (ROC AUC)</td><td class="wrap">0.82</td></tr>
+<tr><td class="wrap">Binomial log loss of town counts, each town predicted by a calibration fit on the others (lower is better)</td><td class="wrap">306 (uncalibrated 362; one statewide rate 326)</td></tr></tbody>
+  </table></div>
+  <p>The ranking transfers; the level does not. The model predicted 13% of tested wells would reach 20 ng/L,
+     against 5% measured. Public wells are more contaminated than private wells, plausibly because they pump far
+     larger volumes from productive aquifers and draw from a wider area. Each point below is a tested town: its calibrated rate predicted with the calibration fit on the other
+     towns, against its measured rate. Larger points are towns with more wells tested.</p>
+  <div class="figure"><svg class="chart scatter" viewBox="0 0 720 400" role="img" aria-label="Predicted against measured share of private wells at or above 20 ng/L for 83 tested towns"><line class="grid" x1="52" x2="704" y1="356.0" y2="356.0"/><text class="tick" x="44" y="360.0" text-anchor="end">0%</text><text class="tick" x="52.0" y="374" text-anchor="middle">0%</text><line class="grid" x1="52" x2="704" y1="257.7" y2="257.7"/><text class="tick" x="44" y="261.7" text-anchor="end">10%</text><text class="tick" x="238.3" y="374" text-anchor="middle">10%</text><line class="grid" x1="52" x2="704" y1="159.4" y2="159.4"/><text class="tick" x="44" y="163.4" text-anchor="end">20%</text><text class="tick" x="424.6" y="374" text-anchor="middle">20%</text><line class="grid" x1="52" x2="704" y1="61.1" y2="61.1"/><text class="tick" x="44" y="65.1" text-anchor="end">30%</text><text class="tick" x="610.9" y="374" text-anchor="middle">30%</text><line class="ref" x1="52.0" y1="356.0" x2="704.0" y2="12.0"/><text class="tick" x="632.8" y="38.4" text-anchor="end">predicted = measured</text><circle class="pt" cx="137.9" cy="268.6" r="13.7"><title>Wellfleet: 4 of 45 tested wells at 20+ (9%); predicted 4.6% out of sample, 12.6% before calibration</title></circle><circle class="pt" cx="283.4" cy="241.7" r="13.5"><title>Boxborough: 5 of 43 tested wells at 20+ (12%); predicted 12.4% out of sample, 29.0% before calibration</title></circle><circle class="pt" cx="107.7" cy="262.4" r="13.4"><title>West Tisbury: 4 of 42 tested wells at 20+ (10%); predicted 3.0% out of sample, 8.5% before calibration</title></circle><circle class="pt" cx="229.7" cy="215.6" r="13.4"><title>Stow: 6 of 42 tested wells at 20+ (14%); predicted 9.5% out of sample, 23.8% before calibration</title></circle><circle class="pt" cx="151.1" cy="236.1" r="13.2"><title>Nantucket: 5 of 41 tested wells at 20+ (12%); predicted 5.3% out of sample, 14.0% before calibration</title></circle><circle class="pt" cx="202.5" cy="306.9" r="13.1"><title>Westport: 2 of 40 tested wells at 20+ (5%); predicted 8.1% out of sample, 19.6% before calibration</title></circle><circle class="pt" cx="197.1" cy="306.9" r="13.1"><title>Lakeville: 2 of 40 tested wells at 20+ (5%); predicted 7.8% out of sample, 19.4% before calibration</title></circle><circle class="pt" cx="169.4" cy="306.9" r="13.1"><title>Rehoboth: 2 of 40 tested wells at 20+ (5%); predicted 6.3% out of sample, 16.1% before calibration</title></circle><circle class="pt" cx="104.7" cy="233.1" r="13.1"><title>Shutesbury: 5 of 40 tested wells at 20+ (12%); predicted 2.8% out of sample, 8.2% before calibration</title></circle><circle class="pt" cx="126.5" cy="282.3" r="13.1"><title>Leverett: 3 of 40 tested wells at 20+ (8%); predicted 4.0% out of sample, 11.0% before calibration</title></circle><circle class="pt" cx="214.4" cy="110.3" r="13.1"><title>Carlisle: 10 of 40 tested wells at 20+ (25%); predicted 8.7% out of sample, 23.2% before calibration</title></circle><circle class="pt" cx="128.9" cy="356.0" r="13.1"><title>Wendell: 0 of 40 tested wells at 20+ (0%); predicted 4.1% out of sample, 10.7% before calibration</title></circle><circle class="pt" cx="124.5" cy="356.0" r="13.0"><title>New Salem: 0 of 39 tested wells at 20+ (0%); predicted 3.9% out of sample, 10.1% before calibration</title></circle><circle class="pt" cx="100.6" cy="304.3" r="12.9"><title>Pelham: 2 of 38 tested wells at 20+ (5%); predicted 2.6% out of sample, 7.3% before calibration</title></circle><circle class="pt" cx="266.0" cy="200.8" r="12.9"><title>Tyngsborough: 6 of 38 tested wells at 20+ (16%); predicted 11.5% out of sample, 27.5% before calibration</title></circle><circle class="pt" cx="105.7" cy="356.0" r="12.3"><title>Hampden: 0 of 34 tested wells at 20+ (0%); predicted 2.9% out of sample, 7.8% before calibration</title></circle><circle class="pt" cx="198.8" cy="211.5" r="12.3"><title>Sherborn: 5 of 34 tested wells at 20+ (15%); predicted 7.9% out of sample, 20.4% before calibration</title></circle><circle class="pt" cx="106.4" cy="356.0" r="12.3"><title>Richmond: 0 of 34 tested wells at 20+ (0%); predicted 2.9% out of sample, 8.0% before calibration</title></circle><circle class="pt" cx="196.7" cy="356.0" r="12.3"><title>Boxford: 0 of 34 tested wells at 20+ (0%); predicted 7.8% out of sample, 19.0% before calibration</title></circle><circle class="pt" cx="142.0" cy="356.0" r="12.2"><title>Truro: 0 of 33 tested wells at 20+ (0%); predicted 4.8% out of sample, 12.5% before calibration</title></circle><circle class="pt" cx="82.2" cy="326.2" r="12.2"><title>Westhampton: 1 of 33 tested wells at 20+ (3%); predicted 1.6% out of sample, 4.6% before calibration</title></circle><circle class="pt" cx="170.1" cy="356.0" r="12.1"><title>Princeton: 0 of 32 tested wells at 20+ (0%); predicted 6.3% out of sample, 15.9% before calibration</title></circle><circle class="pt" cx="195.4" cy="324.3" r="11.9"><title>Harvard: 1 of 31 tested wells at 20+ (3%); predicted 7.7% out of sample, 19.1% before calibration</title></circle><circle class="pt" cx="83.7" cy="356.0" r="11.9"><title>Conway: 0 of 31 tested wells at 20+ (0%); predicted 1.7% out of sample, 4.8% before calibration</title></circle><circle class="pt" cx="204.4" cy="229.2" r="11.9"><title>Carver: 4 of 31 tested wells at 20+ (13%); predicted 8.2% out of sample, 20.7% before calibration</title></circle><circle class="pt" cx="174.8" cy="356.0" r="11.6"><title>Berkley: 0 of 29 tested wells at 20+ (0%); predicted 6.6% out of sample, 16.6% before calibration</title></circle><circle class="pt" cx="136.8" cy="288.2" r="11.6"><title>Granby: 2 of 29 tested wells at 20+ (7%); predicted 4.5% out of sample, 12.2% before calibration</title></circle><circle class="pt" cx="135.5" cy="356.0" r="11.5"><title>Belchertown: 0 of 28 tested wells at 20+ (0%); predicted 4.5% out of sample, 11.6% before calibration</title></circle><circle class="pt" cx="211.8" cy="356.0" r="11.2"><title>Freetown: 0 of 26 tested wells at 20+ (0%); predicted 8.6% out of sample, 20.9% before calibration</title></circle><circle class="pt" cx="150.0" cy="280.4" r="11.2"><title>Charlton: 2 of 26 tested wells at 20+ (8%); predicted 5.3% out of sample, 13.9% before calibration</title></circle><circle class="pt" cx="102.5" cy="356.0" r="11.2"><title>Becket: 0 of 26 tested wells at 20+ (0%); predicted 2.7% out of sample, 7.4% before calibration</title></circle><circle class="pt" cx="80.1" cy="356.0" r="11.0"><title>New Marlborough: 0 of 25 tested wells at 20+ (0%); predicted 1.5% out of sample, 4.2% before calibration</title></circle><circle class="pt" cx="181.5" cy="356.0" r="11.0"><title>Bolton: 0 of 25 tested wells at 20+ (0%); predicted 7.0% out of sample, 17.5% before calibration</title></circle><circle class="pt" cx="182.2" cy="198.7" r="11.0"><title>Newbury: 4 of 25 tested wells at 20+ (16%); predicted 7.0% out of sample, 18.2% before calibration</title></circle><circle class="pt" cx="79.6" cy="356.0" r="10.8"><title>Ashfield: 0 of 24 tested wells at 20+ (0%); predicted 1.5% out of sample, 4.2% before calibration</title></circle><circle class="pt" cx="99.9" cy="356.0" r="10.5"><title>Otis: 0 of 22 tested wells at 20+ (0%); predicted 2.6% out of sample, 7.1% before calibration</title></circle><circle class="pt" cx="73.4" cy="356.0" r="10.5"><title>Warwick: 0 of 22 tested wells at 20+ (0%); predicted 1.1% out of sample, 3.3% before calibration</title></circle><circle class="pt" cx="76.4" cy="356.0" r="10.3"><title>Tolland: 0 of 21 tested wells at 20+ (0%); predicted 1.3% out of sample, 3.7% before calibration</title></circle><circle class="pt" cx="82.7" cy="356.0" r="10.2"><title>Shelburne: 0 of 20 tested wells at 20+ (0%); predicted 1.7% out of sample, 4.6% before calibration</title></circle><circle class="pt" cx="97.8" cy="356.0" r="9.8"><title>Ashby: 0 of 18 tested wells at 20+ (0%); predicted 2.5% out of sample, 6.8% before calibration</title></circle><circle class="pt" cx="78.6" cy="356.0" r="9.8"><title>Colrain: 0 of 18 tested wells at 20+ (0%); predicted 1.4% out of sample, 4.0% before calibration</title></circle><circle class="pt" cx="103.2" cy="298.2" r="9.6"><title>Holland: 1 of 17 tested wells at 20+ (6%); predicted 2.8% out of sample, 7.6% before calibration</title></circle><circle class="pt" cx="244.8" cy="356.0" r="9.4"><title>Dover: 0 of 16 tested wells at 20+ (0%); predicted 10.3% out of sample, 24.7% before calibration</title></circle><circle class="pt" cx="121.7" cy="290.5" r="9.2"><title>Rochester: 1 of 15 tested wells at 20+ (7%); predicted 3.7% out of sample, 10.1% before calibration</title></circle><circle class="pt" cx="85.0" cy="356.0" r="9.2"><title>Montgomery: 0 of 15 tested wells at 20+ (0%); predicted 1.8% out of sample, 5.0% before calibration</title></circle><circle class="pt" cx="131.5" cy="356.0" r="9.2"><title>Petersham: 0 of 15 tested wells at 20+ (0%); predicted 4.3% out of sample, 11.3% before calibration</title></circle><circle class="pt" cx="82.6" cy="356.0" r="9.0"><title>Goshen: 0 of 14 tested wells at 20+ (0%); predicted 1.6% out of sample, 4.6% before calibration</title></circle><circle class="pt" cx="141.2" cy="356.0" r="8.8"><title>Plympton: 0 of 13 tested wells at 20+ (0%); predicted 4.8% out of sample, 12.6% before calibration</title></circle><circle class="pt" cx="78.1" cy="280.4" r="8.8"><title>Plainfield: 1 of 13 tested wells at 20+ (8%); predicted 1.4% out of sample, 4.0% before calibration</title></circle><circle class="pt" cx="80.3" cy="356.0" r="8.5"><title>Leyden: 0 of 12 tested wells at 20+ (0%); predicted 1.5% out of sample, 4.3% before calibration</title></circle><circle class="pt" cx="76.8" cy="356.0" r="8.3"><title>Tyringham: 0 of 11 tested wells at 20+ (0%); predicted 1.3% out of sample, 3.8% before calibration</title></circle><circle class="pt" cx="78.1" cy="356.0" r="8.3"><title>Royalston: 0 of 11 tested wells at 20+ (0%); predicted 1.4% out of sample, 4.0% before calibration</title></circle><circle class="pt" cx="131.0" cy="356.0" r="8.1"><title>Aquinnah: 0 of 10 tested wells at 20+ (0%); predicted 4.2% out of sample, 11.3% before calibration</title></circle><circle class="pt" cx="252.8" cy="356.0" r="8.1"><title>Mendon: 0 of 10 tested wells at 20+ (0%); predicted 10.8% out of sample, 25.7% before calibration</title></circle><circle class="pt" cx="77.5" cy="356.0" r="8.1"><title>Washington: 0 of 10 tested wells at 20+ (0%); predicted 1.4% out of sample, 3.9% before calibration</title></circle><circle class="pt" cx="79.6" cy="356.0" r="8.1"><title>Windsor: 0 of 10 tested wells at 20+ (0%); predicted 1.5% out of sample, 4.2% before calibration</title></circle><circle class="pt" cx="80.1" cy="356.0" r="7.8"><title>Granville: 0 of 9 tested wells at 20+ (0%); predicted 1.5% out of sample, 4.3% before calibration</title></circle><circle class="pt" cx="94.1" cy="356.0" r="7.8"><title>Brimfield: 0 of 9 tested wells at 20+ (0%); predicted 2.3% out of sample, 6.3% before calibration</title></circle><circle class="pt" cx="80.5" cy="356.0" r="7.8"><title>Peru: 0 of 9 tested wells at 20+ (0%); predicted 1.5% out of sample, 4.3% before calibration</title></circle><circle class="pt" cx="79.6" cy="356.0" r="7.5"><title>Sandisfield: 0 of 8 tested wells at 20+ (0%); predicted 1.5% out of sample, 4.2% before calibration</title></circle><circle class="pt" cx="80.1" cy="356.0" r="7.5"><title>Chesterfield: 0 of 8 tested wells at 20+ (0%); predicted 1.5% out of sample, 4.3% before calibration</title></circle><circle class="pt" cx="105.7" cy="356.0" r="7.5"><title>Erving: 0 of 8 tested wells at 20+ (0%); predicted 2.9% out of sample, 7.9% before calibration</title></circle><circle class="pt" cx="203.5" cy="356.0" r="7.5"><title>Dunstable: 0 of 8 tested wells at 20+ (0%); predicted 8.1% out of sample, 20.2% before calibration</title></circle><circle class="pt" cx="93.9" cy="356.0" r="7.2"><title>Wales: 0 of 7 tested wells at 20+ (0%); predicted 2.2% out of sample, 6.3% before calibration</title></circle><circle class="pt" cx="199.7" cy="215.6" r="7.2"><title>Sutton: 1 of 7 tested wells at 20+ (14%); predicted 7.9% out of sample, 20.0% before calibration</title></circle><circle class="pt" cx="87.8" cy="356.0" r="7.2"><title>Buckland: 0 of 7 tested wells at 20+ (0%); predicted 1.9% out of sample, 5.4% before calibration</title></circle><circle class="pt" cx="220.4" cy="192.2" r="6.9"><title>Millville: 1 of 6 tested wells at 20+ (17%); predicted 9.0% out of sample, 22.5% before calibration</title></circle><circle class="pt" cx="83.1" cy="356.0" r="6.6"><title>Monterey: 0 of 5 tested wells at 20+ (0%); predicted 1.7% out of sample, 4.7% before calibration</title></circle><circle class="pt" cx="91.3" cy="356.0" r="6.6"><title>Alford: 0 of 5 tested wells at 20+ (0%); predicted 2.1% out of sample, 5.9% before calibration</title></circle><circle class="pt" cx="88.3" cy="356.0" r="6.6"><title>Oakham: 0 of 5 tested wells at 20+ (0%); predicted 1.9% out of sample, 5.5% before calibration</title></circle><circle class="pt" cx="167.9" cy="159.4" r="6.6"><title>Berlin: 1 of 5 tested wells at 20+ (20%); predicted 6.2% out of sample, 16.2% before calibration</title></circle><circle class="pt" cx="82.0" cy="356.0" r="6.6"><title>Charlemont: 0 of 5 tested wells at 20+ (0%); predicted 1.6% out of sample, 4.5% before calibration</title></circle><circle class="pt" cx="122.8" cy="356.0" r="6.2"><title>Hubbardston: 0 of 4 tested wells at 20+ (0%); predicted 3.8% out of sample, 10.2% before calibration</title></circle><circle class="pt" cx="75.1" cy="356.0" r="6.2"><title>Heath: 0 of 4 tested wells at 20+ (0%); predicted 1.2% out of sample, 3.5% before calibration</title></circle><circle class="pt" cx="72.7" cy="356.0" r="5.8"><title>Middlefield: 0 of 3 tested wells at 20+ (0%); predicted 1.1% out of sample, 3.2% before calibration</title></circle><circle class="pt" cx="166.8" cy="28.4" r="5.8"><title>Phillipston: 1 of 3 tested wells at 20+ (33%); predicted 6.2% out of sample, 15.9% before calibration</title></circle><circle class="pt" cx="80.9" cy="356.0" r="5.8"><title>New Ashford: 0 of 3 tested wells at 20+ (0%); predicted 1.6% out of sample, 4.4% before calibration</title></circle><circle class="pt" cx="81.2" cy="356.0" r="5.3"><title>New Braintree: 0 of 2 tested wells at 20+ (0%); predicted 1.6% out of sample, 4.4% before calibration</title></circle><circle class="pt" cx="102.1" cy="356.0" r="5.3"><title>Savoy: 0 of 2 tested wells at 20+ (0%); predicted 2.7% out of sample, 7.4% before calibration</title></circle><circle class="pt" cx="74.0" cy="356.0" r="5.3"><title>Rowe: 0 of 2 tested wells at 20+ (0%); predicted 1.2% out of sample, 3.4% before calibration</title></circle><circle class="pt" cx="105.1" cy="356.0" r="5.3"><title>Clarksburg: 0 of 2 tested wells at 20+ (0%); predicted 2.9% out of sample, 7.8% before calibration</title></circle><circle class="pt" cx="77.3" cy="356.0" r="4.6"><title>Hawley: 0 of 1 tested wells at 20+ (0%); predicted 1.4% out of sample, 3.8% before calibration</title></circle><circle class="pt" cx="79.4" cy="356.0" r="4.6"><title>Florida: 0 of 1 tested wells at 20+ (0%); predicted 1.5% out of sample, 4.2% before calibration</title></circle><text class="tick" x="378.0" y="394" text-anchor="middle">Predicted share at 20 ng/L or more, out of sample</text><text class="tick" transform="translate(14 184.0) rotate(-90)" text-anchor="middle">Measured share</text></svg></div>
+  <p class="note">Measured rates in towns with few tested wells are noisy (one well in three is 33%). 77% of the
+     program's invitations targeted wells near suspected sources, so its rates likely run above those of private wells
+     generally.</p>
+
+  <h2 id="calibration">4. Calibration and blending</h2>
+  <p><b>Calibration.</b> One shift in the model's log-odds, fit by maximum likelihood to the towns' counts, where a town's
+     rate is the population-weighted mean over its private-well blocks:</p>
+  <div class="eq">p_cal = σ( logit(p_model) + β ),   β = -1.07
+k_t ~ Binomial( n_t, mean over town t of p_cal )</div>
+  <p>Adding a slope (σ(a·logit p + β)) did not improve leave-one-town-out log loss, so the offset alone is used.</p>
+  <p><b>Blending.</b> In tested towns the calibrated estimate is combined with the town's own result, with the model acting
+     as a prior worth m wells; m is fit by beta-binomial maximum likelihood. Each block's log-odds in the town are then
+     shifted so the town's mean equals the blend:</p>
+  <div class="eq">r_t = ( k_t + m · p̄_t ) / ( n_t + m ),   m = 24 wells</div>
+  <p>A town with 40 tested wells therefore leans about 62% on its own results. Untested towns keep the calibrated
+     model estimate.</p>
+
+  <h2 id="results">5. Results</h2>
+  <p>Estimated private-well residents living where groundwater is at or above 20 ng/L: <b>70,000</b>
+     (7% of 1.0 million); before calibration the model put this at 175,000. Residents by
+     estimated probability:</p>
+  <div class="figure"><svg class="chart bars" viewBox="0 0 720 174" role="img" aria-label="Private-well residents by estimated probability of PFAS6 at or above 20 ng/L"><text class="tick" x="110" y="26.0" text-anchor="end">Under 5%</text><rect class="b0" x="120" y="6" width="490.0" height="30" rx="3"><title>Under 5%: 449,213 residents</title></rect><text class="value" x="618.0" y="26.0">449,213</text><text class="tick" x="110" y="68.0" text-anchor="end">5 to 10%</text><rect class="b1" x="120" y="48" width="369.6" height="30" rx="3"><title>5 to 10%: 338,830 residents</title></rect><text class="value" x="497.6" y="68.0">338,830</text><text class="tick" x="110" y="110.0" text-anchor="end">10 to 20%</text><rect class="b2" x="120" y="90" width="234.7" height="30" rx="3"><title>10 to 20%: 215,147 residents</title></rect><text class="value" x="362.7" y="110.0">215,147</text><text class="tick" x="110" y="152.0" text-anchor="end">20% or more</text><rect class="b3" x="120" y="132" width="19.0" height="30" rx="3"><title>20% or more: 17,429 residents</title></rect><text class="value" x="147.0" y="152.0">17,429</text></svg></div>
+
+  <h3>Towns with the most private-well residents estimated at 20 ng/L or more</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>Town</th><th>Private-well residents</th><th>Estimated share 20+</th><th>Expected residents</th>
+      <th>Before calibration</th><th>MassDEP program: wells at 20+ / tested</th></tr></thead>
+    <tbody><tr><td>Taunton</td><td>18,895</td><td>10%</td><td>1,978</td><td>25%</td><td><span class="note">not tested</span></td></tr>
+<tr><td>Marlborough</td><td>9,373</td><td>19%</td><td>1,735</td><td>39%</td><td><span class="note">not tested</span></td></tr>
+<tr><td>Carver</td><td>10,307</td><td>11%</td><td>1,123</td><td>21%</td><td>4 / 31</td></tr>
+<tr><td>Acton</td><td>7,531</td><td>14%</td><td>1,063</td><td>32%</td><td><span class="note">not tested</span></td></tr>
+<tr><td>Tyngsborough</td><td>7,292</td><td>14%</td><td>1,035</td><td>28%</td><td>6 / 38</td></tr>
+<tr><td>Carlisle</td><td>5,237</td><td>19%</td><td>1,002</td><td>23%</td><td>10 / 40</td></tr>
+<tr><td>Westport</td><td>16,179</td><td>6.1%</td><td>990</td><td>20%</td><td>2 / 40</td></tr>
+<tr><td>Dudley</td><td>6,942</td><td>13%</td><td>893</td><td>30%</td><td><span class="note">not tested</span></td></tr>
+<tr><td>Stow</td><td>6,942</td><td>13%</td><td>877</td><td>24%</td><td>6 / 42</td></tr>
+<tr><td>Westford</td><td>7,577</td><td>12%</td><td>872</td><td>27%</td><td><span class="note">not tested</span></td></tr>
+<tr><td>Canton</td><td>7,652</td><td>11%</td><td>854</td><td>26%</td><td><span class="note">not tested</span></td></tr>
+<tr><td>Hopkinton</td><td>9,731</td><td>8.5%</td><td>829</td><td>21%</td><td><span class="note">not tested</span></td></tr>
+<tr><td>Stoughton</td><td>5,533</td><td>15%</td><td>817</td><td>33%</td><td><span class="note">not tested</span></td></tr>
+<tr><td>Dartmouth</td><td>12,534</td><td>6.4%</td><td>798</td><td>16%</td><td><span class="note">not tested</span></td></tr>
+<tr><td>Charlton</td><td>12,078</td><td>6.5%</td><td>790</td><td>14%</td><td>2 / 26</td></tr>
+<tr><td>Grafton</td><td>7,866</td><td>9.8%</td><td>773</td><td>24%</td><td><span class="note">not tested</span></td></tr>
+<tr><td>Leicester</td><td>7,715</td><td>9.4%</td><td>729</td><td>23%</td><td><span class="note">not tested</span></td></tr>
+<tr><td>Framingham</td><td>5,804</td><td>12%</td><td>723</td><td>28%</td><td><span class="note">not tested</span></td></tr>
+<tr><td>Plymouth</td><td>14,976</td><td>4.6%</td><td>692</td><td>12%</td><td><span class="note">not tested</span></td></tr>
+<tr><td>Middleton</td><td>6,123</td><td>11%</td><td>687</td><td>26%</td><td><span class="note">not tested</span></td></tr></tbody>
+  </table></div>
+  <p class="note">Full lists: <a href="data/private_well_towns.csv">all towns</a> and
+     <a href="data/private_well_program_towns.csv">tested towns with predictions</a>.</p>
+
+  <h3>By Environmental Justice block group</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>Group</th><th>Private-well residents</th><th>Share of group on private wells</th><th>Estimated share 20+</th></tr></thead>
+    <tbody><tr class="selected"><td class="wrap">All residents</td><td>1,020,619</td><td>15%</td><td>6.9%</td></tr>
+<tr><td class="wrap">In EJ block groups</td><td>142,342</td><td>4.1%</td><td>9.5%</td></tr>
+<tr><td class="wrap">EJ: minority criterion</td><td>103,587</td><td>3.2%</td><td>11%</td></tr>
+<tr><td class="wrap">EJ: income criterion</td><td>56,241</td><td>4.3%</td><td>7.7%</td></tr>
+<tr><td class="wrap">EJ: English isolation</td><td>3,363</td><td>0.8%</td><td>14%</td></tr>
+<tr><td class="wrap">Not in EJ block groups</td><td>878,277</td><td>25%</td><td>6.5%</td></tr></tbody>
+  </table></div>
+  <p class="note">Few EJ residents use private wells; the shares for those groups rest on small populations.</p>
+
+  <h2 id="limits">6. Limitations</h2>
+  <ul>
+    <li>Estimates are area-level probabilities from a model with modest discrimination; they cannot identify individual
+        contaminated wells.</li>
+    <li>Calibration rests on 83 towns chosen because most residents use private wells, and on invitations mostly
+        targeted near suspected sources; rates in other settings may differ.</li>
+    <li>The outcome is PFAS6 against the 20 ng/L state standard. EPA's 2024 limits of 4 ng/L each for PFOA and PFOS are
+        stricter and would classify more wells.</li>
+    <li>Private-well status is inferred from community water service areas; homes inside a service area that still use
+        wells, and service-area boundary errors, are not captured.</li>
+    <li>Public-well results run through 2026-09-21 and the private-well program sampled in 2020 to 2022; groundwater
+        PFAS can change over time.</li>
   </ul>
 
-  <p class="disclaimer">An independent analysis built only from public data, not an official product of MassDEP or
-     any government agency. It is not a substitute for testing your water. Code and data:
-     <a href="https://github.com/adichiara/PFAS-release-risk">GitHub</a>. Updated 2026-09-30.</p>
+  <h2>Related analyses</h2>
+  <ul>
+    <li><a href="analysis.html">Public water</a>: measured PFAS6 for every community water system, including
+        purchased water, cross-checked against EPA UCMR 5.</li>
+    <li><a href="releases.html">Reported releases</a>: where MassDEP is likely to receive a PFAS release report. Reports follow
+        where testing happens, so this is context rather than a measure of exposure.</li>
+  </ul>
+
+  <h2>Data sources</h2>
+  <div class="scroll"><table>
+    <thead><tr><th class="wrap">Dataset</th><th class="wrap">Publisher</th><th>Status</th></tr></thead>
+    <tbody><tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/census2020/CENSUS2020_BLK_BG_TRCT.zip">2020 Census block groups (with 2020 population and housing counts)</a></td><td class="wrap">MassGIS / U.S. Census Bureau</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/census2020/CENSUS2020_BLK_BG_TRCT.zip">2020 Census blocks (population, housing and land area for the hexagon grid)</a></td><td class="wrap">MassGIS / U.S. Census Bureau</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/towns.zip">Municipal boundaries (used for spatially grouped cross-validation)</a></td><td class="wrap">MassGIS</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://www.mass.gov/doc/downloadable-data-waste-site-cleanup-notifications-status/download">MassDEP Waste Site Cleanup notifications and chemicals (bulk download)</a></td><td class="wrap">MassDEP Bureau of Waste Site Cleanup</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://eeaonline.eea.state.ma.us/portal#!/search/wastesite">MassDEP data portal site details (official site coordinates)</a></td><td class="wrap">MassDEP / EEA Data Portal</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/gdbs/MassGIS_AddressPoints.zip">MassGIS statewide address points (offline geocoding of release addresses)</a></td><td class="wrap">MassGIS</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/firestations_pt.zip">Fire stations (MEMA)</a></td><td class="wrap">MassGIS</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/bwpmajor_pt.zip">MassDEP major permitted facilities (air, hazardous waste generators, TSDFs)</a></td><td class="wrap">MassGIS / MassDEP</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/ust.zip">MassDEP underground storage tank facilities</a></td><td class="wrap">MassGIS / MassDEP</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/solidwaste.zip">MassDEP solid waste land disposal sites (landfill footprints)</a></td><td class="wrap">MassGIS / MassDEP</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/census2020/CENSUS2020TIGERROADS_SHP.zip">2020 TIGER primary and secondary roads</a></td><td class="wrap">MassGIS / U.S. Census Bureau</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/aquifers.zip">High- and medium-yield aquifers</a></td><td class="wrap">MassGIS / USGS</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://adds-faa.opendata.arcgis.com/datasets/faa::airports-1">Airports (FAA NASR), public-use aerodromes and military airfields (AFFF use)</a><br><span class="note">ROC AUC 0.714 -&gt; 0.713, top-10%-land capture 35% -&gt; 34% (4 km² hexagons, smoothed logistic); also no gain in the groundwater model; not used</span></td><td class="wrap">FAA Aeronautical Data Delivery Service</td><td><span class="status">tested, not used</span></td></tr>
+<tr><td class="wrap"><a href="https://catalog.data.gov/dataset/military-installations-ranges-and-training-areas">Military installations, ranges and training areas (MIRTA)</a><br><span class="note">ROC AUC 0.714 -&gt; 0.707, capture 35% -&gt; 32% (4 km² hexagons, smoothed logistic); also no gain in the groundwater model; not used</span></td><td class="wrap">U.S. Department of Defense</td><td><span class="status">tested, not used</span></td></tr>
+<tr><td class="wrap"><a href="https://www.epa.gov/toxics-release-inventory-tri-program/tri-basic-data-files-calendar-years-1987-present">EPA Toxics Release Inventory reporters, Massachusetts, 2014-2024</a><br><span class="note">ROC AUC 0.714 -&gt; 0.706, capture 35% -&gt; 32% (4 km² hexagons, smoothed logistic); also no gain in the groundwater model; not used</span></td><td class="wrap">U.S. EPA</td><td><span class="status">tested, not used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/pwsdep_pt.zip">Public water supply sources (wells and intakes)</a></td><td class="wrap">MassGIS / MassDEP</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://eeaonline.eea.state.ma.us/portal#!/search/drinking-water">PFAS6 results for public water systems (MassDEP drinking-water data)</a></td><td class="wrap">MassDEP / EEA Data Portal</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/DEP_Sewer_Service_Areas.zip">Sewer service areas of municipal wastewater treatment plants</a></td><td class="wrap">MassGIS / MassDEP</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://www.epa.gov/frs/epa-state-combined-csv-download-files">EPA Facility Registry Service, Massachusetts facilities and NAICS codes</a></td><td class="wrap">U.S. EPA</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/census2020/ej2020.zip">2020 Environmental Justice populations (block groups; minority, income, limited-English criteria)</a></td><td class="wrap">MassGIS / Executive Office of Energy and Environmental Affairs</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://mass-eoeea.maps.arcgis.com/apps/dashboards/f15b2464024645ec8215be1685fe88f1">MassDEP Private Wells PFAS Sampling Program, results by town (2020-2022)</a></td><td class="wrap">MassDEP / UMass Amherst</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://www.epa.gov/enviro/sdwis-overview">Purchased-water links between public water systems (who buys from whom)</a></td><td class="wrap">U.S. EPA Safe Drinking Water Information System (Envirofacts)</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://www.epa.gov/dwucmr/occurrence-data-unregulated-contaminant-monitoring-rule">EPA UCMR 5 PFAS results for public water systems, 2023-2025 (29 PFAS)</a></td><td class="wrap">U.S. EPA</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/state/DEP_PWS_Water_Service_Areas.zip">Community public water system service areas (outside them, homes are presumed on private wells)</a></td><td class="wrap">MassGIS / MassDEP</td><td><span class="status">used</span></td></tr>
+<tr><td class="wrap"><a href="https://s3.us-east-1.amazonaws.com/download.massgis.digital.mass.gov/shapefiles/lclu2016/">2016 land cover / land use (industrial, commercial, impervious fractions)</a></td><td class="wrap">MassGIS</td><td><span class="status">planned</span></td></tr></tbody>
+  </table></div>
+
+  <h2>Downloads</h2>
+  <ul class="downloads"><li><a href="data/private_well_towns.csv">Private-well residents and estimates by town</a></li><li><a href="data/private_well_program_towns.csv">MassDEP program results by tested town, with the model&#x27;s uncalibrated, out-of-sample and blended rates</a></li><li><a href="data/block_group_drinking_water.csv">Drinking water by 2020 block group: public-water PFAS6 now and at peak, private-well share and estimate, EJ fields</a></li></ul>
+
+  <footer>An independent analysis built from public data; not an official product of MassDEP or any agency.
+    Run 2026-10-01. Code, data catalog and method: <a href="https://github.com/adichiara/PFAS-release-risk">GitHub</a>.</footer>
 </main>
 </body>
 </html>

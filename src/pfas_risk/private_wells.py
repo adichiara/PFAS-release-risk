@@ -129,5 +129,11 @@ def calibrate(private: pd.DataFrame) -> tuple[pd.Series, dict]:
                           "uncalibrated_model": round(_binomial_nll(raw_town, k, n), 1),
                           "flat_rate": round(_binomial_nll(np.full(len(k), flat), k, n), 1)},
         "offset": round(offset, 3), "prior_weight_wells": round(m, 1),
+        # Per tested town: wells sampled (n) and at 20+ (k); the model's town rate before calibration,
+        # the calibrated rate predicted without that town (out of sample), and the final blend.
+        "town_table": [
+            {"town": str(name).title(), "n": int(nn), "k": int(kk), "model": round(float(r), 4),
+             "loto": round(float(lo), 4), "blended": round(float(blended[name]), 4)}
+            for name, nn, kk, r, lo in zip(sampled, n, k, raw_town, loto, strict=True)],
     }
     return adjusted, stats
